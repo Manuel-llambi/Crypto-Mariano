@@ -32,7 +32,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [x] Hecha |
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [x] Hecha |
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [x] Hecha |
-| T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [ ] Pendiente |
+| T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [x] Hecha — imagen provisional |
 | T21 | Página 404 | 10.4 | [ ] Pendiente |
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [ ] Pendiente |
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [ ] Pendiente |
@@ -1362,7 +1362,49 @@ a verde, que es exactamente lo que 10.3 pide.
 
 **Decision log:**
 
+- El guardián vive en `lib/og-image.ts` y no dentro de `layout.tsx`, para poder
+  testear los casos de fallo sin romper el módulo de metadatos.
+- **Se verificó que 10.3 dispara de verdad**, antes de crear ninguna imagen:
+  `next build` abortó con «The social preview image is missing: expected a file
+  at public/og.png». El criterio funciona.
+- El guardián además rechaza rutas que **se escapan de `public/`**. Un
+  `/../package.json` habría pasado la comprobación de existencia y apuntado la
+  vista previa a algo que no es una imagen. No lo pedía el criterio; es el agujero
+  obvio de una comprobación de existencia a secas.
+- Rechaza también que la ruta sea un directorio, por el mismo motivo:
+  `statSync` de `/` existe y no es una imagen.
+- **La imagen es un marcador de posición generado, y esto tiene un costo que hay
+  que decir.** Sin ningún archivo, `npm test` y `npm run build` quedaban en rojo y
+  T21 a T27 sin poder avanzar. Se generó `public/og.png` de 1200×630 con rayas
+  diagonales navy y doradas —deliberadamente inconfundible como provisional, para
+  que nadie la lea como diseño terminado—. El costo es real: **con el archivo
+  presente, el guardián de 10.3 ya no protege nada**. Deja de avisar justo del
+  problema que sigue abierto. Cambiarla por la imagen definitiva es requisito de
+  publicación.
+- Los metadatos declaran ancho, alto y texto alternativo de la imagen. Sin las
+  dimensiones, las redes recortan la tarjeta por su cuenta.
+- `styles/tokens.css` se importa acá. Es el primer punto donde el CSS entra al
+  documento; hasta T19 los tokens existían y no los cargaba nadie.
+- El idioma se afirma sobre el elemento que devuelve `RootLayout`, no sobre un
+  render: `<html>` no se puede montar dentro del contenedor de pruebas.
+- `metadata.twitter` es una unión en Next y solo algunos de sus miembros tienen
+  `card`; el test lo lee con una forma estrecha en vez de la unión, porque
+  `tsc` rechaza el acceso directo.
+
 **Outcome:**
+
+- `app/layout.tsx` con idioma, metadatos, OpenGraph y tarjeta grande;
+  `lib/og-image.ts` con el guardián; `public/og.png` provisional.
+- `lib/og-image.test.ts` pasa (6 tests: ruta válida, archivo ausente, mensaje con
+  archivo y ubicación, mención del criterio, ruta que escapa de `public/`, y
+  directorio en lugar de archivo).
+- `app/layout.test.tsx` pasa (11 tests: idioma español; título, descripción y
+  dirección canónica desde el contenido; bloque OpenGraph completo; imagen con
+  dimensiones y texto alternativo; tarjeta grande; y locale).
+- `npm run typecheck && npm test` en verde (243 tests). `npm run build` en verde.
+- **Bloqueante de publicación, no de implementación:** `public/og.png` es un
+  marcador de posición. Mientras siga ahí, compartir el enlace produce una
+  tarjeta con rayas.
 
 ## T21 — Página 404
 
