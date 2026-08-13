@@ -29,7 +29,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T14 | `UpdatesSection` — actualizaciones fechadas | 2.6, 2.7 | [x] Hecha |
 | T15 | Secciones de audiencia, metodología y prueba social | 2.4, 9.3 | [x] Hecha |
 | T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [x] Hecha |
-| T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [ ] Pendiente |
+| T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [x] Hecha |
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [ ] Pendiente |
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [ ] Pendiente |
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [ ] Pendiente |
@@ -1150,7 +1150,53 @@ JavaScript.
 
 **Decision log:**
 
+- **Los enlaces se duplican en el marcado**, una vez en la lista en línea del
+  encabezado y otra dentro del panel. Se descartó la alternativa —un solo juego
+  de enlaces y CSS que fuerce visible el contenido de un `<details>` cerrado por
+  encima de 1024 px— porque depende de anular el ocultamiento del agente de
+  usuario, que no está garantizado entre navegadores y habría quedado sin red de
+  contención hasta los E2E de T23. Con `display: none` solo una de las dos listas
+  existe a la vez, también para el árbol de accesibilidad: nadie escucha los
+  enlaces dos veces.
+- El costo de esa duplicación es de test, no de producto: jsdom no aplica CSS, de
+  modo que las dos listas están «visibles» para las consultas. Los tests de T16
+  se acotaron por nombre accesible (`Secciones del sitio` frente a
+  `Secciones del sitio, panel`) en vez de relajarse a `getAllByRole`, que habría
+  dejado de distinguir cuál es cuál.
+- El efecto escucha en el `<details>`, no en cada enlace: un solo manejador, y
+  los enlaces que se agreguen después quedan cubiertos sin tocar nada. Filtra con
+  `closest("a")` para no cerrar el panel ante un clic en el fondo; hay un test de
+  ese caso.
+- El efecto **no** llama a `preventDefault`. El enlace tiene que navegar de forma
+  nativa: interceptarlo convertiría la navegación en responsabilidad de nuestro
+  JavaScript y rompería 8.2 justo donde 8.5 dice que no debe romperse.
+- Se devuelve la función de limpieza que retira el escucha, y hay un test que lo
+  exige. Sin ella, cada montaje del panel dejaría un escucha vivo.
+- **Un test se rompió por su propio comentario.** La aserción «el efecto no hace
+  nada más» buscaba la cadena `history` en el fuente, y la encontró… en el
+  comentario que explicaba justamente que no se usa historial. La aserción pasó a
+  hacerse sobre el fuente **sin comentarios**: las de este tipo son sobre el
+  código, no sobre la prosa. Vale para todas las verificaciones por ausencia del
+  proyecto.
+- El panel no lleva `name`, igual que `Disclosure`: no debe acoplarse con ningún
+  otro desplegable de la página.
+
 **Outcome:**
+
+- `components/ui/NavPanel.tsx` y su módulo CSS; `TopNavBar` lo integra y su hoja
+  de estilos suma el umbral de 1024 px en las dos direcciones.
+- `components/ui/NavPanel.test.tsx` pasa (13 tests: un enlace por ítem con su
+  `href`, cerrado por omisión, sin `name`, umbral declarado, `<details>` nativo
+  con `<summary>` de control, todos los enlaces adentro, cierre al activar un
+  enlace, panel intacto ante un clic fuera de un enlace, directiva de cliente
+  presente, ausencia de otras responsabilidades, ausencia de estado propio y
+  retiro del escucha).
+- `components/sections/TopNavBar.test.tsx` sube a 14 tests con la verificación de
+  que el panel recibe los mismos ítems.
+- `npm run typecheck && npm test` en verde (207 tests). `npm run build` en verde.
+- **Pendiente de ventana real:** que el panel abra con JavaScript bloqueado (8.4)
+  y que se cierre al navegar (7.3) están probados en jsdom, que no ejecuta el
+  comportamiento nativo de `<details>`. La verificación de verdad es T26.
 
 ## T18 — Composición de la página e integridad de anclas
 

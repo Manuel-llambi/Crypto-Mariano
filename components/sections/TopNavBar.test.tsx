@@ -1,7 +1,7 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen } from "@testing-library/react";
+import { cleanup, render, screen, within } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import { TopNavBar } from "./TopNavBar";
@@ -33,20 +33,44 @@ const stylesheet = readFileSync(
   "utf8",
 );
 
+/**
+ * The inline list, scoped by its accessible name.
+ *
+ * Below 1024px the same links live in NavPanel instead (7.2), so both sets are
+ * in the document at once. Only one is ever rendered — the other is
+ * `display: none`, and therefore out of the accessibility tree — but jsdom
+ * applies no CSS, so the queries have to say which of the two they mean.
+ */
+const inlineNav = () => within(screen.getByRole("navigation", { name: "Secciones del sitio" }));
+
 describe("navigation links come from the data (1.5)", () => {
   it("renders one link per item, with the href received", () => {
     renderNav();
 
     for (const item of items) {
-      expect(screen.getByRole("link", { name: item.label }).getAttribute("href")).toBe(item.href);
+      expect(inlineNav().getByRole("link", { name: item.label }).getAttribute("href")).toBe(
+        item.href,
+      );
     }
   });
 
   it("renders whatever items it is given, not a hardcoded list", () => {
     renderNav({ items: [{ label: "Confianza", href: "#confianza" }] });
 
-    expect(screen.getByRole("link", { name: "Confianza" }).getAttribute("href")).toBe("#confianza");
-    expect(screen.queryByRole("link", { name: "Programa" })).toBeNull();
+    expect(inlineNav().getByRole("link", { name: "Confianza" }).getAttribute("href")).toBe(
+      "#confianza",
+    );
+    expect(inlineNav().queryByRole("link", { name: "Programa" })).toBeNull();
+  });
+
+  // 7.2 — the same items reach the narrow-screen panel.
+  it("hands the same items to the narrow-screen panel", () => {
+    renderNav();
+
+    const panel = within(screen.getByRole("navigation", { name: "Secciones del sitio, panel" }));
+    for (const item of items) {
+      expect(panel.getByRole("link", { name: item.label }).getAttribute("href")).toBe(item.href);
+    }
   });
 
   it("writes no anchor of its own in the source", () => {

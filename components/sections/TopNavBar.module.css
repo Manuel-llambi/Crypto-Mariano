@@ -19,8 +19,20 @@
   white-space: nowrap;
 }
 
+/*
+ * 7.2 — the inline list is the wide-screen shape. Below the threshold it is
+ * removed entirely, both visually and from the accessibility tree, and NavPanel
+ * carries the same links instead. Only one of the two is ever announced.
+ */
 .nav {
+  display: none;
   flex: 1 1 auto;
+}
+
+@media (min-width: 1024px) {
+  .nav {
+    display: block;
+  }
 }
 
 .list {

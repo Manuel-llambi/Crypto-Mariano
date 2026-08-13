@@ -1,3 +1,4 @@
+import { NavPanel } from "@/components/ui/NavPanel";
 import { accessUrl } from "@/lib/access-url";
 import type { NavItem } from "@/lib/nav/sections";
 
@@ -51,6 +52,10 @@ export function TopNavBar({ items, siteName, enrollLabel, loginLabel }: TopNavBa
         <a className={styles.enrol} href={ENROL_HREF}>
           {enrollLabel}
         </a>
+
+        {/* 7.2 — below 1024px the links move in here; the site name and the
+            enrolment control above stay visible either way. */}
+        <NavPanel items={items} />
       </div>
     </header>
   );
