@@ -11,7 +11,13 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 0.75rem clamp(0.75rem, 3vw, 1.5rem);
+  /*
+   * The block padding stays small on purpose. Controls are 44px tall (7.6), so
+   * anything above ~14px here would push the bar past `--header-height` — and
+   * that value is what `scroll-padding` subtracts, so the bar growing past it
+   * puts anchor targets back underneath it (1.3).
+   */
+  padding: 0.5rem clamp(0.75rem, 3vw, 1.5rem);
   background: var(--white);
   border-block-end: 1px solid var(--rule);
   color: var(--navy);
@@ -20,7 +26,6 @@
 @media (min-width: 1024px) {
   .header {
     gap: 2rem;
-    padding-block: 1rem;
   }
 }
 

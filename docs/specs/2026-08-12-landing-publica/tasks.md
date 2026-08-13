@@ -37,7 +37,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [x] Hecha |
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [x] Hecha |
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [x] Hecha |
-| T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [ ] Pendiente |
+| T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [x] Hecha |
 | T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [ ] Pendiente |
 | T27 | Auditoría de accesibilidad en integración continua | 9.4, 9.6 | [ ] Pendiente |
 
@@ -1702,7 +1702,47 @@ del panel— y mide su caja y su foco.
 
 **Decision log:**
 
+- El test **recorre toda la página** en vez de una lista elegida de controles.
+  El control que nadie recordó es exactamente el que termina midiendo 19 px de
+  alto; enumerarlos a mano habría reproducido el olvido dentro del test. Con
+  `a[href], button, summary, [tabindex]` aparecieron doce controles chicos que no
+  estaban en ninguna lista mía.
+- Las dos reglas —foco y área activable— se declaran **una sola vez** en
+  `styles/global.css`, apuntando a tipos de control y no a nombres de clase. Un
+  control agregado en seis meses las hereda en vez de quedar afuera.
+- El anillo va en `:focus-visible` y no en `:focus`, para que aparezca con
+  teclado y tecnología de asistencia y no en cada clic del ratón. Hay un test que
+  fija esa distinción: un control **solo clickeado** no debe mostrarlo.
+- **`element.focus()` programático no dispara `:focus-visible` en un enlace.**
+  El navegador solo lo cuenta cuando el foco llegó por teclado, así que medir
+  después de `.focus()` habría reportado «sin anillo» en una página que anilla
+  bien. Todas las specs de foco llegan con `Tab`.
+- La spec de orden de tabulación compara la secuencia real de `Tab` contra el
+  orden documental de los controles visibles. No hay `tabindex` positivo en el
+  proyecto; esto es lo que garantiza que no aparezca uno.
+- **Aplicar 7.6 rompió 1.3.** Los controles de 44 px empujaron el encabezado
+  cuatro píxeles por encima de `--header-height`, y como ese valor es el que
+  `scroll-padding` descuenta, seis specs de anclas fallaron a la vez. Se redujo
+  el relleno vertical del encabezado para que la altura la fije el token.
+  - Se agregó además una spec que ata la altura medida del encabezado a la banda
+    reservada. Ese acoplamiento existía y se manifestaba como seis fallos
+    confusos; ahora falla una spec que dice exactamente qué pasó.
+
 **Outcome:**
+
+- `styles/global.css` suma el anillo de foco y las áreas activables mínimas;
+  `TopNavBar.module.css` ajusta el relleno vertical.
+- `e2e/controls.spec.ts` pasa (10 specs: 44×44 en todo control visible a 375 y a
+  1280, también con un desplegable abierto; recorrido completo por `Tab` en orden
+  documental; apertura de una pregunta y del panel solo con teclado; anillo
+  visible en los diez primeros controles tabulados; ausencia de anillo tras un
+  clic; y diferencia contra el estado en reposo).
+- `e2e/anchors.spec.ts` suma la spec de altura del encabezado (18 specs).
+- `npm run test:e2e` pasa (51 specs). `npm run typecheck && npm test` en verde
+  (253 tests).
+- **Nota para T27:** la auditoría automatizada de 9.6 todavía no corre. Estas
+  specs cubren foco y área activable, que son dos de sus hallazgos habituales,
+  pero no la reemplazan.
 
 ## T26 — Funcionamiento sin JavaScript
 

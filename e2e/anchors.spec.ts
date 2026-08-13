@@ -46,6 +46,29 @@ test.describe("the header stays at the top edge (1.4)", () => {
     expect(box!.y).toBeLessThanOrEqual(1);
   });
 
+  /**
+   * The header may not grow past the band `scroll-padding` reserves.
+   *
+   * When the 44px activation targets of 7.6 were applied, the bar grew four
+   * pixels past `--header-height` and six anchor specs failed at once — a
+   * confusing symptom for a simple cause. This asserts the coupling directly,
+   * so the next time it breaks it says so.
+   */
+  test("is no taller than the band reserved for it", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto("/");
+
+    const measured = await page.evaluate(() => {
+      const header = document.querySelector("header")!.getBoundingClientRect().height;
+      const reserved = Number.parseFloat(
+        getComputedStyle(document.documentElement).scrollPaddingTop,
+      );
+      return { header, reserved };
+    });
+
+    expect(measured.header).toBeLessThanOrEqual(measured.reserved + 1);
+  });
+
   test("still covers the full width after scrolling", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto("/");
