@@ -14,12 +14,13 @@ Landing de una sola página para un **curso de investigación de criptoactivos**
 
 ## Comandos de verificación
 
-La verificación de toda tarea es `npm run typecheck && npm test`. Las tareas T22 a T27 agregan `npm run test:e2e`, que **todavía no existe**: el andamiaje E2E lo crea T22.
+La verificación de toda tarea es `npm run typecheck && npm test`. Las tareas T22 a T27 agregan `npm run test:e2e` (Playwright, contra `next build` + `next start` en el puerto 3100). **`workers: 1` a propósito:** con más, cinco Chromium en paralelo no disparan `load` y toda la suite expira. **`tsconfig.json` excluye `e2e/`**, así que `typecheck` no cubre las specs.
 
 | Comando | Qué hace |
 |---|---|
 | `npm run typecheck` | `tsc --noEmit`, con `strict` y `noUncheckedIndexedAccess` |
 | `npm test` | `vitest run` |
+| `npm run test:e2e` | `playwright test` — compila y sirve antes de correr |
 | `npm run build` | `next build` |
 | `npm run dev` | Servidor de desarrollo |
 
@@ -37,7 +38,7 @@ No afirmar que la suite está en verde sin haberla corrido.
 
 Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
 
-Hechas hasta hoy (2026-08-13): T1 a T21. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T22** (andamiaje E2E y smoke test) — la primera con navegador real.
+Hechas hasta hoy (2026-08-13): T1 a T22. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T23** (layout adaptable a pantallas angostas).
 
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 

@@ -34,7 +34,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [x] Hecha |
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [x] Hecha — imagen provisional |
 | T21 | Página 404 | 10.4 | [x] Hecha — código 404 pendiente de E2E |
-| T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [ ] Pendiente |
+| T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [x] Hecha |
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [ ] Pendiente |
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [ ] Pendiente |
 | T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [ ] Pendiente |
@@ -1487,7 +1487,55 @@ registra en el Decision log.
 
 **Decision log:**
 
+- Corredor: **Playwright**, fijado en `1.56.1`. `.gitignore` y `tsconfig.json` ya
+  excluían `e2e/`, `playwright-report/` y `.playwright/` desde T1, así que la
+  elección venía anticipada. Es además el único de los candidatos que trae
+  control del contexto para deshabilitar JavaScript, que es lo que T26 necesita
+  para el Requisito 8; con otro corredor habría que sumar herramienta más
+  adelante.
+- Corre contra `next build` + `next start`, no contra el servidor de desarrollo.
+  Varios criterios solo se sostienen ahí: sin JavaScript el servidor de
+  desarrollo igual envía su propio runtime de cliente, y el guardián de 10.3 solo
+  actúa al compilar.
+- Puerto **3100** y no 3000, para que un servidor de desarrollo olvidado no se
+  confunda con la compilación bajo prueba.
+- Se fija `127.0.0.1` en vez de `localhost` en las dos puntas. En Windows
+  `localhost` resuelve primero a `::1` mientras `next start` escucha en IPv4, y
+  el fallo aparece de forma intermitente, que es peor que no funcionar nunca.
+- **`workers: 1`.** Con el valor por omisión (uno por núcleo) arrancaron cinco
+  Chromium y **ninguno** disparó `load`: las cinco specs expiraban en `page.goto`
+  contra un servidor que respondía a `curl` en 70 ms. Con un worker la suite
+  entera corre en cinco segundos, así que el paralelismo no compraba nada.
+  Diagnóstico: se levantó el servidor a mano y se comprobó por `curl` (200 en `/`
+  y 404 en una ruta inexistente) y con una sonda de navegador directa (200), lo
+  que descartó servidor y red y dejó el paralelismo como única causa.
+- **El smoke test verifica 4.5 sobre las preguntas frecuentes, no sobre el
+  temario**, y la razón es un hallazgo: **con el contenido actual el temario no
+  renderiza ningún desplegable**. `EXP-00` y `EXP-01` están disponibles pero sin
+  resumen escrito, así que 4.4 manda mostrarlos sin control; el resto es
+  `coming-soon`. El mecanismo es el mismo componente en los dos lugares.
+- Se agregó una spec que fija ese estado (`#programa details` es 0). Está escrita
+  para **empezar a fallar** el día que un módulo reciba resumen, que es el día en
+  que 4.5 pasa a ser verificable sobre el temario.
+- Se agregó también la verificación del código 404, que T21 no podía observar en
+  jsdom. Es comportamiento de servidor y acá sí se mide: `/una-ruta-que-no-existe`
+  responde 404.
+
 **Outcome:**
+
+- `playwright.config.ts`, `e2e/smoke.spec.ts` y el script `test:e2e` en
+  `package.json`; `@playwright/test@1.56.1` y Chromium instalados.
+- `npm run test:e2e` pasa (5 specs: la página carga y muestra sus seis secciones;
+  dos desplegables abiertos a la vez; el temario sin controles mientras ningún
+  módulo declare resumen; los tres controles de inscripción con `intent=signup` y
+  dirección absoluta; y la ruta inexistente con código 404, encabezado, pie y
+  enlace al inicio).
+- `npm run typecheck && npm test` en verde (253 tests).
+- **Nota:** `tsconfig.json` excluye `e2e/`, de modo que `npm run typecheck` **no**
+  cubre las specs. Fue decisión de T1 y no se cambió acá; los errores de tipos en
+  E2E aparecen al correr Playwright, no antes.
+- **Pendiente de T26:** que el panel de navegación abra con JavaScript
+  deshabilitado. El corredor ya lo permite; la spec es de esa tarea.
 
 ## T23 — Layout adaptable a pantallas angostas
 
