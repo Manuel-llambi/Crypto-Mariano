@@ -1,0 +1,38 @@
+/*
+ * Document-level rules. Tokens live in tokens.css; this file is what applies
+ * them to the document itself.
+ */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-sans);
+  background: var(--white);
+}
+
+/*
+ * 1.3 — a sticky header and fragment links go wrong together by default: the
+ * browser scrolls the target to the very top of the viewport, which is where
+ * the header already is, so the heading the visitor asked for lands underneath
+ * it. `scroll-padding` reserves that band on every anchor jump, once, instead of
+ * a `scroll-margin` repeated on each section.
+ */
+html {
+  scroll-padding-block-start: var(--header-height);
+  scroll-behavior: smooth;
+}
+
+/*
+ * 1.7 — with reduced motion declared, arriving is instant. The preference is
+ * honoured by removing the animation, never by adding a faster one.
+ */
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+}

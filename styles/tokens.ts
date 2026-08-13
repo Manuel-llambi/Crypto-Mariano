@@ -48,6 +48,14 @@ export const SPACE_TOKENS = {
   "--section-block": "clamp(3rem, 8vw, 6rem)",
   "--card-padding": "clamp(1.5rem, 4vw, 2.5rem)",
   "--row-padding": "clamp(1.25rem, 3vw, 2rem)",
+  /**
+   * Height of the fixed header.
+   *
+   * It is a token because two unrelated rules must agree on it: the header
+   * reserves it, and `scroll-padding` on the document subtracts it so an anchor
+   * target does not land underneath (1.3). Two hardcoded numbers would drift.
+   */
+  "--header-height": "4.5rem",
   "--row-gap": "16px",
   "--label-inline": "9px",
   "--label-block": "3px",

@@ -36,7 +36,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T21 | Página 404 | 10.4 | [x] Hecha — código 404 pendiente de E2E |
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [x] Hecha |
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [x] Hecha |
-| T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [ ] Pendiente |
+| T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [x] Hecha |
 | T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [ ] Pendiente |
 | T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [ ] Pendiente |
 | T27 | Auditoría de accesibilidad en integración continua | 9.4, 9.6 | [ ] Pendiente |
@@ -1632,7 +1632,52 @@ verifica en ventana real midiendo la posición del título de destino.
 
 **Decision log:**
 
+- Se usó `scroll-padding-block-start` en el documento en vez del
+  `scroll-margin-top` por sección que sugería la tarea. Es la misma corrección
+  declarada **una vez** en lugar de repetida en seis secciones, y cubre también
+  cualquier destino futuro sin que haya que acordarse.
+- La altura del encabezado pasó a token `--header-height`. Dos reglas sin
+  relación tienen que coincidir en ese número —el encabezado lo reserva y el
+  documento lo descuenta— y dos constantes escritas a mano se separan.
+  `min-block-size` fija además la altura, que si no varía con la copia.
+- Se agregó `styles/global.css` en vez de meter reglas de documento en
+  `tokens.css`: ese archivo es tokens y tiene un test de paridad; mezclarlo con
+  reglas de elemento lo volvería otra cosa.
+- **La verificación por mutación falló dos veces antes de servir, y ahí estuvo
+  el aprendizaje de la tarea.**
+  1. Quité `scroll-padding` y las 6 specs siguieron en verde. Motivo: a 1280 el
+     relleno vertical de la sección (96 px) ya supera el encabezado (72 px), así
+     que el título despejaba **por decoración**, no por la corrección.
+  2. Agregué el ancho de 375, donde el relleno baja a 48 px. Siguió en verde: la
+     etiqueta que va antes del `<h2>` aporta los píxeles que faltaban.
+  3. Recién al afirmar también el **borde superior de la sección** —que es lo
+     único que depende de verdad del desplazamiento corregido— la mutación
+     tumbó los 12 casos.
+  Sin ese tercer intento, T24 habría quedado registrada como verde con un test
+  que no distinguía la implementación de su ausencia.
+- Las specs de 1.3 corren en dos anchos, y **el angosto abre el panel primero**:
+  por debajo de 1024 los enlaces viven ahí, así que probar solo a 1280 dejaba sin
+  cubrir el camino que usa la mitad de los visitantes.
+- 1.7 se emula con `page.emulateMedia({ reducedMotion })` explícito y no con
+  `test.use({ reducedMotion })`: con la segunda forma
+  `matchMedia("(prefers-reduced-motion: reduce)").matches` daba `false` y la spec
+  medía el caso equivocado.
+- Otra vez un selector propio: `header nav a[href="#faq"]` matchea dos elementos
+  —la lista en línea y el panel—, y las specs morían por modo estricto antes de
+  llegar a medir nada. Se acotó por nombre accesible.
+
 **Outcome:**
+
+- `styles/global.css` nuevo (reinicio mínimo, `scroll-padding` y
+  `scroll-behavior`); `--header-height` agregado a `styles/tokens.{ts,css}`;
+  `TopNavBar.module.css` reserva esa altura; `app/layout.tsx` importa el global.
+- `e2e/anchors.spec.ts` pasa (17 specs: encabezado arriba y a todo el ancho tras
+  desplazar; las seis secciones con título y borde superior por debajo del
+  encabezado, en 1280 y en 375; movimiento reducido sin desplazamiento animado y
+  con llegada correcta; y `scroll-behavior` en `smooth` por omisión y `auto` con
+  la preferencia declarada).
+- `npm run test:e2e` pasa (40 specs en total). `npm run typecheck && npm test` en
+  verde (253 tests).
 
 ## T25 — Áreas activables y operación por teclado
 

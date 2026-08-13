@@ -1,7 +1,13 @@
+/*
+ * `min-block-size` pins the header to the same value `scroll-padding` reserves
+ * on the document. Left to its content the bar would be a few pixels shorter or
+ * taller depending on the copy, and anchor targets would sit just under it.
+ */
 .header {
   position: sticky;
   top: 0;
   z-index: 10;
+  min-block-size: var(--header-height);
   display: flex;
   align-items: center;
   gap: 0.75rem;

@@ -38,7 +38,7 @@ No afirmar que la suite está en verde sin haberla corrido.
 
 Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
 
-Hechas hasta hoy (2026-08-13): T1 a T23. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T24** (encabezado fijo y desplazamiento por anclas).
+Hechas hasta hoy (2026-08-13): T1 a T24. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T25** (áreas activables y operación por teclado).
 
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 
@@ -46,7 +46,7 @@ Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollsp
 
 Commit inicial: `0ceac7e`, cubre T1 a T14. De acá en adelante, un commit por tarea.
 
-**Un test que pasa en la primera corrida no cuenta como verificado.** Si no lo viste en rojo, comprobalo por mutación: rompé a propósito lo que debería detectar, confirmá que falla *solo* ese test, y restaurá con `git checkout`. Se usó en T18, T19, T20 y T21. En T18 descubrió un defecto real en el mensaje de error. **Ojo:** `git checkout` no restaura un archivo que todavía no está versionado — commitealo antes de mutarlo, o reponé a mano.
+**Un test que pasa en la primera corrida no cuenta como verificado.** Si no lo viste en rojo, comprobalo por mutación: rompé a propósito lo que debería detectar, confirmá que falla *solo* ese test, y restaurá con `git checkout`. Se usó en T18, T19, T20 y T21. En T18 descubrió un defecto real en el mensaje de error. En T24 hizo falta **tres veces**: las dos primeras el test seguía verde sin la implementación, porque el criterio se cumplía por relleno decorativo; recién al afirmar el borde superior de la sección la mutación tumbó los casos. **Ojo:** `git checkout` no restaura un archivo que todavía no está versionado — commitealo antes de mutarlo, o reponé a mano.
 
 `NEXT_PUBLIC_ACCESS_URL` vive en `.env.local` (no versionado) y, para los tests, en el bloque `test.env` de `vitest.config.ts`.
 

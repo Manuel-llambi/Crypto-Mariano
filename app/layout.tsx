@@ -5,6 +5,7 @@ import { site } from "@/lib/content";
 import { resolveOgImage } from "@/lib/og-image";
 
 import "@/styles/tokens.css";
+import "@/styles/global.css";
 
 /** Standard OpenGraph card size. Declaring it stops networks from cropping. */
 const OG_SIZE = { width: 1200, height: 630 };
