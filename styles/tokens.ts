@@ -1,0 +1,81 @@
+/**
+ * The visual foundation, declared once (9.4).
+ *
+ * `styles/tokens.css` is derived from this module and a test asserts the two
+ * never drift. Declaring the values here is what makes the contrast of every
+ * token measurable instead of a claim in a document.
+ *
+ * The Figma file defines no variables, so every value below was read off the
+ * mockup by hand — except the two colours design.md corrected.
+ */
+export const COLOR_TOKENS = {
+  /** Headings, buttons, the visual panel of the hero. */
+  "--navy": "#16213c",
+  /** Borders, rules and decoration. Never text: as text it is 4.16:1 (fails). */
+  "--gold-line": "#98773e",
+  /** `EXP·NN` codes and status labels. The corrected gold. */
+  "--gold-text": "#7d6234",
+  /** Body copy. The corrected grey: the mockup's #76777e was 4.46:1 (fails). */
+  "--grey-text": "#616267",
+  /** Card and hero background. */
+  "--white": "#ffffff",
+  /** Alternating section background, read off the audience section of the mockup. */
+  "--cream": "#f8f7f4",
+  /**
+   * The hairline that groups the disclosure cards. Decoration, not an interface
+   * element: at 1.70:1 on white it would never reach 3:1, and design.md settles
+   * that it does not have to — the control is identified by its text and its
+   * chevron, never by this rule.
+   */
+  "--rule": "#c6c6ce",
+} as const;
+
+export const TYPOGRAPHY_TOKENS = {
+  "--font-sans": "'IBM Plex Sans', system-ui, sans-serif",
+  "--font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+} as const;
+
+/** Spacing observed on the mockup. */
+export const SPACE_TOKENS = {
+  "--section-inline": "64px",
+  "--section-block": "96px",
+  "--card-padding": "40px",
+  "--row-padding": "32px",
+  "--row-gap": "16px",
+  "--label-inline": "9px",
+  "--label-block": "3px",
+  "--radius": "4px",
+} as const;
+
+export const TOKENS = {
+  ...COLOR_TOKENS,
+  ...TYPOGRAPHY_TOKENS,
+  ...SPACE_TOKENS,
+};
+
+export type ColorToken = keyof typeof COLOR_TOKENS;
+
+/** Used as text, so 9.4 asks them for 4.5:1. */
+export const TEXT_TOKENS = ["--navy", "--gold-text", "--grey-text"] as const satisfies ColorToken[];
+
+/** Used as interface element or decoration, so 9.4 asks them for 3:1. */
+export const UI_TOKENS = ["--gold-line"] as const satisfies ColorToken[];
+
+/** The surfaces the other tokens are measured against. */
+export const BACKGROUND_TOKENS = ["--white", "--cream"] as const satisfies ColorToken[];
+
+/**
+ * Decoration: 9.4 sets no threshold because nothing is identified by these.
+ *
+ * A token only belongs here if losing it entirely would cost the visitor no
+ * information. Anything that signals state or affordance is a UI token.
+ */
+export const DECORATION_TOKENS = ["--rule"] as const satisfies ColorToken[];
+
+/**
+ * The two mockup colours design.md rejected as text.
+ *
+ * They stay listed so the test can prove they never come back: neither reaches
+ * 4.5:1 on white or on cream.
+ */
+export const REJECTED_AS_TEXT = ["#98773e", "#76777e"] as const;

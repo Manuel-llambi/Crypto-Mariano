@@ -1,0 +1,57 @@
+.disclosure,
+.heading {
+  background: var(--white);
+}
+
+.summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--row-gap);
+  padding: var(--row-padding);
+  cursor: pointer;
+  color: var(--navy);
+}
+
+/*
+ * The native marker is replaced by the chevron of the mockup. It is drawn with
+ * --navy and not with --rule: the chevron is the graphical object that tells
+ * the visitor the row can open, so 9.4 asks it for 3:1.
+ */
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary {
+  list-style: none;
+}
+
+.summary::after {
+  content: "";
+  flex: none;
+  width: 0.6rem;
+  height: 0.6rem;
+  border-right: 2px solid var(--navy);
+  border-bottom: 2px solid var(--navy);
+  transform: rotate(45deg) translate(-0.15rem, -0.15rem);
+}
+
+.disclosure[open] > .summary::after {
+  transform: rotate(225deg) translate(-0.15rem, -0.15rem);
+}
+
+.content {
+  padding: 0 var(--row-padding) var(--row-padding);
+  color: var(--grey-text);
+}
+
+.heading {
+  padding: var(--row-padding);
+  color: var(--navy);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .summary::after {
+    transition: transform 150ms ease;
+  }
+}

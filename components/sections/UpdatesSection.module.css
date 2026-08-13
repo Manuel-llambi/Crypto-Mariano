@@ -1,0 +1,64 @@
+.section {
+  display: flex;
+  gap: 3rem;
+  padding: var(--section-block) var(--section-inline);
+  background: var(--cream);
+  color: var(--navy);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--row-gap);
+  flex: 0 0 23rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 2.25rem;
+  line-height: 2.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-gap);
+  flex: 1 1 auto;
+}
+
+.entry {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  padding: var(--row-padding);
+  border: 1px solid var(--rule);
+  border-radius: var(--radius);
+  background: var(--white);
+}
+
+.month {
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  color: var(--gold-text);
+}
+
+.entryTitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  line-height: 1.6rem;
+  font-weight: 600;
+}
+
+.description {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.6rem;
+  color: var(--grey-text);
+}

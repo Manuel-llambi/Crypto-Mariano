@@ -1,0 +1,69 @@
+.section {
+  display: flex;
+  align-items: center;
+  gap: 3rem;
+  padding: var(--section-block) var(--section-inline);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.copy {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--row-gap);
+  flex: 1 1 auto;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.headline {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 3.5rem;
+  line-height: 3.9rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.subheadline {
+  margin: 0;
+  max-width: 34rem;
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  line-height: 1.75rem;
+  color: var(--grey-text);
+}
+
+.cta {
+  margin-top: var(--row-gap);
+  padding-block: 0.875rem;
+  padding-inline: 2rem;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+/*
+ * The navy ground is the fallback: the box is filled before anything is painted
+ * into it, so an empty panel reads as deliberate rather than broken.
+ */
+.panel {
+  flex: 0 0 auto;
+  max-width: 100%;
+  border-radius: var(--radius);
+  background: var(--navy);
+}

@@ -1,0 +1,101 @@
+.section {
+  padding: var(--section-block) var(--section-inline);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.eyebrow {
+  margin-bottom: var(--row-gap);
+}
+
+.sectionTitle {
+  font-family: var(--font-sans);
+  font-size: 2.25rem;
+  line-height: 2.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  margin: 0 0 var(--row-gap);
+}
+
+.figures {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--row-padding);
+  margin: 0 0 var(--row-gap);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.figures dt,
+.figures dd {
+  display: inline;
+  margin: 0;
+}
+
+.description {
+  max-width: 72ch;
+  margin: 0 0 var(--section-block);
+  color: var(--grey-text);
+  font-size: 1rem;
+  line-height: 1.5rem;
+}
+
+.modules {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+  background: var(--rule);
+  border-block: 1px solid var(--rule);
+}
+
+.module {
+  background: var(--white);
+}
+
+/* The coming-soon branch is a plain card, so it carries its own padding; the
+   available branch gets it from Disclosure. */
+article.module {
+  padding: var(--row-padding);
+}
+
+.moduleHead {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--row-gap);
+}
+
+.heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: start;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  line-height: 0.9375rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: var(--gold-text);
+}
+
+.title {
+  font-size: 1.5rem;
+  line-height: 2rem;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.teaser {
+  margin: var(--row-gap) 0 0;
+  color: var(--grey-text);
+  font-style: italic;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}

@@ -1,0 +1,26 @@
+/**
+ * Derived from styles/tokens.ts — do not edit either one alone.
+ *
+ * styles/tokens.test.ts fails if a name or a value here stops matching the
+ * module, and it measures the contrast of every colour against 9.4.
+ */
+
+:root {
+  --navy: #16213c;
+  --gold-line: #98773e;
+  --gold-text: #7d6234;
+  --grey-text: #616267;
+  --white: #ffffff;
+  --cream: #f8f7f4;
+  --rule: #c6c6ce;
+  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
+  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
+  --section-inline: 64px;
+  --section-block: 96px;
+  --card-padding: 40px;
+  --row-padding: 32px;
+  --row-gap: 16px;
+  --label-inline: 9px;
+  --label-block: 3px;
+  --radius: 4px;
+}
