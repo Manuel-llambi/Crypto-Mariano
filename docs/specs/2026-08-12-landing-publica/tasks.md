@@ -38,7 +38,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [x] Hecha |
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [x] Hecha |
 | T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [x] Hecha |
-| T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [ ] Pendiente |
+| T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [x] Hecha |
 | T27 | Auditoría de accesibilidad en integración continua | 9.4, 9.6 | [ ] Pendiente |
 
 ## T1 — Andamiaje del proyecto y formateo de duración
@@ -1769,7 +1769,45 @@ lo rompe.
 
 **Decision log:**
 
+- El contexto entero corre con `test.use({ javaScriptEnabled: false })`, no una
+  spec suelta. El requisito describe un modo de uso completo, no un caso de
+  borde.
+- **No hizo falta corregir nada.** Las once specs pasaron en la primera corrida,
+  que es la consecuencia de haber elegido `<details>` nativo en T10 y de no haber
+  metido estado ni manejadores en ningún componente desde entonces.
+- **Y por eso mismo se verificó por mutación, que es la comprobación central de
+  esta tarea.** Se reescribió `Disclosure` como componente de cliente con
+  `useState`, `<button>` y contenido condicional —exactamente la regresión que
+  T26 dice proteger— y la suite cayó: fallaron las tres specs de 8.1 y la de 8.5.
+  Con el fuente restaurado volvió a verde. La afirmación «este test protege la
+  decisión de `<details>` nativo» quedó demostrada, no asumida.
+- 8.3 **comprueba el enlace, no lo sigue.** El destino es una dirección absoluta
+  en otro host y la pantalla de acceso está fuera de alcance (6.7); seguirlo
+  convertiría la suite en dependiente de un servicio que no controlamos.
+- 8.5 se afirma en positivo y en negativo: que el panel **queda abierto** tras
+  seguir un enlace (la degradación aceptada) y que todo lo demás —las seis
+  secciones, los tres controles de inscripción, los tres desplegables— se
+  comporta igual que con JavaScript. Sin la segunda mitad, «una sola diferencia»
+  no sería verificable: una segunda diferencia entraría sin que nada avise.
+- La spec de 8.1 comprueba también que la respuesta **se oculta** antes de abrir.
+  Un desplegable que muestra siempre su contenido pasaría un test que solo mire
+  el atributo `open`.
+
 **Outcome:**
+
+- `e2e/no-javascript.spec.ts` pasa (11 specs: la página renderiza sin script;
+  apertura y cierre de una pregunta; dos abiertas a la vez; contenido oculto
+  antes de abrir y visible después; ancla que llega a su sección por debajo del
+  encabezado; los dos controles de acceso con su intención y dirección absoluta;
+  panel que abre y muestra sus enlaces; enlaces del panel que navegan; el panel
+  que queda abierto tras navegar; y el resto de la página idéntico).
+- Ningún cambio de producción: la implementación ya cumplía los cinco criterios.
+- `npm run test:e2e` pasa (62 specs). `npm run typecheck && npm test` en verde
+  (253 tests).
+- **Deudas saldadas.** Quedaban anotadas desde T10, T12 y T17 como «pendiente de
+  ventana real»: el comportamiento nativo de `<details>`, que abrir un
+  desplegable no cierre otro, y que el panel abra con el runtime bloqueado. Las
+  tres están verificadas.
 
 ## T27 — Auditoría de accesibilidad en integración continua
 
