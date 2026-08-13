@@ -9,6 +9,14 @@ interface TopNavBarProps {
   siteName: string;
   enrollLabel: string;
   loginLabel: string;
+  /**
+   * Prefix for the anchors, empty on the landing itself.
+   *
+   * A bare `#programa` resolves against the current URL, so on any other route
+   * — the 404 page — it would point at a section of a page that is not there.
+   * The 404 passes `/` to send the visitor home and then to the section.
+   */
+  anchorPrefix?: string;
 }
 
 /** Resolved once at module scope: constants in the output, no runtime work. */
@@ -27,7 +35,13 @@ const LOGIN_HREF = accessUrl("login");
  * (1.5). Sticky positioning is declared in the stylesheet and verified in a real
  * window in T24.
  */
-export function TopNavBar({ items, siteName, enrollLabel, loginLabel }: TopNavBarProps) {
+export function TopNavBar({
+  items,
+  siteName,
+  enrollLabel,
+  loginLabel,
+  anchorPrefix = "",
+}: TopNavBarProps) {
   return (
     <header className={styles.header}>
       <span className={styles.name}>{siteName}</span>
@@ -36,7 +50,7 @@ export function TopNavBar({ items, siteName, enrollLabel, loginLabel }: TopNavBa
         <ul className={styles.list}>
           {items.map((item) => (
             <li key={item.href}>
-              <a className={styles.link} href={item.href}>
+              <a className={styles.link} href={`${anchorPrefix}${item.href}`}>
                 {item.label}
               </a>
             </li>
@@ -55,7 +69,7 @@ export function TopNavBar({ items, siteName, enrollLabel, loginLabel }: TopNavBa
 
         {/* 7.2 — below 1024px the links move in here; the site name and the
             enrolment control above stay visible either way. */}
-        <NavPanel items={items} />
+        <NavPanel items={items} anchorPrefix={anchorPrefix} />
       </div>
     </header>
   );

@@ -33,7 +33,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [x] Hecha |
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [x] Hecha |
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [x] Hecha — imagen provisional |
-| T21 | Página 404 | 10.4 | [ ] Pendiente |
+| T21 | Página 404 | 10.4 | [x] Hecha — código 404 pendiente de E2E |
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [ ] Pendiente |
 | T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [ ] Pendiente |
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [ ] Pendiente |
@@ -1425,7 +1425,43 @@ un enlace al inicio. La ruta inexistente debe responder con el código de estado
 
 **Decision log:**
 
+- **El test destapó un defecto que la tarea no anticipaba.** «Conservar
+  encabezado y pie» no alcanza con renderizarlos: sus enlaces son fragmentos
+  (`#programa`), y un fragmento resuelve **contra la URL actual**. En una ruta
+  inexistente apuntaban a una sección de una página que no está ahí, así que el
+  encabezado se conservaba de aspecto y no de función.
+- La solución es una prop `anchorPrefix` en `TopNavBar`, `NavPanel` y
+  `SiteFooter`, vacía por omisión y `"/"` en la página 404. Se prefirió a
+  cambiar el tipo `Anchor` para admitir `/#seccion`: ese tipo es lo que hace
+  imposible un ancla rota (1.5) y aflojarlo por este caso habría costado la
+  garantía entera.
+- El boletín del pie **no** lleva prefijo: es una dirección absoluta. Hay un test
+  que lo fija, porque prefijar todos los enlaces del pie por descuido es
+  exactamente el error que sigue a este arreglo.
+- Verificado por mutación: quitando las dos props, fallan «keeps the navigation
+  of the header» y «keeps the navigation of the footer», y solo esos dos.
+  - **Nota de método:** `git checkout` no restauró el archivo mutado porque
+    `app/not-found.tsx` todavía no estaba versionado. Para mutar un archivo nuevo
+    hay que commitear antes, o reponer a mano.
+- El código de estado 404 lo devuelve Next por el solo hecho de existir
+  `app/not-found.tsx`; no hay nada que implementar y jsdom no puede observarlo.
+  Queda como verificación de T22 en adelante.
+- La página emite su propio `<h1>` y respeta la jerarquía, con los mismos dos
+  tests que T19 aplica a la landing. Un 404 sin encabezado de primer nivel
+  incumpliría 9.2 tanto como la página principal.
+
 **Outcome:**
+
+- `app/not-found.tsx` y su módulo CSS; `anchorPrefix` agregado a `TopNavBar`,
+  `NavPanel` y `SiteFooter`.
+- `app/not-found.test.tsx` pasa (10 tests: encabezado y pie presentes, anclas del
+  encabezado y del pie prefijadas, boletín absoluto, enlace al inicio, mención
+  del 404, un único `<h1>`, jerarquía sin saltos, y nombre del sitio desde el
+  contenido validado).
+- `npm run typecheck && npm test` en verde (253 tests). `npm run build` en verde.
+- **Pendiente de verificación real:** que una ruta inexistente responda con
+  código 404 y no con 200. Es comportamiento del servidor y necesita petición de
+  verdad; se cubre desde T22.
 
 ## T22 — Andamiaje E2E y smoke test
 

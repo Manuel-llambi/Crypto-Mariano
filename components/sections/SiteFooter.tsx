@@ -5,6 +5,13 @@ import styles from "./SiteFooter.module.css";
 interface SiteFooterProps {
   footer: Footer;
   siteName: string;
+  /**
+   * Prefix for the anchors, empty on the landing itself.
+   *
+   * Only the section links take it. The newsletter is an absolute address and
+   * stays untouched.
+   */
+  anchorPrefix?: string;
 }
 
 /**
@@ -16,7 +23,7 @@ interface SiteFooterProps {
  *
  * It emits no heading, so it cannot introduce a level jump in the page (9.2).
  */
-export function SiteFooter({ footer, siteName }: SiteFooterProps) {
+export function SiteFooter({ footer, siteName, anchorPrefix = "" }: SiteFooterProps) {
   return (
     <footer className={styles.footer}>
       <div className={styles.brand}>
@@ -28,7 +35,7 @@ export function SiteFooter({ footer, siteName }: SiteFooterProps) {
         <ul className={styles.list}>
           {footer.links.map((link) => (
             <li key={link.href}>
-              <a className={styles.link} href={link.href}>
+              <a className={styles.link} href={`${anchorPrefix}${link.href}`}>
                 {link.label}
               </a>
             </li>

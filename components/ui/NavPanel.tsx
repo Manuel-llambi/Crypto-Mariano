@@ -8,6 +8,8 @@ import styles from "./NavPanel.module.css";
 
 interface NavPanelProps {
   items: NavItem[];
+  /** Same reason as in TopNavBar: a bare fragment resolves against this URL. */
+  anchorPrefix?: string;
 }
 
 /**
@@ -23,7 +25,7 @@ interface NavPanelProps {
  * else here — no scrolling, no history, no preventing the default. The
  * `<details>` owns whether it is open; this keeps no state of its own.
  */
-export function NavPanel({ items }: NavPanelProps) {
+export function NavPanel({ items, anchorPrefix = "" }: NavPanelProps) {
   const panel = useRef<HTMLDetailsElement>(null);
 
   useEffect(() => {
@@ -51,7 +53,7 @@ export function NavPanel({ items }: NavPanelProps) {
         <ul className={styles.list}>
           {items.map((item) => (
             <li key={item.href}>
-              <a className={styles.link} href={item.href}>
+              <a className={styles.link} href={`${anchorPrefix}${item.href}`}>
                 {item.label}
               </a>
             </li>
