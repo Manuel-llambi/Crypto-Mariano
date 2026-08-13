@@ -28,7 +28,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T13 | `Hero` y `FinalCta` — controles de inscripción | 6.1, 6.3 | [x] Hecha |
 | T14 | `UpdatesSection` — actualizaciones fechadas | 2.6, 2.7 | [x] Hecha |
 | T15 | Secciones de audiencia, metodología y prueba social | 2.4, 9.3 | [x] Hecha |
-| T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [ ] Pendiente |
+| T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [x] Hecha |
 | T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [ ] Pendiente |
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [ ] Pendiente |
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [ ] Pendiente |
@@ -1071,7 +1071,57 @@ ancla y el enlace de newsletter (enlace, no formulario). El comportamiento
 
 **Decision log:**
 
+- **1.6 se verifica por ausencia, y eso hay que testearlo aparte.** «No hay
+  scrollspy» no se ve en el DOM renderizado: un componente con
+  `IntersectionObserver` produce el mismo marcado inicial que uno sin él. El test
+  lee el fuente y afirma que no contiene `IntersectionObserver`,
+  `addEventListener`, `useState` ni `useEffect`, y que el marcado no lleva
+  `aria-current` ni `data-active`. Mismo enfoque que 8.1 en T10.
+- El resaltado se verifica en la hoja de estilos, no en jsdom: se afirma que
+  `:hover` y `:focus-visible` existen. jsdom no computa CSS de módulos, así que
+  una aserción sobre estilo calculado sería verde y vacía.
+- Igual criterio para 1.4: se afirma `position: sticky` y `top: 0` leyendo el
+  CSS. La tarea ya decía que el comportamiento real se verifica en ventana en
+  T24; acá solo se prueba que está declarado.
+- **La interfaz de `design.md` estaba incompleta.** Declaraba
+  `{ items, siteName }`, pero el encabezado necesita además los rótulos de los
+  dos controles de acceso. Se agregaron `enrollLabel` y `loginLabel` como props
+  en lugar de importar `site` desde el componente: mantiene la regla de que las
+  secciones no importan de `content/` y deja a T18 pasar el mismo `enrollLabel`
+  a los tres controles, que es lo que 6.6 necesita para ser verificable.
+- Los destinos de acceso se resuelven en el ámbito del módulo
+  (`accessUrl("signup")` y `accessUrl("login")`), igual que en `Hero`: quedan
+  como cadenas constantes en la salida y no hay trabajo en tiempo de ejecución
+  detrás del enlace (6.3).
+- Hay un test de que ni el encabezado ni el pie escriben `href="#` en su fuente.
+  Es la forma directa de sostener que los destinos salen de los datos: si alguien
+  escribe un ancla a mano, el tipo `Anchor` no lo detecta —sería una cadena
+  válida— pero este test sí.
+- El pie **no emite ningún encabezado**. Es lo que garantiza que no pueda meter un
+  salto de nivel en la jerarquía de la página (9.2) sin que T19 tenga que
+  ocuparse de él.
+- El boletín es enlace y no formulario. Un formulario acá significaría recolectar
+  una dirección en una página cuyo contrato entero es no hablar con la red (2.1).
+  El test afirma que no hay `<form>` ni `<input>`.
+
 **Outcome:**
+
+- `components/sections/TopNavBar.tsx` y `components/sections/SiteFooter.tsx` con
+  sus módulos CSS; `Footer` exportado desde `lib/content/schemas.ts`.
+- Los dos archivos de test pasan (20 tests: un enlace por ítem con su `href`,
+  lista no cableada, ausencia de anclas en el fuente, nombre del sitio, los dos
+  destinos de acceso con su intención, ambos como `<a href>` sin botones ni
+  script, ausencia de estado activo y de observadores, `:hover`/`:focus-visible`
+  presentes, `sticky` y `top: 0` declarados, landmarks `banner` y `contentinfo`,
+  boletín como enlace sin formulario ni campo, copia del pie y ausencia de
+  encabezados).
+- `npm run typecheck && npm test` en verde (194 tests). `npm run build` en verde.
+- **Sin resolver, heredado de T6:** el pie del mockup enlaza Privacidad,
+  Términos y Acreditaciones —páginas, no secciones—, y el modelo del diseño solo
+  admite anclas. El componente respeta el diseño; si el pie tiene que enlazar
+  páginas legales, hay que cambiar `design.md` y el esquema.
+- **Para T17:** este encabezado todavía no contempla pantallas angostas. Muestra
+  los enlaces en línea siempre; el umbral de 1024 px y el `NavPanel` son T17.
 
 ## T17 — `NavPanel` — navegación de pantallas angostas
 

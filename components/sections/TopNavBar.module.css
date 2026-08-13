@@ -1,0 +1,83 @@
+.header {
+  position: sticky;
+  top: 0;
+  z-index: 10;
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  padding: 1rem 1.5rem;
+  background: var(--white);
+  border-block-end: 1px solid var(--rule);
+  color: var(--navy);
+}
+
+.name {
+  font-family: var(--font-sans);
+  font-size: 1.25rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.nav {
+  flex: 1 1 auto;
+}
+
+.list {
+  display: flex;
+  gap: 1.5rem;
+  justify-content: center;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * 1.6 — the highlight is exactly these two states and nothing else. There is no
+ * rule keyed on scroll position, because there is no scroll position to key on.
+ */
+.link {
+  color: var(--navy);
+  font-size: 0.875rem;
+  text-decoration: none;
+  text-transform: uppercase;
+}
+
+.link:hover,
+.link:focus-visible {
+  color: var(--gold-text);
+  text-decoration: underline;
+}
+
+.access {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.login {
+  color: var(--navy);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.login:hover,
+.login:focus-visible {
+  text-decoration: underline;
+}
+
+.enrol {
+  padding: 0.5rem 1.5rem;
+  background: var(--navy);
+  color: var(--white);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.enrol:hover,
+.enrol:focus-visible {
+  background: var(--gold-text);
+}

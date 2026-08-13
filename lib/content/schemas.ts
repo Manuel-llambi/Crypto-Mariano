@@ -65,6 +65,8 @@ export const FooterSchema = z.strictObject({
   legal: NonEmpty,
 });
 
+export type Footer = z.infer<typeof FooterSchema>;
+
 export const SiteSchema = z.strictObject({
   name: NonEmpty,
   title: NonEmpty, // 10.1
