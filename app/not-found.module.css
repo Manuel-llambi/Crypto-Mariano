@@ -21,8 +21,10 @@
 .title {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.2;
+  /* A single long Spanish word must break rather than widen the page (7.8). */
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
 }

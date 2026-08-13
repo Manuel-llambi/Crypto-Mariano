@@ -17,15 +17,35 @@
 .title {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.2;
+  /* A single long Spanish word must break rather than widen the page (7.8). */
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
   text-align: center;
 }
 
+/*
+ * 7.5 — a grid, not a flex row, so the number of columns is a declared fact the
+ * test can measure rather than a consequence of how the boxes happen to fit.
+ * One column narrow, two from 768, four from 1024.
+ */
 .cards {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 1.5rem;
   align-items: stretch;
+}
+
+@media (min-width: 768px) {
+  .cards {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  .cards {
+    grid-template-columns: repeat(4, 1fr);
+  }
 }

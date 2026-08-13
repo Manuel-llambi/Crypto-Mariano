@@ -1,9 +1,16 @@
 .section {
   display: flex;
+  flex-direction: column;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
   background: var(--white);
   color: var(--navy);
+}
+
+@media (min-width: 1024px) {
+  .section {
+    flex-direction: row;
+  }
 }
 
 .intro {
@@ -11,22 +18,32 @@
   flex-direction: column;
   align-items: flex-start;
   gap: var(--row-gap);
-  flex: 0 0 23rem;
+  flex: 0 1 23rem;
 }
 
 .title {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.2;
+  /* A single long Spanish word must break rather than widen the page (7.8). */
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
 }
 
 .blocks {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 2rem;
   flex: 1 1 auto;
+  min-inline-size: 0;
+}
+
+@media (min-width: 768px) {
+  .blocks {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .block {

@@ -15,10 +15,10 @@
   --rule: #c6c6ce;
   --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --section-inline: 64px;
-  --section-block: 96px;
-  --card-padding: 40px;
-  --row-padding: 32px;
+  --section-inline: clamp(1.25rem, 5vw, 4rem);
+  --section-block: clamp(3rem, 8vw, 6rem);
+  --card-padding: clamp(1.5rem, 4vw, 2.5rem);
+  --row-padding: clamp(1.25rem, 3vw, 2rem);
   --row-gap: 16px;
   --label-inline: 9px;
   --label-block: 3px;

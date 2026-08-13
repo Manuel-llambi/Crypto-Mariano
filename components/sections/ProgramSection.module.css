@@ -10,8 +10,10 @@
 
 .sectionTitle {
   font-family: var(--font-sans);
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.2;
+  /* A single long Spanish word must break rather than widen the page (7.8). */
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
   margin: 0 0 var(--row-gap);
@@ -62,8 +64,10 @@ article.module {
   padding: var(--row-padding);
 }
 
+/* The status badge wraps under the title rather than being pushed off (7.8). */
 .moduleHead {
   display: flex;
+  flex-wrap: wrap;
   align-items: flex-start;
   justify-content: space-between;
   gap: var(--row-gap);
@@ -86,8 +90,9 @@ article.module {
 }
 
 .title {
-  font-size: 1.5rem;
-  line-height: 2rem;
+  font-size: clamp(1.125rem, 4vw, 1.5rem);
+  line-height: 1.3;
+  overflow-wrap: break-word;
   text-transform: uppercase;
   color: var(--navy);
 }

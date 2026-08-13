@@ -35,7 +35,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [x] Hecha — imagen provisional |
 | T21 | Página 404 | 10.4 | [x] Hecha — código 404 pendiente de E2E |
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [x] Hecha |
-| T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [ ] Pendiente |
+| T23 | Layout adaptable a pantallas angostas | 7.1, 7.4, 7.5, 7.7, 7.8 | [x] Hecha |
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [ ] Pendiente |
 | T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [ ] Pendiente |
 | T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [ ] Pendiente |
@@ -1563,7 +1563,51 @@ CSS.
 
 **Decision log:**
 
+- **Todo se mide sobre la geometría renderizada**, nunca sobre nombres de clase
+  ni sobre el texto de las media queries. Una hoja de estilos puede llevar la
+  regla correcta y maquetar mal igual; lo que importa es dónde terminan las
+  cajas.
+- **El espaciado se volvió `clamp` en los tokens, no en media queries.**
+  `--section-inline: 64px` en una pantalla de 320 se comía 128 px de ancho, que
+  era el origen del desbordamiento. Con `clamp(1.25rem, 5vw, 4rem)` el valor del
+  mockup pasa a ser el techo y no el piso, es continuo —así que no salta en
+  ningún punto de quiebre— y el test de paridad entre `tokens.ts` y `tokens.css`
+  sigue valiendo porque es una sola declaración.
+- 7.7 se resuelve con `clamp(2rem, 4.4vw, 3.5rem)` en el titular, por el mismo
+  motivo: una talla por punto de quiebre **es** el salto que el criterio prohíbe.
+- **La grilla de audiencia pasó de flex a grid.** Con flex, la cantidad de
+  columnas es una consecuencia de cómo entran las cajas; con
+  `grid-template-columns` es un hecho declarado que el test puede contar.
+- Los `flex: 0 0 23rem` de las columnas de introducción pasaron a `0 1 23rem`.
+  Un piso de 368 px es más ancho que una pantalla de 320: el `0 0` era el
+  desbordamiento escrito a mano.
+- **Tres defectos que solo aparecieron midiendo:**
+  - en 768, justo donde arranca la fila, el panel del hero era rígido en 480 px y
+    empujaba la página; pasó a `flex: 1 1 auto` con las dimensiones en línea como
+    techo;
+  - los titulares de sección a 2.25 rem fijos desbordaban en 320 porque
+    **«Actualizaciones» es una sola palabra que no puede partirse**: ahora son
+    `clamp` con `overflow-wrap: break-word`;
+  - la etiqueta «Próximamente» quedaba empujada fuera por el `space-between` del
+    encabezado de módulo; se agregó `flex-wrap`.
+- Por debajo de 640 px se oculta el control de inicio de sesión. 7.2 exige que
+  sobrevivan el nombre del sitio y el de inscripción; el de acceso no entra sin
+  apretar a los otros dos, y sigue disponible desde el panel y el cierre.
+- **Un fallo era del test, no del código.** `getByRole("navigation", { name })`
+  hace coincidencia por **subcadena** por omisión, así que «Secciones del sitio»
+  matcheaba también «…, panel» y «…, pie de página», y las dos specs de
+  navegación morían por violación de modo estricto. Se agregó `exact: true`.
+
 **Outcome:**
+
+- `e2e/responsive.spec.ts` con 18 specs; estilos reescritos partiendo de pantalla
+  angosta en `styles/tokens.{ts,css}`, `Hero`, `AudienceSection`,
+  `MethodologySection`, `FaqSection`, `UpdatesSection`, `SocialProofSection`,
+  `ProgramSection`, `TopNavBar` y `app/not-found.module.css`.
+- `npm run test:e2e` pasa (23 specs en total con el smoke de T22).
+- `npm run typecheck && npm test` en verde (253 tests).
+- **Fuera de alcance de esta tarea:** 7.6 (área activable de 44×44) es T25 y 7.3
+  (cierre del panel al navegar) se verifica en T26.
 
 ## T24 — Encabezado fijo y desplazamiento por anclas
 

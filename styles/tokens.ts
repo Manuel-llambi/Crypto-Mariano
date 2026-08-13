@@ -35,12 +35,19 @@ export const TYPOGRAPHY_TOKENS = {
   "--font-mono": "'IBM Plex Mono', ui-monospace, monospace",
 } as const;
 
-/** Spacing observed on the mockup. */
+/**
+ * Spacing.
+ *
+ * The mockup only exists at 1280px, so its values are the **upper** bound of
+ * each clamp; the lower bound is what keeps a 320px screen from spending its
+ * width on margins (7.8). Being continuous, these also avoid a jump at any
+ * breakpoint — no media query redefines them.
+ */
 export const SPACE_TOKENS = {
-  "--section-inline": "64px",
-  "--section-block": "96px",
-  "--card-padding": "40px",
-  "--row-padding": "32px",
+  "--section-inline": "clamp(1.25rem, 5vw, 4rem)",
+  "--section-block": "clamp(3rem, 8vw, 6rem)",
+  "--card-padding": "clamp(1.5rem, 4vw, 2.5rem)",
+  "--row-padding": "clamp(1.25rem, 3vw, 2rem)",
   "--row-gap": "16px",
   "--label-inline": "9px",
   "--label-block": "3px",

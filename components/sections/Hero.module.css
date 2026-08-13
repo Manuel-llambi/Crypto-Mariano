@@ -1,10 +1,23 @@
+/*
+ * Narrow first (7.1): stacked, with the copy and its call to action before the
+ * visual panel (7.4). The row arrangement is the exception, added at 768px.
+ */
 .section {
   display: flex;
-  align-items: center;
-  gap: 3rem;
+  flex-direction: column;
+  align-items: stretch;
+  gap: 2rem;
   padding: var(--section-block) var(--section-inline);
   background: var(--white);
   color: var(--navy);
+}
+
+@media (min-width: 768px) {
+  .section {
+    flex-direction: row;
+    align-items: center;
+    gap: 3rem;
+  }
 }
 
 .copy {
@@ -24,13 +37,21 @@
   color: var(--gold-text);
 }
 
+/*
+ * 7.7 — one continuous expression instead of a size per breakpoint. `clamp`
+ * scales with the viewport and settles at both ends, so there is no step to jump
+ * at 640, 768 or 1024, and the headline stops growing past its ceiling rather
+ * than turning into a banner on a wide monitor.
+ */
 .headline {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 3.5rem;
-  line-height: 3.9rem;
+  font-size: clamp(2rem, 4.4vw, 3.5rem);
+  line-height: 1.1;
   font-weight: 600;
   text-transform: uppercase;
+  /* Long Spanish compounds would otherwise widen the page at 320px (7.8). */
+  overflow-wrap: break-word;
 }
 
 .subheadline {
@@ -61,9 +82,22 @@
  * The navy ground is the fallback: the box is filled before anything is painted
  * into it, so an empty panel reads as deliberate rather than broken.
  */
+/*
+ * `1 1` and not `0 0`: at 768px, where the row layout starts, a rigid 480px
+ * panel plus the copy is wider than the viewport. It may shrink; the inline
+ * dimensions stay its ceiling, not its floor.
+ */
 .panel {
-  flex: 0 0 auto;
-  max-width: 100%;
+  flex: 1 1 auto;
+  min-inline-size: 0;
+  /*
+   * The inline width and height on the element are the designed footprint. These
+   * caps let it shrink inside a 320px screen instead of pushing the page wider
+   * (7.8); `aspect-ratio` keeps it square while it does.
+   */
+  max-inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 1;
   border-radius: var(--radius);
   background: var(--navy);
 }

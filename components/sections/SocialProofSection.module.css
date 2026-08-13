@@ -12,8 +12,10 @@
 .title {
   margin: 0;
   font-family: var(--font-sans);
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(1.5rem, 5vw, 2.25rem);
+  line-height: 1.2;
+  /* A single long Spanish word must break rather than widen the page (7.8). */
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -28,12 +30,19 @@
 
 .seals {
   display: flex;
-  gap: 3rem;
+  gap: 1.5rem 3rem;
   margin: 0;
   padding: 0;
   list-style: none;
   flex-wrap: wrap;
   justify-content: center;
+}
+
+@media (max-width: 639px) {
+  .seals {
+    flex-direction: column;
+    align-items: center;
+  }
 }
 
 .seal {
@@ -57,8 +66,14 @@
 }
 
 .metrics {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 2rem;
   align-self: stretch;
-  justify-content: center;
+}
+
+@media (min-width: 640px) {
+  .metrics {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
