@@ -31,7 +31,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [x] Hecha |
 | T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [x] Hecha |
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [x] Hecha |
-| T19 | Invariantes de la página renderizada | 6.6, 9.2 | [ ] Pendiente |
+| T19 | Invariantes de la página renderizada | 6.6, 9.2 | [x] Hecha |
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [ ] Pendiente |
 | T21 | Página 404 | 10.4 | [ ] Pendiente |
 | T22 | Andamiaje E2E y smoke test | 1.1, 4.5, 6.1 | [ ] Pendiente |
@@ -1289,7 +1289,50 @@ tres coincidan, sea cual sea la elegida, pero el contenido necesita la decisión
 
 **Decision log:**
 
+- **El bloqueante ya no existía.** La forma verbal la decidió el usuario el
+  2026-08-13: tuteo, «Inscríbete» en los tres controles. El contenido ya estaba
+  corregido antes de empezar esta tarea.
+- Los controles de inscripción se identifican por **destino**
+  (`a[href*="intent=signup"]`), no por posición ni por clase CSS. Una consulta
+  posicional se rompería con cualquier reordenamiento de la página y dejaría de
+  cubrir un cuarto control si alguien lo agregara; por destino, todo control que
+  lleve a inscribirse entra en la aserción automáticamente.
+- Los ocho tests **pasaron en la primera corrida**, lo cual en TDD no es una
+  buena noticia: un test que nunca se vio en rojo puede no estar afirmando nada.
+  Se verificó por mutación, dos veces:
+  - se cambió el rótulo del cierre a «Inscribite» → falló «gives all three the
+    same wording»;
+  - se cambió el `<h2>` de audiencia por `<h4>` → falló «never skips a level
+    going down».
+  En ambos casos falló **solo** el test correspondiente, y se restauró el fuente.
+  Sin esa comprobación, T19 habría quedado registrada como verde sin evidencia de
+  que los invariantes se verifican de verdad.
+- El chequeo de jerarquía permite subir cualquier cantidad de niveles y solo
+  prohíbe **bajar** más de uno por vez. Volver de un `h3` a un `h2` al empezar
+  otra sección es correcto y frecuente; prohibirlo habría obligado a un marcado
+  antinatural.
+- Se agregó un test de que hay más de cinco encabezados. Los otros dos de 9.2
+  pasarían por vacío en una página sin encabezados, y un invariante que se cumple
+  porque no hay nada que verificar es peor que no tenerlo.
+- Los invariantes viven en `app/page.invariants.test.tsx`, separados de
+  `app/page.test.tsx`. Los de T18 son sobre composición y anclas; estos son
+  propiedades emergentes. Mezclarlos habría hecho que el archivo dejara de tener
+  un motivo único para fallar.
+
 **Outcome:**
+
+- `app/page.invariants.test.tsx` pasa (8 tests: exactamente tres controles de
+  inscripción, mismo texto, texto no vacío, mismo destino; un único `<h1>`; el
+  documento abre con él; ningún salto de nivel hacia abajo; y cantidad mínima de
+  encabezados para que la verificación signifique algo).
+- No hizo falta corregir contenido ni marcado: la composición de T18 ya cumplía
+  los tres criterios.
+- `npm run typecheck && npm test` en verde (226 tests). `npm run build` en verde.
+- **Observación sobre 6.6.** El invariante se sostiene **por test, no por
+  construcción**: el rótulo vive en tres campos de contenido distintos
+  (`site.enrollLabel`, `site.hero.ctaLabel`, `site.finalCta.ctaLabel`) que hoy
+  coinciden. Colapsarlos en un único campo haría 6.6 cierto por estructura y el
+  test innecesario, pero es un cambio de `design.md` y del esquema de T5.
 
 ## T20 — `layout.tsx` — idioma, metadatos y vista previa
 

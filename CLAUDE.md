@@ -37,13 +37,15 @@ No afirmar que la suite está en verde sin haberla corrido.
 
 Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
 
-Hechas hasta hoy (2026-08-13): T1 a T18. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T19** (invariantes de la página renderizada).
+Hechas hasta hoy (2026-08-13): T1 a T19. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T20** (`layout.tsx`: idioma, metadatos y vista previa).
 
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 
 `NavPanel` es el **único** componente de cliente del sitio. Su efecto solo retira el atributo `open`; no llama a `preventDefault`, no toca historial ni desplazamiento. Cualquier responsabilidad extra ahí rompe el Requisito 8.
 
-Commit inicial: `0ceac7e`, cubre T1 a T14. De acá en adelante conviene un commit por tarea.
+Commit inicial: `0ceac7e`, cubre T1 a T14. De acá en adelante, un commit por tarea.
+
+**Un test que pasa en la primera corrida no cuenta como verificado.** Si no lo viste en rojo, comprobalo por mutación: rompé a propósito lo que debería detectar, confirmá que falla *solo* ese test, y restaurá con `git checkout`. Se usó en T18 (saboteando `content/faq.ts` para probar que el build aborta) y en T19 (rótulo de CTA y nivel de encabezado). En T18 esa comprobación descubrió un defecto real en el mensaje de error.
 
 `NEXT_PUBLIC_ACCESS_URL` vive en `.env.local` (no versionado) y, para los tests, en el bloque `test.env` de `vitest.config.ts`.
 
