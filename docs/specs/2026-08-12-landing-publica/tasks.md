@@ -30,7 +30,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T15 | Secciones de audiencia, metodología y prueba social | 2.4, 9.3 | [x] Hecha |
 | T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [x] Hecha |
 | T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [x] Hecha |
-| T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [ ] Pendiente |
+| T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [x] Hecha |
 | T19 | Invariantes de la página renderizada | 6.6, 9.2 | [ ] Pendiente |
 | T20 | `layout.tsx` — idioma, metadatos y vista previa | 9.1, 10.1, 10.2, 10.3 | [ ] Pendiente |
 | T21 | Página 404 | 10.4 | [ ] Pendiente |
@@ -386,10 +386,13 @@ según las preguntas abiertas de `requirements.md`.
   pérdida o duplicado al ordenar, programa ya derivado, y anclas de encabezado y
   pie contra `SECTION_IDS`).
 - `npm run typecheck && npm test` en verde (64 tests). `npm run build` en verde.
-- **Caveat:** que un contenido inválido rompa `next build` todavía no está
-  probado de punta a punta, porque `app/page.tsx` sigue siendo el andamio de T1 y
-  nadie importa `lib/content/index.ts` desde la compilación. Queda garantizado
-  recién con T18.
+- ~~**Caveat:** que un contenido inválido rompa `next build` todavía no está
+  probado de punta a punta.~~ **Cerrado en T18**, verificado saboteando
+  `content/faq.ts` a propósito: `next build` aborta con
+  `Invalid content in content/faq.ts: - 0.categoria: unrecognized field`. La
+  verificación descubrió además que el motivo que emitía Zod para un campo
+  sobrante era «Invalid input», sin índice de arreglo; `parse.ts` se corrigió en
+  T18 para nombrar los tres datos que pide 2.3.
 - **Copia faltante del mockup.** La lectura por MCP de Figma se cortó por límite
   del plan Starter tras leer temario, audiencia y preguntas frecuentes. Quedan
   con marcador `[REVISAR]` y número de nodo: subtítulo del hero (23:279), titular
@@ -1223,7 +1226,42 @@ convierte un ancla rota en un fallo automático.
 
 **Decision log:**
 
+- El test de 1.5 **no compara contra `SECTION_IDS`**: recoge todo `a[href^="#"]`
+  del documento renderizado y exige que cada fragmento resuelva a un elemento
+  real de la página. Comparar contra la tupla habría probado que los datos
+  coinciden consigo mismos; esto prueba lo que el criterio dice, que el ancla
+  tiene destino. Hay un test aparte de que hay anclas en el encabezado **y** en
+  el pie, para que la aserción no pase por vacío si un día uno de los dos deja de
+  emitirlas.
+- `app/page.tsx` es el **único** módulo que importa `lib/content`. Todas las
+  secciones reciben props. Es lo que las mantiene testeables con datos falsos y
+  lo que concentra en un punto el momento en que corre la validación.
+- El hero y el cierre no llevan `id` porque no son destinos de navegación. El
+  conteo esperado de `<section>` se escribe como `SECTION_IDS.length + 2` en vez
+  de `8`: si mañana se agrega una sección navegable, el test no hay que tocarlo.
+- **Se cerró el pendiente que T6 dejó abierto.** Se saboteó `content/faq.ts` a
+  propósito, se comprobó que `next build` aborta, y se restauró. Es la única
+  forma de probar 2.3 de punta a punta: los tests unitarios prueban que
+  `parseContent` lanza, no que la compilación se detenga.
+- **Esa verificación encontró un defecto real.** El motivo que Zod emite para un
+  campo sobrante es «Invalid input», que no dice que el campo sobra, y mi
+  `parse.ts` descartaba el `path` del issue, así que tres entradas malas de un
+  arreglo producían tres líneas idénticas sin decir cuál. Ahora el mensaje es
+  `0.categoria: unrecognized field — this file must not declare it`. Sin
+  ejecutar el fallo de verdad, el criterio 2.3 habría quedado formalmente cumplido
+  y prácticamente inútil.
+
 **Outcome:**
+
+- `app/page.tsx` compone las diez piezas en el orden de 1.1; `lib/content/parse.ts`
+  corregido; `lib/content/index.test.ts` suma dos tests por el defecto hallado.
+- `app/page.test.tsx` pasa (9 tests: encabezado, pie y conteo de secciones; orden
+  documental de las secciones navegables; apertura y cierre por landmark; hero
+  antes de toda sección navegable; un único elemento por identificador; ningún
+  identificador no declarado; todo fragmento con destino; anclas en encabezado y
+  pie; y el temario real con sus códigos derivados).
+- `npm run typecheck && npm test` en verde (218 tests). `npm run build` en verde,
+  y la página pasa de 127 B a 1.9 kB, que es el contenido real renderizándose.
 
 ## T19 — Invariantes de la página renderizada
 

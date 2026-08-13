@@ -1,11 +1,27 @@
 import type { z } from "zod";
 
-/** Names the offending field, or the root when the whole value is wrong. */
-function fieldOf(issue: z.core.$ZodIssue): string {
+/** Dotted path to a value, or a marker when the whole file is the problem. */
+function pathOf(path: PropertyKey[]): string {
+  return path.length > 0 ? path.join(".") : "(root)";
+}
+
+/**
+ * One line of "field: reason" per rejection (2.3).
+ *
+ * Surplus keys are described by hand because Zod reports them with an empty
+ * path and the bare message "Invalid input", which names neither the field nor
+ * what is wrong with it. Prefixing the path matters inside arrays: without it,
+ * three bad entries produce three identical lines and none says which entry.
+ */
+function describe(issue: z.core.$ZodIssue): string[] {
   if (issue.code === "unrecognized_keys") {
-    return issue.keys.join(", ");
+    const prefix = issue.path.length > 0 ? `${issue.path.join(".")}.` : "";
+    return issue.keys.map(
+      (key) => `${prefix}${key}: unrecognized field — this file must not declare it`,
+    );
   }
-  return issue.path.length > 0 ? issue.path.join(".") : "(root)";
+
+  return [`${pathOf(issue.path)}: ${issue.message}`];
 }
 
 /**
@@ -26,7 +42,8 @@ export function parseContent<Schema extends z.ZodType>(
   }
 
   const detail = result.error.issues
-    .map((issue) => `  - ${fieldOf(issue)}: ${issue.message}`)
+    .flatMap(describe)
+    .map((line) => `  - ${line}`)
     .join("\n");
 
   throw new Error(`Invalid content in ${file}:\n${detail}`);

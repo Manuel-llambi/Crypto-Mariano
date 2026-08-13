@@ -37,7 +37,7 @@ No afirmar que la suite está en verde sin haberla corrido.
 
 Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
 
-Hechas hasta hoy (2026-08-13): T1 a T17. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T18** (composición de la página e integridad de anclas).
+Hechas hasta hoy (2026-08-13): T1 a T18. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T19** (invariantes de la página renderizada).
 
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 
@@ -57,7 +57,7 @@ T7 se ejecutó fuera del orden del listado, a propósito: los esquemas de navega
 
 ## Contenido y valores derivados
 
-El contenido vive en archivos versionados del repositorio, validado con Zod al importarlo. Sin CMS, sin API, sin peticiones de red ni en compilación ni en ejecución. Contenido mal formado debe **romper la compilación** indicando archivo, campo y motivo.
+El contenido vive en archivos versionados del repositorio, validado con Zod al importarlo. Sin CMS, sin API, sin peticiones de red ni en compilación ni en ejecución. Contenido mal formado **rompe la compilación** indicando archivo, campo y motivo — verificado de punta a punta en T18: `Invalid content in content/faq.ts: - 0.categoria: unrecognized field`. `app/page.tsx` es el único módulo que importa `lib/content`; las secciones reciben props.
 
 El Requisito 3 es el que sostiene la estructura: la compilación falla si un archivo de contenido declara explícitamente cualquiera de estos valores.
 

@@ -37,6 +37,31 @@ describe("parseContent", () => {
     expect(message).toContain("analytics");
   });
 
+  // Discovered in T18: three bad entries produced three identical lines, none
+  // of which said which entry was at fault.
+  it("locates a surplus key inside an array", () => {
+    const list = z.array(z.strictObject({ title: z.string() }));
+    let message = "";
+    try {
+      parseContent("content/faq.ts", list, [{ title: "Uno" }, { title: "Dos", extra: 1 }]);
+    } catch (error) {
+      message = (error as Error).message;
+    }
+
+    expect(message).toContain("1.extra");
+  });
+
+  it("says what is wrong with a surplus key, not just its name", () => {
+    let message = "";
+    try {
+      parseContent("content/site.ts", schema, { title: "Título", analytics: "on" });
+    } catch (error) {
+      message = (error as Error).message;
+    }
+
+    expect(message).toContain("unrecognized field");
+  });
+
   it("names the field of a missing key", () => {
     let message = "";
     try {
