@@ -55,7 +55,14 @@ export default defineConfig({
   ],
 
   webServer: {
-    command: `npm run build && npx next start --hostname ${HOST} --port ${PORT}`,
+    /*
+     * CI builds in its own step, so rebuilding here would double the slowest
+     * part of the run for nothing. Locally the build is chained, so a single
+     * `npm run test:e2e` always tests current code.
+     */
+    command: process.env.CI
+      ? `npx next start --hostname ${HOST} --port ${PORT}`
+      : `npm run build && npx next start --hostname ${HOST} --port ${PORT}`,
     url: BASE_URL,
     reuseExistingServer: !process.env.CI,
     // The build runs first, so this waits for a compile, not just a boot.

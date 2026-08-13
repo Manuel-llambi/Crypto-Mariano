@@ -39,7 +39,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T24 | Encabezado fijo y desplazamiento por anclas | 1.3, 1.4, 1.7 | [x] Hecha |
 | T25 | Áreas activables y operación por teclado | 7.6, 9.5 | [x] Hecha |
 | T26 | Funcionamiento sin JavaScript | 8.1, 8.2, 8.3, 8.4, 8.5 | [x] Hecha |
-| T27 | Auditoría de accesibilidad en integración continua | 9.4, 9.6 | [ ] Pendiente |
+| T27 | Auditoría de accesibilidad en integración continua | 9.4, 9.6 | [x] Hecha |
 
 ## T1 — Andamiaje del proyecto y formateo de duración
 
@@ -1831,7 +1831,47 @@ y sobre la página 404, y conectarla a la integración continua junto con
 
 **Decision log:**
 
+- La auditoría es `@axe-core/playwright` y vive dentro de la suite E2E, no como
+  paso aparte. Necesita la página renderizada en un navegador real, que es lo que
+  el corredor ya provee; un paso separado habría duplicado compilación y
+  servidor.
+- Se audita en **cuatro estados**, no solo la portada en reposo: 1280, 375, con
+  los desplegables abiertos y con el panel abierto. El motivo es concreto: axe
+  solo ve lo renderizado, y el texto de una respuesta cerrada no está en el árbol
+  de accesibilidad, así que un problema de contraste ahí adentro no se reportaría
+  nunca. También se audita la página 404.
+- **La primera corrida encontró una violación real, y la respuesta correcta fue
+  acotar la regla, no aflojar la aserción.** Era `color-contrast-enhanced`, el
+  umbral **AAA** de 7:1. El criterio 9.4 pide 4.5:1 y 3:1, que es AA, y la paleta
+  nunca pretendió AAA. Afirmar sobre toda la categoría `cat.color` habría hecho
+  fallar la compilación contra un nivel que nadie acordó; la spec usa la regla
+  `color-contrast` y el motivo queda escrito en el archivo.
+- Hay un test de que la regla de contraste **efectivamente corrió** sobre más de
+  diez nodos. Una auditoría que no encuentra violaciones porque no analizó nada
+  es verde y vacía; es el modo de fallo más silencioso de estas herramientas.
+- **Verificado por mutación:** se devolvió `--grey-text` al `#76777e` que
+  `design.md` había rechazado y cayeron las seis specs de auditoría. Restaurado,
+  verde. La auditoría detecta de verdad lo que T9 previno sobre los tokens.
+- El flujo de integración continua ordena los pasos **de más barato a más caro**:
+  un error de tipos se reporta en segundos y no después de bajar un navegador.
+  `npm run build` corre como paso propio y la configuración de Playwright omite
+  su compilación cuando `CI` está definida, para no compilar dos veces.
+- Se agregó `npm run verify`, que encadena lo mismo localmente. Que la única
+  forma de reproducir la integración continua sea empujar un commit es una
+  fricción que se paga en cada iteración.
+
 **Outcome:**
+
+- `e2e/accessibility.spec.ts` pasa (7 specs: sin violaciones en 1280 y 375, con
+  desplegables abiertos, con panel abierto y en la página 404; sin violaciones de
+  contraste AA; y confirmación de que la regla de contraste corrió).
+- `.github/workflows/ci.yml` encadena `typecheck`, `test`, `build` y `test:e2e`
+  —que incluye la auditoría—, guarda el reporte de Playwright si algo falla, y
+  declara `NEXT_PUBLIC_ACCESS_URL`.
+- `npm run verify` en verde de punta a punta: 253 tests unitarios y 69 specs E2E.
+- **Sin verificar:** el flujo de integración continua no se ejecutó nunca. No hay
+  remoto configurado ni commits empujados; su corrección está razonada, no
+  probada. La primera ejecución real puede necesitar ajustes.
 
 ## Cobertura de requisitos
 

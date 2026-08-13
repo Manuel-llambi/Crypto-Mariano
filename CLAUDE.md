@@ -21,6 +21,7 @@ La verificación de toda tarea es `npm run typecheck && npm test`. Las tareas T2
 | `npm run typecheck` | `tsc --noEmit`, con `strict` y `noUncheckedIndexedAccess` |
 | `npm test` | `vitest run` |
 | `npm run test:e2e` | `playwright test` — compila y sirve antes de correr |
+| `npm run verify` | encadena typecheck, test, build y test:e2e — lo mismo que CI |
 | `npm run build` | `next build` |
 | `npm run dev` | Servidor de desarrollo |
 
@@ -36,9 +37,9 @@ No afirmar que la suite está en verde sin haberla corrido.
 - **`planner`** (subagente, `.claude/agents/planner.md`) — no es un revisor que devuelve observaciones: juzga cada tarea contra cuatro criterios (tamaño, alineación con el spec, completitud, necesidad) y **aplica él mismo los arreglos** en `tasks.md` antes de emitir su veredicto (`CRITERIA MET` / `NEEDS ITERATION`). Nunca implementa, nunca toca `requirements.md` ni `design.md` — si encuentra un hueco ahí, lo reporta en el veredicto. Tres `NEEDS ITERATION` seguidos sobre la misma tarea es señal de un hueco estructural del spec: se para y se consulta al usuario.
 - Con el `tasks.md` aprobado, pasa a la ejecución en TDD, registrando en cada tarea su Decision log y Outcome. Durante la planeación esos dos campos quedan **vacíos**.
 
-Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
+Estado actual del pipeline: **ejecución terminada.** Los tres artefactos están en `docs/specs/2026-08-12-landing-publica/` y las 27 tareas están en `[x] Hecha`. La tabla **Resumen de tareas** de ese archivo sigue siendo la fuente de verdad.
 
-Hechas hasta hoy (2026-08-13): T1 a T26. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. Siguiente tarea: **T27** (auditoría de accesibilidad en integración continua), la última.
+**Las 27 tareas están hechas.** Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. La implementación está completa; lo que queda son las preguntas abiertas de publicación listadas más abajo.
 
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 

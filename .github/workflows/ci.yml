@@ -1,0 +1,58 @@
+name: CI
+
+on:
+  push:
+    branches: [main, master]
+  pull_request:
+
+# A second push to the same branch cancels the run in flight: the older result
+# is about to be superseded anyway.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+
+    env:
+      # The access screen is out of scope for this landing; the build only needs
+      # a valid address to link to. `lib/access-url.ts` throws without it (6.5).
+      NEXT_PUBLIC_ACCESS_URL: https://acceso.test/acceso
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+
+      - run: npm ci
+
+      # Every step below fails the job. They are ordered cheapest first, so a
+      # type error is reported in seconds rather than after a browser download.
+      - name: Types
+        run: npm run typecheck
+
+      - name: Unit tests
+        run: npm test
+
+      - name: Build
+        run: npm run build
+
+      - name: Install the browser
+        run: npx playwright install --with-deps chromium
+
+      # This one command carries the end-to-end suites and the accessibility
+      # audit: a violation reported by axe fails the job here (9.6).
+      - name: End-to-end and accessibility audit
+        run: npm run test:e2e
+
+      - name: Keep the report of a failed run
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: playwright-report
+          path: playwright-report/
+          retention-days: 7
