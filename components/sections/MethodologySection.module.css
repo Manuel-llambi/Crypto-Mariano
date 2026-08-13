@@ -1,0 +1,52 @@
+.section {
+  display: flex;
+  gap: 2rem;
+  padding: var(--section-block) var(--section-inline);
+  background: var(--white);
+  color: var(--navy);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--row-gap);
+  flex: 0 0 23rem;
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 2.25rem;
+  line-height: 2.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+.blocks {
+  display: flex;
+  gap: 2rem;
+  flex: 1 1 auto;
+}
+
+.block {
+  flex: 1 1 0;
+  min-inline-size: 0;
+  padding: var(--card-padding);
+  background: var(--cream);
+}
+
+.blockTitle {
+  margin: 0 0 var(--row-gap);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 400;
+  text-transform: uppercase;
+}
+
+.description {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  color: var(--grey-text);
+}

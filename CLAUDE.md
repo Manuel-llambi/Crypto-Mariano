@@ -37,7 +37,11 @@ No afirmar que la suite está en verde sin haberla corrido.
 
 Estado actual del pipeline: **planeación cerrada, ejecución en curso.** Los tres artefactos están escritos y aprobados en `docs/specs/2026-08-12-landing-publica/`; `tasks.md` tiene 27 tareas convergidas. La tabla **Resumen de tareas** de ese archivo es la única fuente de verdad del avance — consultarla antes de empezar, no confiar en esta línea.
 
-Hechas hasta hoy (2026-08-13): T1 a T12. Dejaron `lib/` (`format/`, `program/derive.ts`, `nav/sections.ts`, `content/`, `access-url.ts`, `color/contrast.ts`), `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`) y `components/sections/` (`ProgramSection`, `FaqSection`), más los nueve archivos de `content/`. Siguiente tarea: **T13** (`Hero` y `FinalCta`), la primera que consume `accessUrl` y por lo tanto la que romperá la compilación sin `NEXT_PUBLIC_ACCESS_URL`.
+Hechas hasta hoy (2026-08-13): T1 a T15. Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`) y los nueve archivos de `content/`. Siguiente tarea: **T16** (`TopNavBar` y `SiteFooter`).
+
+Commit inicial: `0ceac7e`, cubre T1 a T14. De acá en adelante conviene un commit por tarea.
+
+`NEXT_PUBLIC_ACCESS_URL` vive en `.env.local` (no versionado) y, para los tests, en el bloque `test.env` de `vitest.config.ts`.
 
 Los tokens de color tienen cuatro categorías en `styles/tokens.ts`: texto (4.5:1), interfaz (3:1), fondo y **decoración** (exenta de umbral). Un token nuevo sin clasificar rompe el test.
 

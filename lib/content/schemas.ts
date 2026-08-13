@@ -96,6 +96,8 @@ const AudienceProfileSchema = z.strictObject({
   description: NonEmpty,
 });
 
+export type AudienceProfile = z.infer<typeof AudienceProfileSchema>;
+
 /** Exactly 4 profiles (2.4). */
 export const AudienceSchema = z.array(AudienceProfileSchema).length(4);
 
@@ -103,6 +105,8 @@ const MethodologyBlockSchema = z.strictObject({
   title: NonEmpty,
   description: NonEmpty,
 });
+
+export type MethodologyBlock = z.infer<typeof MethodologyBlockSchema>;
 
 /** Exactly 2 blocks (2.4). */
 export const MethodologySchema = z.array(MethodologyBlockSchema).length(2);
@@ -123,6 +127,10 @@ export const SocialProofSchema = z.strictObject({
   seals: SealsSchema,
   metrics: MetricsSchema,
 });
+
+export type Seal = z.infer<typeof SealSchema>;
+export type Metric = z.infer<typeof MetricSchema>;
+export type SocialProof = z.infer<typeof SocialProofSchema>;
 
 /**
  * An update entry (2.6).

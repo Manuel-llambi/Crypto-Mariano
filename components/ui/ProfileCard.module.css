@@ -1,0 +1,27 @@
+.card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--row-gap);
+  flex: 1 1 0;
+  min-inline-size: 0;
+  padding: var(--card-padding);
+  background: var(--white);
+  text-align: center;
+}
+
+.title {
+  margin: 0;
+  font-size: 1.25rem;
+  line-height: 1.75rem;
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--navy);
+}
+
+.description {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--grey-text);
+}

@@ -1,0 +1,31 @@
+.section {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding: var(--section-block) var(--section-inline);
+  background: var(--cream);
+  color: var(--navy);
+}
+
+.intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--row-gap);
+}
+
+.title {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 2.25rem;
+  line-height: 2.7rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.cards {
+  display: flex;
+  gap: 1.5rem;
+  align-items: stretch;
+}

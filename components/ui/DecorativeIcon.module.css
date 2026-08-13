@@ -1,0 +1,16 @@
+/*
+ * The mockup's glyphs were never exported: the Figma read hit the plan quota
+ * before the icon assets could be downloaded. Until they exist, the icon holds
+ * its designed box so the layout is right and nothing shifts when the real
+ * artwork lands.
+ */
+.icon {
+  display: block;
+  inline-size: 1.5rem;
+  block-size: 1.6667rem;
+  background: currentColor;
+  color: var(--gold-line);
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}

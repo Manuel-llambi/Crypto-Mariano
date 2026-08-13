@@ -27,7 +27,7 @@ chica que lo hace pasar → verificación. La verificación de toda tarea es
 | T12 | `FaqSection` — preguntas desplegables | 5.1, 5.2 | [x] Hecha |
 | T13 | `Hero` y `FinalCta` — controles de inscripción | 6.1, 6.3 | [x] Hecha |
 | T14 | `UpdatesSection` — actualizaciones fechadas | 2.6, 2.7 | [x] Hecha |
-| T15 | Secciones de audiencia, metodología y prueba social | 2.4, 9.3 | [ ] Pendiente |
+| T15 | Secciones de audiencia, metodología y prueba social | 2.4, 9.3 | [x] Hecha |
 | T16 | `TopNavBar` y `SiteFooter` | 1.4, 1.6, 6.2, 6.3 | [ ] Pendiente |
 | T17 | `NavPanel` — navegación de pantallas angostas | 7.2, 7.3, 8.4, 8.5 | [ ] Pendiente |
 | T18 | Composición de la página e integridad de anclas | 1.1, 1.2, 1.5 | [ ] Pendiente |
@@ -998,7 +998,48 @@ las preguntas abiertas y no se resuelven acá.
 
 **Decision log:**
 
+- 9.3 se resuelve con un componente, `DecorativeIcon`, y no repitiendo
+  `aria-hidden` en cada sitio. El criterio es fácil de cumplir y fácil de olvidar
+  en el próximo icono que alguien agregue; concentrado en un componente, la
+  decisión se toma una sola vez y el test la cubre entera.
+- El nombre del icono viaja por `data-icon` y **no** se renderiza como texto.
+  Sirve al CSS y nunca llega al árbol de accesibilidad. Hay un test explícito de
+  que la palabra `shield` no aparece en el texto accesible: era la forma más
+  probable de romper 9.3 sin darse cuenta.
+- Las cardinalidades de 2.4 **no** se verifican en los componentes. Los esquemas
+  ya rechazan una lista que no tenga exactamente 4, 2, 3 y 2 al importar el
+  contenido; comprobarlo otra vez en la presentación pondría la misma regla en
+  dos lugares que pueden discrepar. Los tests afirman que se renderiza todo lo
+  recibido, que es lo que sí le toca a la sección.
+- `MetricCard` imprime `value` literal, sin formatear. «5000+» es una afirmación
+  escrita por un editor, no una cantidad calculada: pasarla por un formateador de
+  números le comería el signo.
+- La jerarquía de encabezados se testea acá aunque 9.2 sea de T19: cada sección
+  aporta un `<h2>` y sus tarjetas `<h3>`, y T19 solo puede afirmar la ausencia de
+  saltos si cada pieza ya llega bien. Ninguna sección emite `<h1>`.
+- Los sellos son `<ul>`/`<li>` y no `<div>`: son una lista de afiliaciones, y el
+  recuento que anuncia el lector de pantalla es información real para alguien que
+  está evaluando credibilidad institucional.
+- Los titulares «Diseñado para profesionales» y «Rigor forense» salen del mockup
+  y no llevan marcador; el de prueba social viene del contenido, que sí lo tiene.
+
 **Outcome:**
+
+- `components/sections/` suma `AudienceSection`, `MethodologySection` y
+  `SocialProofSection`; `components/ui/` suma `ProfileCard`, `MetricCard` y
+  `DecorativeIcon`, cada uno con su módulo CSS. `lib/content/schemas.ts` exporta
+  `AudienceProfile`, `MethodologyBlock`, `Seal`, `Metric` y `SocialProof`.
+- Tres archivos de test pasan (24 tests en total: perfiles, bloques, sellos y
+  métricas completos y en orden; iconos `aria-hidden` sin texto alternativo ni
+  filtración del identificador; valores sin reformatear; jerarquía de encabezados;
+  y los tres identificadores de sección).
+- `npm run typecheck && npm test` en verde (174 tests). `npm run build` en verde.
+- **Iconos sin dibujo.** Los glifos del mockup nunca se exportaron: la lectura de
+  Figma se agotó antes de bajar los activos. `DecorativeIcon` reserva la caja
+  diseñada para que el layout sea correcto y nada se corra cuando lleguen; hoy se
+  ve un bloque sólido. Falta bajar los SVG y enchufarlos por `mask-image`.
+- **Recordatorio:** los tres sellos y las dos métricas siguen siendo marcadores
+  de posición sin respaldo. Es pregunta abierta de publicación, no de esta tarea.
 
 ## T16 — `TopNavBar` y `SiteFooter`
 
