@@ -3,20 +3,58 @@
  * visual panel (7.4). The row arrangement is the exception, added at 768px.
  */
 .section {
-  display: flex;
-  flex-direction: column;
-  align-items: stretch;
+  display: grid;
+  grid-template-columns: 1fr;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
   background: var(--white);
   color: var(--navy);
 }
 
+/*
+ * From 768px the hero gives its right edge and its vertical padding to the
+ * panel, and the copy carries them instead.
+ *
+ * The first attempt cancelled the padding with negative margins on the panel.
+ * That does not work: a percentage in the section's *padding* resolves against
+ * the section's containing block, but the same expression in a child's *margin*
+ * resolves against the section's already-narrowed content box — so the panel
+ * came up short by the difference. Moving the padding onto the copy avoids the
+ * arithmetic entirely: the panel simply ends at the section's border edge, which
+ * is the edge of the viewport.
+ */
+/*
+ * From 768px the hero keeps its **left** padding and gives up the other three,
+ * so the copy still starts on the same 1152px grid as every section below while
+ * the panel runs to the edge of the screen and takes the hero's full height.
+ *
+ * Keeping the left padding on the section is deliberate. A percentage inside
+ * `--section-inline` resolves against the element's containing block: on the
+ * section that is the viewport and the value is right, but moved onto the copy
+ * it would resolve against the copy's own column and collapse to the bare inset
+ * — the headline would drift off the grid by hundreds of pixels on a wide
+ * screen. `100vw` would fix the arithmetic and break on any machine with a
+ * classic scrollbar, which it does not account for.
+ *
+ * The cost is that the split is of the padded box, so the panel's share of the
+ * viewport drifts a little as the margins grow. The copy staying on the grid is
+ * worth more than an exact ratio.
+ */
 @media (min-width: 768px) {
   .section {
-    flex-direction: row;
-    align-items: center;
-    gap: 3rem;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.3fr);
+    align-items: stretch;
+    gap: 0;
+    padding-block: 0;
+    padding-inline-end: 0;
+  }
+
+  .copy {
+    padding-block: var(--section-block);
+    /* Room so the text never runs into the panel. */
+    padding-inline-end: 3rem;
+    /* Vertically centred even though the row stretches. */
+    justify-content: center;
   }
 }
 
@@ -86,21 +124,27 @@
  * into it, so an empty panel reads as deliberate rather than broken.
  */
 /*
- * `1 1` and not `0 0`: at 768px, where the row layout starts, a rigid 480px
- * panel plus the copy is wider than the viewport. It may shrink; the inline
- * dimensions stay its ceiling, not its floor.
+ * The visual panel.
+ *
+ * Narrow: a plain block under the copy, holding the minimum height the element
+ * declares inline (7.4).
  */
 .panel {
   flex: 1 1 auto;
   min-inline-size: 0;
-  /*
-   * The inline width and height on the element are the designed footprint. These
-   * caps let it shrink inside a 320px screen instead of pushing the page wider
-   * (7.8); `aspect-ratio` keeps it square while it does.
-   */
   max-inline-size: 100%;
-  block-size: auto;
-  aspect-ratio: 1;
   border-radius: var(--radius);
   background: var(--navy);
+}
+
+/*
+ * From 768px the panel is the one thing on the page that ignores the content
+ * cap: it runs to the edge of the viewport and takes the hero's full height,
+ * because that is where a photograph will go. It stays in normal flow, so the
+ * hero is still as tall as its copy and nothing can overlap.
+ */
+@media (min-width: 768px) {
+  .panel {
+    border-radius: 0;
+  }
 }

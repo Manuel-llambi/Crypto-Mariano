@@ -17,6 +17,7 @@
   --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
   --font-serif: 'Source Serif 4', Georgia, serif;
   --content-max: 1152px;
+  --nav-max: 1232px;
   --section-inset: clamp(1.25rem, 5vw, 4rem);
   --section-inline: max(var(--section-inset), (100% - var(--content-max)) / 2);
   --section-block: clamp(3rem, 8vw, 6rem);

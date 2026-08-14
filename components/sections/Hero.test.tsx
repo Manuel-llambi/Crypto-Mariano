@@ -82,14 +82,21 @@ describe("the hero copy", () => {
 });
 
 describe("the visual panel holds its space", () => {
-  it("declares an explicit width and height", () => {
+  /**
+   * A floor, not a fixed box.
+   *
+   * From 768px up the panel bleeds to the edge of the viewport and fills the
+   * hero's height, so a declared width and height would fight the layout. What
+   * it still needs is a minimum height, so the stacked narrow layout does not
+   * collapse to nothing before there is a photograph to paint.
+   */
+  it("declares a minimum height and no fixed size", () => {
     render(<Hero hero={hero} />);
 
-    // Reserved space is what keeps the layout from jumping when the panel has
-    // nothing to paint yet.
     const panel = screen.getByRole("img", { name: hero.imageAlt });
-    expect(panel.style.width).not.toBe("");
-    expect(panel.style.height).not.toBe("");
+    expect(panel.style.minHeight).not.toBe("");
+    expect(panel.style.width).toBe("");
+    expect(panel.style.height).toBe("");
   });
 
   it("names itself for assistive technology instead of staying silent", () => {

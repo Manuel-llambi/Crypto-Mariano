@@ -18,13 +18,13 @@ interface HeroProps {
 const EXPLORE_HREF: Anchor = "#programa";
 
 /**
- * Reserved space for the hero visual, in pixels.
+ * Minimum height of the hero visual on a narrow screen, in pixels.
  *
- * Declared inline rather than in the stylesheet because the point is to hold the
- * box before anything paints into it; the panel keeps its footprint even with
- * nothing to show.
+ * Only a floor. From 768px up the panel stops being a box of its own and fills
+ * the column, so the stylesheet governs and this no longer applies — but it
+ * still holds the space before anything is painted into it.
  */
-const PANEL = { width: 480, height: 480 };
+const PANEL_MIN_HEIGHT = 320;
 
 /** The opening block: the first level heading of the page. */
 export function Hero({ hero }: HeroProps) {
@@ -47,7 +47,7 @@ export function Hero({ hero }: HeroProps) {
         className={styles.panel}
         role="img"
         aria-label={hero.imageAlt}
-        style={{ width: PANEL.width, height: PANEL.height }}
+        style={{ minHeight: PANEL_MIN_HEIGHT }}
       />
     </section>
   );

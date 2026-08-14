@@ -57,6 +57,14 @@ export const SPACE_TOKENS = {
    * once its 64px margins are taken off.
    */
   "--content-max": "1152px",
+  /**
+   * The header runs wider than the content on purpose.
+   *
+   * Its brand sits left and its access controls right, so pulling them in to the
+   * content column left the bar looking narrower than the page. Eighty pixels of
+   * extra room is enough to reach past the text without losing the centring.
+   */
+  "--nav-max": "1232px",
   /** The breathing room a narrow screen needs, before any centring. */
   "--section-inset": "clamp(1.25rem, 5vw, 4rem)",
   /**

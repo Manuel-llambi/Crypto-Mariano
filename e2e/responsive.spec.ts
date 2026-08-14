@@ -49,21 +49,24 @@ test.describe("no horizontal scrolling (7.8)", () => {
  * while the text inside it stays centred and capped. Both halves are asserted:
  * a wrapper would satisfy the first and fail the second.
  */
+const CAP = 1152;
+
 test.describe("content is capped at 1152px", () => {
-  const CAP = 1152;
 
   for (const width of [1440, 1920, 2560]) {
     test(`keeps the content at ${CAP}px on a ${width}px viewport`, async ({ page }) => {
       await at(page, width);
 
+      // The hero is skipped on purpose: its panel bleeds past the cap by
+      // design, which the suite below covers on its own terms.
       const measured = await page.evaluate(() => {
-        const boxes = [...document.querySelectorAll<HTMLElement>("main > section")].map((section) => {
+        const sections = [...document.querySelectorAll<HTMLElement>("main > section")].slice(1);
+        return sections.map((section) => {
           const style = getComputedStyle(section);
           const left = Number.parseFloat(style.paddingLeft);
           const right = Number.parseFloat(style.paddingRight);
           return Math.round(section.getBoundingClientRect().width - left - right);
         });
-        return boxes;
       });
 
       expect(measured.length).toBeGreaterThan(5);
@@ -93,12 +96,14 @@ test.describe("content is capped at 1152px", () => {
     await at(page, 1920);
 
     const offsets = await page.evaluate(() =>
-      [...document.querySelectorAll<HTMLElement>("main > section")].map((section) => {
-        const style = getComputedStyle(section);
-        return Math.round(
-          Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight),
-        );
-      }),
+      [...document.querySelectorAll<HTMLElement>("main > section")]
+        .slice(1)
+        .map((section) => {
+          const style = getComputedStyle(section);
+          return Math.round(
+            Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight),
+          );
+        }),
     );
 
     for (const offset of offsets) {
@@ -112,7 +117,8 @@ test.describe("content is capped at 1152px", () => {
 
     const client = await page.evaluate(() => document.documentElement.clientWidth);
     const box = await page.evaluate(() => {
-      const section = document.querySelector<HTMLElement>("main > section")!;
+      // Second section: the hero drops its right padding for the bleed.
+      const section = [...document.querySelectorAll<HTMLElement>("main > section")][1]!;
       const style = getComputedStyle(section);
       return (
         section.getBoundingClientRect().width -
@@ -125,19 +131,88 @@ test.describe("content is capped at 1152px", () => {
     expect(box).toBeGreaterThan(client - 200);
   });
 
-  test("aligns the header with the sections below it", async ({ page }) => {
+  /**
+   * The header runs wider than the content, by design: 1232 against 1152. It is
+   * asserted rather than left implicit, because «wider» is easy to turn into
+   * «uncapped» by deleting one rule.
+   */
+  test("caps the header at 1232px, wider than the content", async ({ page }) => {
     await at(page, 1920);
 
-    const gap = await page.evaluate(() => {
+    const measured = await page.evaluate(() => {
       const header = document.querySelector<HTMLElement>("header")!;
-      const section = document.querySelector<HTMLElement>("main > section")!;
-      return (
-        Number.parseFloat(getComputedStyle(header).paddingLeft) -
-        Number.parseFloat(getComputedStyle(section).paddingLeft)
+      const style = getComputedStyle(header);
+      return Math.round(
+        header.getBoundingClientRect().width -
+          Number.parseFloat(style.paddingLeft) -
+          Number.parseFloat(style.paddingRight),
       );
     });
 
-    expect(Math.abs(gap)).toBeLessThanOrEqual(1);
+    expect(measured).toBe(1232);
+    expect(measured).toBeGreaterThan(CAP);
+  });
+});
+
+/**
+ * The hero panel is the one thing that ignores the content cap.
+ *
+ * It is where a photograph will go, and the design runs it to the right edge of
+ * the viewport at the hero's full height. It escapes by cancelling the section's
+ * padding with negative margins, which is why the assertions below are about
+ * where its edges land rather than about any declared width.
+ */
+test.describe("the hero panel bleeds off the grid", () => {
+  test("reaches the right edge of the viewport at 1920px", async ({ page }) => {
+    await at(page, 1920);
+
+    const client = await page.evaluate(() => document.documentElement.clientWidth);
+    const panel = await page.locator('main [role="img"]').boundingBox();
+
+    expect(Math.round(panel!.x + panel!.width)).toBe(client);
+  });
+
+  test("fills the full height of the hero at 1920px", async ({ page }) => {
+    await at(page, 1920);
+
+    const hero = await page.locator("main section").first().boundingBox();
+    const panel = await page.locator('main [role="img"]').boundingBox();
+
+    expect(Math.round(panel!.y)).toBe(Math.round(hero!.y));
+    expect(Math.round(panel!.height)).toBe(Math.round(hero!.height));
+  });
+
+  test("leaves the hero copy on the content grid", async ({ page }) => {
+    await at(page, 1920);
+
+    const headline = await page.locator("main h1").boundingBox();
+    const audience = await page.locator("#audiencia h2").boundingBox();
+
+    // The copy still starts where every other section's content starts.
+    expect(Math.round(headline!.x)).toBe(Math.round((1920 - CAP) / 2));
+    expect(audience).not.toBeNull();
+  });
+
+  test("stays inside the page: bleeding never becomes overflow", async ({ page }) => {
+    await at(page, 1920);
+
+    const overflow = await page.evaluate(() => ({
+      scroll: document.documentElement.scrollWidth,
+      client: document.documentElement.clientWidth,
+    }));
+
+    expect(overflow.scroll).toBeLessThanOrEqual(overflow.client);
+  });
+
+  test("goes back into the flow when the hero stacks at 375px", async ({ page }) => {
+    await at(page, 375);
+
+    const client = await page.evaluate(() => document.documentElement.clientWidth);
+    const panel = await page.locator('main [role="img"]').boundingBox();
+
+    // Stacked, it is an ordinary block inside the padding, not a bleed.
+    expect(panel!.x).toBeGreaterThan(0);
+    expect(Math.round(panel!.x + panel!.width)).toBeLessThan(client);
   });
 });
 

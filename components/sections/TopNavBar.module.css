@@ -17,13 +17,12 @@
    * that value is what `scroll-padding` subtracts, so the bar growing past it
    * puts anchor targets back underneath it (1.3).
    *
-   * Horizontally it takes its own tighter inset but the same 1152px ceiling as
-   * every section: the bar would otherwise stretch its navigation across a wide
-   * monitor while the content below stayed centred, and the two would stop
-   * lining up.
+   * Horizontally it caps at `--nav-max`, which is wider than the content
+   * column: the brand sits left and the access controls right, so holding them
+   * to the text column made the bar look narrower than the page.
    */
   padding-block: 0.5rem;
-  padding-inline: max(clamp(0.75rem, 3vw, 1.5rem), (100% - var(--content-max)) / 2);
+  padding-inline: max(clamp(0.75rem, 3vw, 1.5rem), (100% - var(--nav-max)) / 2);
   background: var(--white);
   border-block-end: 1px solid var(--rule);
   color: var(--navy);
