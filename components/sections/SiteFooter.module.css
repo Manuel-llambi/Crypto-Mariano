@@ -1,61 +1,161 @@
+/*
+ * White ground with a hairline above, as the finished design has it — not the
+ * navy block this footer used to be. The navy is now the closing call to action
+ * immediately above, and two navy blocks in a row flattened the end of the page.
+ */
 .footer {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 2rem;
-  padding: 5rem var(--section-inline) 2rem;
-  background: var(--navy);
-  color: var(--white);
+  padding: var(--section-block) var(--section-inline) 2rem;
+  background: var(--white);
+  border-block-start: 1px solid var(--rule);
+  color: var(--navy);
 }
 
-.brand {
-  flex: 1 1 24rem;
+.grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2.5rem;
+  margin-block-end: 4rem;
+}
+
+@media (min-width: 768px) {
+  .grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (min-width: 1024px) {
+  /* The brand column is wider than the three that follow it. */
+  .grid {
+    grid-template-columns: 1.6fr 1fr 1fr 1.2fr;
+    gap: 3rem;
+  }
 }
 
 .name {
+  display: block;
+  margin-block-end: var(--row-gap);
   font-family: var(--font-sans);
-  font-size: 1.5rem;
-  font-weight: 600;
+  font-size: 1.125rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
   text-transform: uppercase;
 }
 
 .description {
-  margin: 1rem 0 0;
-  max-inline-size: 32rem;
+  margin: 0;
   font-size: 0.875rem;
   line-height: 1.5rem;
+  color: var(--grey-text);
 }
 
-.nav {
-  flex: 0 0 auto;
+.column {
+  min-inline-size: 0;
+}
+
+.columnTitle {
+  margin: 0 0 var(--row-gap);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--gold-text);
 }
 
 .list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.25rem;
   margin: 0;
   padding: 0;
   list-style: none;
 }
 
 .link {
-  color: var(--white);
+  color: var(--grey-text);
   font-size: 0.875rem;
   text-decoration: none;
 }
 
 .link:hover,
 .link:focus-visible {
+  color: var(--navy);
   text-decoration: underline;
 }
 
-.legal {
-  flex: 1 1 100%;
+.address {
+  margin: 0 0 var(--row-gap);
+  font-style: normal;
+  font-size: 0.875rem;
+  line-height: 1.5rem;
+  color: var(--grey-text);
+}
+
+.emailLabel {
   margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  /*
+   * The design greys this label down to a shade that would fail 9.4. It keeps
+   * the corrected grey instead: the label names the address below it, so losing
+   * it costs real information.
+   */
+  color: var(--grey-text);
+}
+
+.email {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy);
+  text-decoration: none;
+}
+
+.email:hover,
+.email:focus-visible {
+  text-decoration: underline;
+}
+
+.bottom {
+  display: flex;
+  flex-direction: column;
+  gap: var(--row-gap);
+  align-items: flex-start;
   padding-block-start: 2rem;
-  border-block-start: 1px solid var(--gold-line);
+  border-block-start: 1px solid var(--rule);
+}
+
+@media (min-width: 768px) {
+  .bottom {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
+.legal,
+.notes {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.625rem;
-  letter-spacing: 1px;
+  letter-spacing: 0.15em;
   text-transform: uppercase;
+  color: var(--grey-text);
+}
+
+.notes {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  flex-wrap: wrap;
+}
+
+.tick {
+  inline-size: 2rem;
+  block-size: 0.25rem;
+  background: var(--gold-line);
 }

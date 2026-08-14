@@ -58,11 +58,45 @@ const NavItemSchema = z.strictObject({
 /** Header navigation: at least one destination, all of them real sections (1.4, 1.5). */
 export const NavSchema = z.array(NavItemSchema).min(1);
 
+/**
+ * A footer destination.
+ *
+ * Unlike the header, these are **pages and addresses**, not section anchors, so
+ * `href` is a plain string rather than the `Anchor` template type. That is a
+ * deliberate reversal of the earlier design: the finished layout groups legal
+ * and institutional links under headed columns, none of which is a section of
+ * this page. The trade-off is that `Anchor` no longer guards them — the test of
+ * 1.5 covers header anchors, and a wrong path here fails as a 404 instead of at
+ * compile time.
+ */
+const FooterLinkSchema = z.strictObject({
+  label: NonEmpty,
+  href: NonEmpty,
+});
+
+const FooterColumnSchema = z.strictObject({
+  title: NonEmpty,
+  links: z.array(FooterLinkSchema).min(1),
+});
+
 export const FooterSchema = z.strictObject({
   description: NonEmpty,
-  links: NavSchema, // 1.6 — the footer repeats the same anchor guarantee
-  newsletter: z.strictObject({ label: NonEmpty, href: z.url() }),
+  /**
+   * The two headed link columns of the design.
+   *
+   * Two, not three: the fourth cell of the grid is the address block below,
+   * which carries a heading but no link list.
+   */
+  columns: z.array(FooterColumnSchema).length(2),
+  address: z.strictObject({
+    title: NonEmpty,
+    line: NonEmpty,
+    emailLabel: NonEmpty,
+    email: z.email(),
+  }),
   legal: NonEmpty,
+  /** The two technical notes on the right of the bottom rule. */
+  notes: z.array(NonEmpty).length(2),
 });
 
 export type Footer = z.infer<typeof FooterSchema>;

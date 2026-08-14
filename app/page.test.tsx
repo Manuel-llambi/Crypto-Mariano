@@ -81,14 +81,16 @@ describe("no anchor points at nothing (1.5)", () => {
     }
   });
 
-  it("covers the header and the footer, not only one of them", () => {
+  /**
+   * The header owns in-page navigation; the footer links pages and an address.
+   * This used to require anchors in both, which the finished design moved away
+   * from — so it now states where they live and where they must not.
+   */
+  it("puts the section anchors in the header and not in the footer", () => {
     const { container } = renderPage();
 
-    const inHeader = container.querySelectorAll('header a[href^="#"]');
-    const inFooter = container.querySelectorAll('footer a[href^="#"]');
-
-    expect(inHeader.length).toBeGreaterThan(0);
-    expect(inFooter.length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('header a[href^="#"]').length).toBeGreaterThan(0);
+    expect(container.querySelectorAll('footer a[href^="#"]')).toHaveLength(0);
   });
 });
 

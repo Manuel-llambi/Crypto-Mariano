@@ -54,9 +54,18 @@ const site = {
 
 const footer = {
   description: "Descripción del pie",
-  links: [{ label: "Programa", href: "#programa" }],
-  newsletter: { label: "Suscribirse", href: "https://cryptocrime.academy/newsletter" },
+  columns: [
+    { title: "Protocolo", links: [{ label: "Privacidad", href: "/privacidad" }] },
+    { title: "Nodos", links: [{ label: "Acreditaciones", href: "/acreditaciones" }] },
+  ],
+  address: {
+    title: "Sede central",
+    line: "Madrid, España",
+    emailLabel: "E-mail:",
+    email: "contacto@cryptocrime.academy",
+  },
   legal: "© 2026 Crypto Crime Academy",
+  notes: ["Transmisión: AES_256_SECURED", "Lex Forensica v.1.2"],
 };
 
 /** Replaces one entry of an array-shaped fixture to build a rejection case. */
@@ -163,7 +172,7 @@ describe("SiteSchema", () => {
   });
 });
 
-describe("NavSchema and FooterSchema", () => {
+describe("NavSchema", () => {
   it("accepts anchors pointing at existing sections", () => {
     expect(
       NavSchema.safeParse([
@@ -171,7 +180,6 @@ describe("NavSchema and FooterSchema", () => {
         { label: "Programa", href: "#programa" },
       ]).success,
     ).toBe(true);
-    expect(FooterSchema.safeParse(footer).success).toBe(true);
   });
 
   // 1.5, defence in depth: the type already forbids it, the schema confirms it.
@@ -179,23 +187,45 @@ describe("NavSchema and FooterSchema", () => {
     expect(NavSchema.safeParse([{ label: "Testimonios", href: "#testimonios" }]).success).toBe(
       false,
     );
-    expect(
-      FooterSchema.safeParse({
-        ...footer,
-        links: [{ label: "Testimonios", href: "#testimonios" }],
-      }).success,
-    ).toBe(false);
   });
 
   it("rejects an empty navigation list", () => {
     expect(NavSchema.safeParse([]).success).toBe(false);
   });
+});
 
-  it("requires the newsletter destination to be a URL", () => {
+describe("FooterSchema", () => {
+  it("accepts the footer fixture", () => {
+    expect(FooterSchema.safeParse(footer).success).toBe(true);
+  });
+
+  // Exactly two: the fourth cell of the grid is the address, not a link list.
+  it("requires exactly two link columns", () => {
+    expect(FooterSchema.safeParse({ ...footer, columns: [footer.columns[0]] }).success).toBe(false);
     expect(
-      FooterSchema.safeParse({ ...footer, newsletter: { label: "Suscribirse", href: "boletin" } })
+      FooterSchema.safeParse({ ...footer, columns: [...footer.columns, footer.columns[0]] }).success,
+    ).toBe(false);
+  });
+
+  it("rejects a column with no link at all", () => {
+    expect(
+      FooterSchema.safeParse({
+        ...footer,
+        columns: [{ title: "Protocolo", links: [] }, footer.columns[1]],
+      }).success,
+    ).toBe(false);
+  });
+
+  it("requires the contact address to be an e-mail", () => {
+    expect(
+      FooterSchema.safeParse({ ...footer, address: { ...footer.address, email: "contacto" } })
         .success,
     ).toBe(false);
+  });
+
+  it("requires exactly the two technical notes of the bottom rule", () => {
+    expect(FooterSchema.safeParse({ ...footer, notes: ["Una sola"] }).success).toBe(false);
+    expect(FooterSchema.safeParse({ ...footer, notes: [] }).success).toBe(false);
   });
 });
 

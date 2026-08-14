@@ -39,7 +39,8 @@ export default function NotFound() {
         </a>
       </main>
 
-      <SiteFooter footer={footer} siteName={site.name} anchorPrefix="/" />
+      {/* No `anchorPrefix` here: the footer links pages, not sections. */}
+      <SiteFooter footer={footer} siteName={site.name} />
     </>
   );
 }

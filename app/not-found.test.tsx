@@ -35,25 +35,21 @@ describe("the error page keeps its bearings (10.4)", () => {
     }
   });
 
-  it("keeps the navigation of the footer equally reachable", () => {
+  /**
+   * The footer needs no prefix: its destinations are absolute paths, an outbound
+   * address and a mailto, none of which resolves against the current route.
+   */
+  it("keeps the footer destinations reachable without a prefix", () => {
     render(<NotFound />);
 
     const links = within(screen.getByRole("contentinfo")).getAllByRole("link");
-    const fragments = links.filter((link) => link.getAttribute("href")?.includes("#"));
+    expect(links.length).toBeGreaterThan(0);
 
-    expect(fragments.length).toBeGreaterThan(0);
-    for (const link of fragments) {
-      expect(link.getAttribute("href")).toMatch(/^\/#/);
+    for (const link of links) {
+      const href = link.getAttribute("href")!;
+      expect(href.startsWith("#")).toBe(false);
+      expect(href).toMatch(/^(\/|https?:\/\/|mailto:)/);
     }
-  });
-
-  it("leaves the outbound newsletter link absolute, not prefixed", () => {
-    render(<NotFound />);
-
-    const newsletter = within(screen.getByRole("contentinfo")).getByRole("link", {
-      name: "Newsletter",
-    });
-    expect(newsletter.getAttribute("href")).toMatch(/^https?:\/\//);
   });
 
   it("offers a link back to the home page", () => {

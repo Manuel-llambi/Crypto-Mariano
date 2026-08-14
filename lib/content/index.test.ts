@@ -141,11 +141,28 @@ describe("the content index", () => {
 
   // 1.5 — every navigation anchor has a section to land on.
   it("only navigates to declared sections", async () => {
-    const { nav, footer } = await import("./index");
+    const { nav } = await import("./index");
     const anchors = SECTION_IDS.map((id) => `#${id}`);
 
-    for (const item of [...nav, ...footer.links]) {
+    for (const item of nav) {
       expect(anchors).toContain(item.href);
+    }
+  });
+
+  /**
+   * The footer used to carry anchors too. Following the finished design it now
+   * links pages and an address, so this states the new boundary rather than
+   * leaving the old assertion silently deleted.
+   */
+  it("keeps section anchors out of the footer", async () => {
+    const { footer } = await import("./index");
+    const destinations = footer.columns.flatMap((column) =>
+      column.links.map((link) => link.href),
+    );
+
+    expect(destinations.length).toBeGreaterThan(0);
+    for (const href of destinations) {
+      expect(href.startsWith("#")).toBe(false);
     }
   });
 });

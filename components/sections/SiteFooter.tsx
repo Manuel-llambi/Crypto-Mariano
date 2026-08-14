@@ -5,50 +5,63 @@ import styles from "./SiteFooter.module.css";
 interface SiteFooterProps {
   footer: Footer;
   siteName: string;
-  /**
-   * Prefix for the anchors, empty on the landing itself.
-   *
-   * Only the section links take it. The newsletter is an absolute address and
-   * stays untouched.
-   */
-  anchorPrefix?: string;
 }
 
 /**
- * The closing block: the same anchors as the header, plus the one outbound link.
+ * The closing block of the document.
  *
- * The newsletter is a link and not a form on purpose — subscribing happens
- * elsewhere, and a form here would mean collecting an address on a page whose
- * whole contract is that it never talks to the network (2.1).
+ * Its destinations are pages and an address, not sections — the header owns the
+ * in-page navigation. That is why this component no longer takes `anchorPrefix`:
+ * there is no fragment here to resolve against the current route.
  *
- * It emits no heading, so it cannot introduce a level jump in the page (9.2).
+ * Its column headings are level two, not three. The 404 page has no sections
+ * between its first level heading and this footer, so level three would skip a
+ * level there (9.2).
  */
-export function SiteFooter({ footer, siteName, anchorPrefix = "" }: SiteFooterProps) {
+export function SiteFooter({ footer, siteName }: SiteFooterProps) {
   return (
     <footer className={styles.footer}>
-      <div className={styles.brand}>
-        <span className={styles.name}>{siteName}</span>
-        <p className={styles.description}>{footer.description}</p>
+      <div className={styles.grid}>
+        <div className={styles.brand}>
+          <span className={styles.name}>{siteName}</span>
+          <p className={styles.description}>{footer.description}</p>
+        </div>
+
+        {footer.columns.map((column) => (
+          <nav key={column.title} className={styles.column} aria-label={column.title}>
+            <h2 className={styles.columnTitle}>{column.title}</h2>
+            <ul className={styles.list}>
+              {column.links.map((link) => (
+                <li key={link.href}>
+                  <a className={styles.link} href={link.href}>
+                    {link.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        ))}
+
+        <div className={styles.column}>
+          <h2 className={styles.columnTitle}>{footer.address.title}</h2>
+          {/* `not-italic` in the design; an address is still the right element. */}
+          <address className={styles.address}>{footer.address.line}</address>
+          <p className={styles.emailLabel}>{footer.address.emailLabel}</p>
+          <a className={styles.email} href={`mailto:${footer.address.email}`}>
+            {footer.address.email}
+          </a>
+        </div>
       </div>
 
-      <nav className={styles.nav} aria-label="Secciones del sitio, pie de página">
-        <ul className={styles.list}>
-          {footer.links.map((link) => (
-            <li key={link.href}>
-              <a className={styles.link} href={`${anchorPrefix}${link.href}`}>
-                {link.label}
-              </a>
-            </li>
-          ))}
-          <li>
-            <a className={styles.link} href={footer.newsletter.href}>
-              {footer.newsletter.label}
-            </a>
-          </li>
-        </ul>
-      </nav>
-
-      <p className={styles.legal}>{footer.legal}</p>
+      <div className={styles.bottom}>
+        <p className={styles.legal}>{footer.legal}</p>
+        <div className={styles.notes}>
+          <span>{footer.notes[0]}</span>
+          {/* The brass tick between the two notes. Decoration, so it is hidden. */}
+          <span aria-hidden="true" className={styles.tick} />
+          <span>{footer.notes[1]}</span>
+        </div>
+      </div>
     </footer>
   );
 }

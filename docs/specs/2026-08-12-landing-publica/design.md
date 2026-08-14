@@ -142,10 +142,27 @@ export type SectionId = (typeof SECTION_IDS)[number];
 export type Anchor = `#${SectionId}`;
 ```
 
-Los `href` de navegación en `content/nav.ts` y `content/footer.ts` se declaran
-como `Anchor`. Un identificador mal escrito deja de compilar — no hace falta un
-script de verificación. Que la sección además exista renderizada lo cubre un
-test (ver estrategia de testing).
+Los `href` de navegación en `content/nav.ts` se declaran como `Anchor`. Un
+identificador mal escrito deja de compilar — no hace falta un script de
+verificación. Que la sección además exista renderizada lo cubre un test (ver
+estrategia de testing).
+
+**El pie no sigue esta regla, y es una corrección al diseño original.** Se
+había modelado `content/footer.ts` con anclas de sección, pero el diseño
+terminado agrupa allí **páginas** —Privacidad, Términos, Acreditaciones— más
+una dirección postal y un correo, bajo columnas con encabezado. Ninguna de esas
+cosas es una sección de esta página.
+
+En consecuencia `FooterSchema` usa `href` como cadena y no como `Anchor`. Lo que
+se pierde es la garantía en tiempo de compilación: una ruta equivocada en el pie
+falla como 404 y no al compilar. Lo que se gana es que el pie pueda decir lo que
+el diseño dice. La navegación dentro de la página sigue siendo exclusiva del
+encabezado, y un test de `app/page.test.tsx` afirma justamente eso: que las
+anclas están en el encabezado y **no** en el pie.
+
+Las tres rutas de página (`/privacidad`, `/terminos`, `/acreditaciones`) todavía
+no existen; hoy caen en la página 404. En la réplica del diseño esos enlaces son
+`href="#"`, así que tampoco están resueltos allá.
 
 ### lib/access-url.ts
 
