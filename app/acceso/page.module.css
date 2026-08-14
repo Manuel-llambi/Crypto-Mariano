@@ -1,0 +1,119 @@
+.main {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: calc(100vh - var(--header-height));
+  padding: var(--section-block) var(--section-inline);
+  background: var(--white);
+  overflow: hidden;
+}
+
+/*
+ * The dotted field of the design, at the opacity it uses. Purely decorative, so
+ * it is out of the accessibility tree and cannot take pointer events.
+ */
+.grid {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  opacity: 0.03;
+  background-image: radial-gradient(var(--navy) 1px, transparent 1px);
+  background-size: 24px 24px;
+}
+
+.card {
+  position: relative;
+  z-index: 1;
+  inline-size: 100%;
+  max-inline-size: 28rem;
+  padding: clamp(1.5rem, 5vw, 3rem);
+  background: var(--cream);
+  border: 1px solid var(--rule);
+}
+
+.intro {
+  margin-block-end: 2rem;
+  text-align: center;
+}
+
+/* The one place the serif of the design is used. */
+.title {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-serif);
+  font-size: 1.75rem;
+  line-height: 1.2;
+  font-weight: 600;
+  color: var(--navy);
+}
+
+.subtitle {
+  margin: 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--grey-text);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+}
+
+/*
+ * The design greys this link down to #76777e, which design.md rejected at
+ * 4.46:1. It takes the corrected grey instead.
+ */
+/*
+ * 7.6 applies here too: the design draws this as a small inline link, but it is
+ * an action control and a finger has to be able to hit it. The global rule of
+ * `styles/global.css` does not reach it — that one covers landmarks and section
+ * links — so the target is grown locally instead of broadening a rule that would
+ * then also inflate prose links.
+ */
+.forgot {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--grey-text);
+  text-decoration: underline;
+}
+
+.forgot:hover,
+.forgot:focus-visible {
+  color: var(--navy);
+}
+
+.submit {
+  min-block-size: 44px;
+  padding-block: 1rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.submit:hover,
+.submit:focus-visible {
+  background: var(--gold-text);
+}
+
+.protocol {
+  margin: 2rem 0 0;
+  padding-block-start: 1.5rem;
+  border-block-start: 1px solid var(--rule);
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  letter-spacing: 0.15em;
+  text-align: center;
+  text-transform: uppercase;
+  color: var(--grey-text);
+}

@@ -101,6 +101,27 @@ export const FooterSchema = z.strictObject({
 
 export type Footer = z.infer<typeof FooterSchema>;
 
+/**
+ * The access screen (out of the landing's numbered requirements).
+ *
+ * Copy only. Nothing here authenticates, sends a code or opens a session — 6.7
+ * forbids all three, and this screen is deliberately inert.
+ */
+export const LoginSchema = z.strictObject({
+  title: NonEmpty,
+  subtitle: NonEmpty,
+  emailLabel: NonEmpty,
+  passwordLabel: NonEmpty,
+  forgotLabel: NonEmpty,
+  forgotHref: NonEmpty,
+  submitLabel: NonEmpty,
+  protocol: NonEmpty,
+});
+
+export const AccessSchema = z.strictObject({ login: LoginSchema });
+
+export type LoginContent = z.infer<typeof LoginSchema>;
+
 export const SiteSchema = z.strictObject({
   name: NonEmpty,
   title: NonEmpty, // 10.1

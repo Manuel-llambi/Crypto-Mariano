@@ -1,0 +1,17 @@
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: var(--header-height);
+  padding: 1rem var(--section-inline);
+  background: var(--cream);
+  border-block-end: 1px solid var(--rule);
+  color: var(--navy);
+}
+
+.name {
+  font-family: var(--font-sans);
+  font-size: 1.125rem;
+  font-weight: 600;
+  letter-spacing: -0.01em;
+}

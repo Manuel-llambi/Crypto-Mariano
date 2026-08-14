@@ -1,0 +1,44 @@
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+/*
+ * `center`, not `baseline`: an action beside the label carries a 44px target
+ * (7.6), and on a baseline row that height would push the label off centre.
+ */
+.head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--row-gap);
+  min-block-size: 1.5rem;
+}
+
+.label {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  color: var(--navy);
+}
+
+.input {
+  inline-size: 100%;
+  min-block-size: 44px;
+  padding: 0.75rem 1rem;
+  background: var(--white);
+  border: 1px solid var(--rule);
+  /* Square, like every other edge in this design. */
+  border-radius: 0;
+  color: var(--navy);
+  font-family: var(--font-sans);
+  font-size: 1rem;
+}
+
+/*
+ * The focused field gets the navy border *and* the global focus ring. The ring
+ * alone would sit outside the box; the border change is what the design shows.
+ */
+.input:focus-visible {
+  border-color: var(--navy);
+}
