@@ -88,24 +88,36 @@ test.describe("anchor navigation works (8.2)", () => {
 
 // 8.3 — the access controls still navigate, with their intent.
 test.describe("access controls work (8.3)", () => {
-  for (const [name, intent] of [
-    ["enrolment", "signup"],
-    ["login", "login"],
-  ] as const) {
-    test(`the ${name} control carries intent=${intent}`, async ({ page }) => {
-      await page.setViewportSize(WIDE);
-      await page.goto("/");
+  /**
+   * The enrolment control still leaves for the configured host, so the link is
+   * checked rather than followed: that screen is out of scope (6.7).
+   */
+  test("the enrolment control carries intent=signup to the configured host", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto("/");
 
-      const control = page.locator(`header a[href*="intent=${intent}"]`).first();
-      const href = await control.getAttribute("href");
+    const control = page.locator('header a[href*="intent=signup"]').first();
+    const href = await control.getAttribute("href");
 
-      // The destination is an absolute address on another host, so the link is
-      // checked rather than followed: the access screen is out of scope (6.7).
-      expect(href).toMatch(/^https?:\/\//);
-      expect(href).toContain(`intent=${intent}`);
-      await expect(control).toBeVisible();
-    });
-  }
+    expect(href).toMatch(/^https?:\/\//);
+    expect(href).toContain("intent=signup");
+    await expect(control).toBeVisible();
+  });
+
+  /**
+   * Signing in is a route of this app, so it is followed for real: with no
+   * JavaScript the anchor still has to land on the access screen.
+   */
+  test("the login control reaches the access screen with no scripting", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto("/");
+
+    await page.locator('header a[href*="intent=login"]').first().click();
+
+    await expect(page).toHaveURL(/\/acceso\?intent=login$/);
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+    await expect(page.locator('input[type="password"]')).toBeVisible();
+  });
 });
 
 // 8.4 — the narrow-screen panel still opens.

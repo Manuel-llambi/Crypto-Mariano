@@ -21,7 +21,20 @@ interface TopNavBarProps {
 
 /** Resolved once at module scope: constants in the output, no runtime work. */
 const ENROL_HREF = accessUrl("signup");
-const LOGIN_HREF = accessUrl("login");
+
+/**
+ * Signing in happens **inside this app**; signing up still does not.
+ *
+ * The access screen for an existing account lives at `/acceso`, so the control
+ * points there rather than at `NEXT_PUBLIC_ACCESS_URL`. The intent stays in the
+ * address because 6.2 asks the destination to state it, and because the sign-up
+ * screen will land beside it as `?intent=signup` once it exists.
+ *
+ * Until then the three enrolment controls keep leaving for the configured host:
+ * sending someone who has no account to a form asking for a password would be
+ * a dead end.
+ */
+const LOGIN_HREF = "/acceso?intent=login";
 
 /**
  * The fixed header: navigation plus the two access controls.

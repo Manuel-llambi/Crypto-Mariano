@@ -76,7 +76,9 @@ Otras decisiones cerradas del diseño:
 - Los módulos son una **unión discriminada por `status`**: `available` (exige `videoMinutes`, resumen desplegable opcional) frente a `coming-soon` (adelanto siempre visible, NO debe declarar `videoMinutes` ni resumen).
 - Los desplegables son `<details>`/`<summary>` nativos, varios abiertos a la vez. Esto es lo que vuelve alcanzable el Requisito 8 (funcionamiento sin JavaScript).
 - El estado activo de la navegación es **solo hover**. Sin scrollspy, deliberadamente.
-- La autenticación está fuera de alcance. La landing solo enlaza a la pantalla de correo y código, diferenciada por `?intent=login` y `?intent=signup`. La dirección base sale de la configuración del proyecto; si falta o es inválida, falla la compilación.
+- La autenticación está fuera de alcance: nada en el repositorio autentica, envía códigos ni abre sesión (6.7).
+- **Los dos destinos de acceso están separados (2026-08-14).** «Iniciar sesión» va a `/acceso?intent=login`, una ruta de esta aplicación con la pantalla de correo y contraseña — **solo UI, inerte**. Los tres controles de «Inscríbete» siguen saliendo a `NEXT_PUBLIC_ACCESS_URL` con `?intent=signup`, porque la pantalla de alta (correo + código) todavía no existe acá. La dirección base sale de la configuración; si falta o es inválida, falla la compilación.
+- `/acceso` **no tiene requisitos numerados**: se implementó contra el diseño de Stitch, no contra el spec de la landing. No debe publicarse mientras el formulario siga siendo una maqueta.
 
 ## Preguntas abiertas que bloquean la publicación
 

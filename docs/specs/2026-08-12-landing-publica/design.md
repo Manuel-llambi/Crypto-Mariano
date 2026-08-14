@@ -179,6 +179,22 @@ Lee `NEXT_PUBLIC_ACCESS_URL`, la valida con `z.string().url()` al importar el
 módulo y le agrega `?intent=`. Una variable ausente o malformada rompe el build
 (6.5). No implementa nada de autenticación (6.7).
 
+**Los dos destinos se separaron el 2026-08-14.** La pantalla de acceso para
+quien ya tiene cuenta se implementó dentro de esta aplicación, en `/acceso`, así
+que el control de inicio de sesión apunta a `/acceso?intent=login` y ya no usa
+`accessUrl`. Los tres controles de inscripción siguen saliendo a
+`NEXT_PUBLIC_ACCESS_URL` con `?intent=signup`, porque la pantalla de alta
+—correo y código— todavía no existe acá; mandar a alguien sin cuenta a un
+formulario que pide contraseña sería un camino muerto.
+
+La intención se conserva en la dirección interna aunque la ruta ya identifique
+la pantalla: 6.2 pide que el destino la indique, y deja lugar a que el alta
+aterrice al lado como `?intent=signup` cuando exista.
+
+`accessUrl` sigue admitiendo las dos intenciones. La landing solo usa `signup`
+hoy; la función no se recortó porque el alta va a volver a necesitarla si esa
+pantalla se aloja fuera.
+
 ### components/ui/Disclosure
 
 - **Responsabilidad:** el único desplegable del sitio, usado por el temario

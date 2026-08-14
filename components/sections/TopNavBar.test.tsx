@@ -86,18 +86,24 @@ describe("navigation links come from the data (1.5)", () => {
 
 // 6.2, 6.3 — both controls are ordinary hyperlinks carrying their intent.
 describe("the two access controls (6.2, 6.3)", () => {
-  it("points the login control at intent=login", () => {
+  /**
+   * The two controls now part ways, and the split is asserted rather than
+   * implied: signing in is a route of this app, signing up still leaves for the
+   * configured host because that screen does not exist here yet.
+   */
+  it("points the login control at the access screen of this app", () => {
     renderNav();
 
     const href = screen.getByRole("link", { name: "Iniciar sesión" }).getAttribute("href");
-    expect(href).toContain("intent=login");
+    expect(href).toBe("/acceso?intent=login");
   });
 
-  it("points the enrolment control at intent=signup", () => {
+  it("points the enrolment control at intent=signup, away from this app", () => {
     renderNav();
 
     const href = screen.getByRole("link", { name: "Inscríbete" }).getAttribute("href");
     expect(href).toContain("intent=signup");
+    expect(href).toMatch(/^https?:\/\//);
   });
 
   it("implements both as anchors, not buttons", () => {
