@@ -216,6 +216,76 @@ test.describe("the hero panel bleeds off the grid", () => {
   });
 });
 
+/**
+ * Alignment defects that were reported by eye.
+ *
+ * Each one is measured rather than described, so it stays fixed: none of the
+ * three would show up in any assertion the suite already had.
+ */
+test.describe("alignment", () => {
+  test("centres the sign-in link with the enrolment button beside it", async ({ page }) => {
+    await at(page, 1280);
+
+    const login = await page.locator('header a[href*="intent=login"]').boundingBox();
+    const enrol = await page.locator('header a[href*="intent=signup"]').boundingBox();
+
+    const loginMiddle = login!.y + login!.height / 2;
+    const enrolMiddle = enrol!.y + enrol!.height / 2;
+
+    expect(Math.abs(loginMiddle - enrolMiddle)).toBeLessThanOrEqual(1);
+  });
+
+  test("keeps the syllabus badge as narrow as its text", async ({ page }) => {
+    await at(page, 1280);
+
+    // Measured against another section's badge: they should agree in kind, and
+    // neither should stretch to the column.
+    const syllabus = await page.locator("#programa span").first().boundingBox();
+    const audience = await page.locator("#audiencia span").first().boundingBox();
+
+    expect(syllabus!.width).toBeLessThan(240);
+    expect(Math.abs(syllabus!.height - audience!.height)).toBeLessThanOrEqual(1);
+  });
+
+  /**
+   * Measured as a gap between two boxes, not as a declared margin.
+   *
+   * The term and its value are separate inline elements, and the space between
+   * them went missing — «DURACIÓN1 h 20 min» on the page. The unit suite cannot
+   * catch it: jsdom applies no CSS module and reports the user-agent's own 40px
+   * for a `<dd>`, so an assertion there passes with or without the rule.
+   */
+  test("separates each syllabus figure from its label", async ({ page }) => {
+    await at(page, 1280);
+
+    const gaps = await page.evaluate(() =>
+      [...document.querySelectorAll("#programa dl > div")].map((figure) => {
+        const term = figure.querySelector("dt")!.getBoundingClientRect();
+        const value = figure.querySelector("dd")!.getBoundingClientRect();
+        return value.left - term.right;
+      }),
+    );
+
+    expect(gaps.length).toBeGreaterThan(0);
+    for (const gap of gaps) {
+      expect(gap).toBeGreaterThan(2);
+    }
+  });
+
+  test("lets the closing headline use the content column", async ({ page }) => {
+    await at(page, 1280);
+
+    const headline = await page
+      .locator("main section")
+      .last()
+      .locator("h2")
+      .boundingBox();
+
+    // 40rem was the old cap; the content column at this width is 1152.
+    expect(headline!.width).toBeGreaterThan(640);
+  });
+});
+
 // 7.4 — below 768 the hero stacks, copy first.
 test.describe("hero stacking (7.4)", () => {
   test("puts the copy above the visual panel at 375px", async ({ page }) => {

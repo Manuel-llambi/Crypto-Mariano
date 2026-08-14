@@ -115,6 +115,23 @@ describe("headline figures (3.5)", () => {
     expect(screen.getByTestId("duration")!.textContent).toContain("1 h 20 min");
   });
 
+  /**
+   * The gap between the term and its value is a style, so it cannot be checked
+   * here: jsdom applies no CSS module, and reading `marginInlineStart` returns
+   * the user-agent's own 40px for a `<dd>` — an assertion on it passes whether
+   * or not the rule exists. `e2e/responsive.spec.ts` measures it in a browser.
+   */
+  it("pairs each figure with its label", () => {
+    render(<ProgramSection enrollLabel="Inscríbete" program={derived([available, withSummary])} />);
+
+    for (const id of ["duration", "module-count"]) {
+      const figure = screen.getByTestId(id);
+
+      expect(figure.querySelector("dt")?.textContent).not.toBe("");
+      expect(figure.querySelector("dd")?.textContent).not.toBe("");
+    }
+  });
+
   it("announces no duration at all when every module is coming soon", () => {
     render(<ProgramSection enrollLabel="Inscríbete" program={derived([comingSoon])} />);
 

@@ -19,9 +19,13 @@
   background: rgb(255 255 255 / 8%);
 }
 
+/*
+ * No width cap: the closing headline uses the whole content column. The section
+ * already stops at 1152px, which is the measure that matters — a second limit
+ * here only made the line break earlier than it needed to.
+ */
 .headline {
   margin: 0;
-  max-width: 40rem;
   font-family: var(--font-sans);
   font-size: clamp(1.75rem, 5vw, 2.75rem);
   line-height: 1.15;

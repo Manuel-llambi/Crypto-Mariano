@@ -5,8 +5,9 @@
  * derived from this list (3.1-3.3) and the schema rejects the file if it tries
  * to state them (3.4).
  *
- * `EXP-00` and `EXP-01` carry no `summary` on purpose — there is no revealed
- * content written for them yet, so they render without a disclosure (4.4).
+ * `EXP-00` and `EXP-01` carry a placeholder `summary`, which is what turns them
+ * into disclosures (4.3). The text is provisional and marked as such: the real
+ * copy for what each module reveals is still an open question.
  */
 export const program = {
   description:
@@ -15,11 +16,15 @@ export const program = {
     {
       status: "available",
       title: "Introducción a las criptomonedas",
+      summary:
+        "[REVISAR] Qué es un criptoactivo, cómo se registra una transacción y qué queda asentado de forma pública. Descripción provisional del contenido del módulo.",
       videoMinutes: 35,
     },
     {
       status: "available",
       title: "Bitcoin y blockchains basadas en UTXO",
+      summary:
+        "[REVISAR] El modelo de salidas no gastadas, cómo se encadenan las transacciones y qué revela esa estructura al reconstruir un recorrido. Descripción provisional del contenido del módulo.",
       videoMinutes: 45,
     },
     {

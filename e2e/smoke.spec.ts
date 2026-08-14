@@ -55,18 +55,43 @@ test("opening two disclosures leaves both open (4.5, 5.2)", async ({ page }) => 
 });
 
 /**
- * 4.4 — what the real syllabus exercises today.
+ * 4.5 on the syllabus itself.
  *
- * Every module either has no summary written yet or is coming-soon, so none of
- * them offers a disclosure control. This is the designed behaviour, not a bug,
- * and the assertion is written so that it starts failing the day a module gets
- * a summary — which is the day 4.5 becomes verifiable on the syllabus itself.
+ * This spec used to pin the opposite: that no module offered a control, because
+ * none declared a summary. It was written to fail the day one did, and that day
+ * came — so it now asserts what the criterion actually says.
  */
-test("no module offers a control while none declares a summary (4.4)", async ({ page }) => {
+test("opening two modules leaves both open (4.5)", async ({ page }) => {
   await page.goto("/");
 
-  await expect(page.locator("#programa")).toBeVisible();
-  await expect(page.locator("#programa details")).toHaveCount(0);
+  const modules = page.locator("#programa details");
+  await expect(modules).toHaveCount(2);
+
+  const first = modules.nth(0);
+  const second = modules.nth(1);
+
+  await expect(first).not.toHaveAttribute("open", /.*/);
+
+  await first.locator("summary").click();
+  await second.locator("summary").click();
+
+  await expect(first).toHaveAttribute("open", /.*/);
+  await expect(second).toHaveAttribute("open", /.*/);
+});
+
+/**
+ * 4.2 and 4.4 — the branches that still hold.
+ *
+ * Coming-soon modules never offer a control, however many available ones become
+ * disclosures around them.
+ */
+test("a coming-soon module still offers no control (4.2)", async ({ page }) => {
+  await page.goto("/");
+
+  const announced = page.locator("#programa article");
+  await expect(announced).toHaveCount(5);
+  await expect(announced.locator("details")).toHaveCount(0);
+  await expect(announced.first().getByText("Próximamente")).toBeVisible();
 });
 
 test("the enrolment control points at the access screen with intent=signup (6.1)", async ({

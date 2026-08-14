@@ -123,9 +123,18 @@
   white-space: nowrap;
 }
 
+/*
+ * `inline-flex`, not `inline`.
+ *
+ * The global 44px rule gives header anchors `display: inline-flex` with their
+ * content centred, but a class beats its `:is()` element selector — so `inline`
+ * here quietly undid it and left this link sitting a few pixels off the
+ * enrolment button beside it.
+ */
 @media (min-width: 640px) {
   .login {
-    display: inline;
+    display: inline-flex;
+    align-items: center;
   }
 }
 

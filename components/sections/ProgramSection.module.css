@@ -6,7 +6,13 @@
   color: var(--navy);
 }
 
+/*
+ * The section is a column flex container, so a stretched item would run the
+ * full width. Every other section keeps its badge inside an `.intro` that packs
+ * to the start; this one sits directly in the column and has to say so itself.
+ */
 .eyebrow {
+  align-self: flex-start;
   margin-bottom: var(--row-gap);
 }
 
@@ -34,10 +40,18 @@
   color: var(--gold-text);
 }
 
+/*
+ * Inline so each figure reads as one line, with a real gap after the term:
+ * without it «DURACIÓN» and «1 h 20 min» ran together into one word.
+ */
 .figures dt,
 .figures dd {
   display: inline;
   margin: 0;
+}
+
+.figures dd {
+  margin-inline-start: 0.5rem;
 }
 
 .description {
