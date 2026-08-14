@@ -7,29 +7,42 @@ import { Hero } from "./Hero";
 afterEach(cleanup);
 
 const hero = {
-  eyebrow: "Investigación forense de criptoactivos",
+  eyebrow: "Lex Forensica",
   headline: "Excelencia en investigación de criptoactivos",
   subheadline: "Un curso para equipos que siguen el rastro del dinero en cadena.",
-  ctaLabel: "Inscríbete",
+  ctaLabel: "Explorar curso",
   imageAlt: "Panel de análisis forense de transacciones en cadena",
 };
 
-function enrolControl() {
+function heroControl() {
   return screen.getByRole("link", { name: hero.ctaLabel });
 }
 
-describe("the enrolment control opens the signup flow (6.1)", () => {
-  it("points at a destination carrying intent=signup", () => {
+/**
+ * The hero invites the visitor into the page, not out of it.
+ *
+ * In the finished design this button reads «Explorar curso» and jumps to the
+ * syllabus. It is **not** one of the three enrolment controls of 6.6 — those are
+ * the header, the syllabus and the closing block — and this suite used to assert
+ * the opposite.
+ */
+describe("the hero control leads to the syllabus", () => {
+  it("points at the programa section", () => {
     render(<Hero hero={hero} />);
 
-    const href = enrolControl().getAttribute("href")!;
-    expect(new URL(href).searchParams.get("intent")).toBe("signup");
+    expect(heroControl().getAttribute("href")).toBe("#programa");
+  });
+
+  it("does not carry an enrolment intent", () => {
+    render(<Hero hero={hero} />);
+
+    expect(heroControl().getAttribute("href")).not.toContain("intent=");
   });
 
   it("takes its wording from the content", () => {
     render(<Hero hero={hero} />);
 
-    expect(enrolControl().textContent).toBe(hero.ctaLabel);
+    expect(heroControl().textContent).toBe(hero.ctaLabel);
   });
 });
 
@@ -37,7 +50,7 @@ describe("the control is a plain link (6.3)", () => {
   it("is an anchor with an href and not a button", () => {
     const { container } = render(<Hero hero={hero} />);
 
-    expect(enrolControl().tagName).toBe("A");
+    expect(heroControl().tagName).toBe("A");
     expect(container.querySelector("button")).toBeNull();
   });
 
@@ -47,7 +60,7 @@ describe("the control is a plain link (6.3)", () => {
     // A React synthetic handler would not show up as an attribute, so this
     // asserts the observable half of 6.3: nothing is wired to intercept the
     // click, and the href alone is what navigates.
-    expect(enrolControl().hasAttribute("onclick")).toBe(false);
+    expect(heroControl().hasAttribute("onclick")).toBe(false);
   });
 });
 

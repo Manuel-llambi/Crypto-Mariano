@@ -53,6 +53,10 @@
   background: var(--cream);
 }
 
+.icon {
+  margin-block-end: var(--row-gap);
+}
+
 .blockTitle {
   margin: 0 0 var(--row-gap);
   font-size: 1.5rem;

@@ -4,7 +4,8 @@
   align-items: center;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
+  /* Cream ground with white cards, as the finished design has it. */
+  background: var(--cream);
   color: var(--navy);
   text-align: center;
 }

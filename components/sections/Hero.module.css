@@ -54,9 +54,12 @@
   overflow-wrap: break-word;
 }
 
+/* The gold rule of the design: decoration, so it needs no contrast ratio. */
 .subheadline {
   margin: 0;
   max-width: 34rem;
+  padding-inline-start: 1.5rem;
+  border-inline-start: 2px solid var(--gold-line);
   font-family: var(--font-sans);
   font-size: 1.125rem;
   line-height: 1.75rem;

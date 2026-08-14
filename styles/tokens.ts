@@ -30,9 +30,17 @@ export const COLOR_TOKENS = {
   "--rule": "#c6c6ce",
 } as const;
 
+/**
+ * The three families of the design, loaded from `@fontsource` in `app/layout.tsx`.
+ *
+ * The fallbacks are not decoration: until the font files arrive the page paints
+ * with them, and for a long stretch of this project they were all the page ever
+ * used, because the families were declared here and nothing loaded them.
+ */
 export const TYPOGRAPHY_TOKENS = {
   "--font-sans": "'IBM Plex Sans', system-ui, sans-serif",
   "--font-mono": "'IBM Plex Mono', ui-monospace, monospace",
+  "--font-serif": "'Source Serif 4', Georgia, serif",
 } as const;
 
 /**

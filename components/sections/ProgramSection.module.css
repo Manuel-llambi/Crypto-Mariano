@@ -1,4 +1,6 @@
 .section {
+  display: flex;
+  flex-direction: column;
   padding: var(--section-block) var(--section-inline);
   background: var(--white);
   color: var(--navy);
@@ -40,10 +42,31 @@
 
 .description {
   max-width: 72ch;
-  margin: 0 0 var(--section-block);
+  margin: 0 0 var(--row-gap);
   color: var(--grey-text);
   font-size: 1rem;
   line-height: 1.5rem;
+}
+
+.cta {
+  align-self: flex-start;
+  margin-block-end: var(--section-block);
+  padding-block: 0.875rem;
+  padding-inline: 2rem;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.cta:hover,
+.cta:focus-visible {
+  background: var(--gold-text);
 }
 
 .modules {

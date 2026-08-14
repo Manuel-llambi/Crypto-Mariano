@@ -47,7 +47,7 @@ export default function HomePage() {
         <AudienceSection audience={audience} />
         <MethodologySection methodology={methodology} />
         <UpdatesSection updates={updates} />
-        <ProgramSection program={program} />
+        <ProgramSection program={program} enrollLabel={site.enrollLabel} />
         <SocialProofSection socialProof={socialProof} />
         <FaqSection faq={faq} />
         <FinalCta finalCta={site.finalCta} />

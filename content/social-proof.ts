@@ -1,21 +1,22 @@
 /**
  * Trust seals and headline figures (2.4).
  *
- * Every value here is unverified: the three seals are design placeholders and
- * neither figure has a source. All of them are blocking questions for launch,
- * not for the build.
+ * Copy taken from the finished design. The figures still have no source behind
+ * them: «5,000+» and «120+» are claims the design makes, not measurements this
+ * project can vouch for. With an audience that evaluates evidence professionally,
+ * they remain a launch question.
  */
 export const socialProof = {
-  title: "[REVISAR] Titular de prueba social pendiente de leer del mockup (nodo 23:232).",
+  title: "Cuentan con la confianza de instituciones en todo el mundo",
   description:
-    "[REVISAR] Descripción de prueba social pendiente de leer del mockup (nodo 23:234).",
+    "Nuestras metodologías son el estándar para unidades en jurisdicciones federales, estatales e internacionales.",
   seals: [
-    { name: "[REVISAR] Sello 1", detail: "Marcador de posición del diseño." },
-    { name: "[REVISAR] Sello 2", detail: "Marcador de posición del diseño." },
-    { name: "[REVISAR] Sello 3", detail: "Marcador de posición del diseño." },
+    { icon: "seal-doj", name: "Afiliados al DOJ", detail: "Departamento de Justicia" },
+    { icon: "seal-interpol", name: "Socios de Interpol", detail: "Cooperación internacional" },
+    { icon: "seal-banks", name: "Bancos globales", detail: "Instituciones financieras" },
   ],
   metrics: [
-    { value: "5000+", label: "[REVISAR] investigadores" },
-    { value: "120+", label: "[REVISAR] agencias" },
+    { value: "5,000+", label: "Investigadores capacitados" },
+    { value: "120+", label: "Agencias representadas" },
   ],
 };

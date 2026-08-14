@@ -9,12 +9,23 @@
   color: var(--white);
 }
 
+/*
+ * On the navy ground the badge has to invert: `--gold-line` as a border and
+ * `--gold-text` as text were both chosen against white and neither carries here.
+ */
+.eyebrow {
+  border-color: rgb(255 255 255 / 40%);
+  color: var(--white);
+  background: rgb(255 255 255 / 8%);
+}
+
 .headline {
   margin: 0;
   max-width: 40rem;
   font-family: var(--font-sans);
-  font-size: 2.75rem;
-  line-height: 3.1rem;
+  font-size: clamp(1.75rem, 5vw, 2.75rem);
+  line-height: 1.15;
+  overflow-wrap: break-word;
   font-weight: 600;
   text-transform: uppercase;
 }
@@ -25,6 +36,16 @@
   font-family: var(--font-sans);
   font-size: 1.125rem;
   line-height: 1.75rem;
+}
+
+.footnote {
+  margin: var(--row-gap) 0 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  /* Deliberately dimmed, but still above 4.5:1 against the navy ground. */
+  color: rgb(255 255 255 / 72%);
 }
 
 .cta {

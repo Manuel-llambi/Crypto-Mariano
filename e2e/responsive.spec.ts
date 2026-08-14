@@ -55,7 +55,10 @@ test.describe("hero stacking (7.4)", () => {
   test("puts the call to action above the visual panel too at 375px", async ({ page }) => {
     await at(page, 375);
 
-    const cta = await page.locator("main a[href*='intent=signup']").first().boundingBox();
+    // The hero control is the one inside the hero section. It used to be found
+    // by `intent=signup`, which now matches the syllabus and closing controls
+    // instead — the hero button leads to the syllabus, not to enrolment.
+    const cta = await page.locator("main section").first().locator("a").first().boundingBox();
     const panel = await page.locator('main [role="img"]').boundingBox();
 
     expect(cta!.y + cta!.height).toBeLessThanOrEqual(panel!.y);

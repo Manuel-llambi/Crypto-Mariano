@@ -83,9 +83,12 @@ export const SiteSchema = z.strictObject({
     imageAlt: NonEmpty, // 9.3
   }),
   finalCta: z.strictObject({
+    eyebrow: NonEmpty,
     headline: NonEmpty,
     body: NonEmpty,
     ctaLabel: NonEmpty,
+    /** The reassurance line under the button in the finished design. */
+    footnote: NonEmpty,
   }),
 });
 
@@ -104,6 +107,7 @@ export type AudienceProfile = z.infer<typeof AudienceProfileSchema>;
 export const AudienceSchema = z.array(AudienceProfileSchema).length(4);
 
 const MethodologyBlockSchema = z.strictObject({
+  icon: NonEmpty,
   title: NonEmpty,
   description: NonEmpty,
 });
@@ -113,7 +117,7 @@ export type MethodologyBlock = z.infer<typeof MethodologyBlockSchema>;
 /** Exactly 2 blocks (2.4). */
 export const MethodologySchema = z.array(MethodologyBlockSchema).length(2);
 
-const SealSchema = z.strictObject({ name: NonEmpty, detail: NonEmpty });
+const SealSchema = z.strictObject({ icon: NonEmpty, name: NonEmpty, detail: NonEmpty });
 
 /** Exactly 3 trust seals (2.4). */
 export const SealsSchema = z.array(SealSchema).length(3);

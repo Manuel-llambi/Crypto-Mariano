@@ -5,6 +5,12 @@ import type { NavItem } from "@/lib/nav/sections";
  *
  * `links` are section anchors, the same guarantee the header carries. The
  * newsletter is the one outbound destination, so it is a URL and not an anchor.
+ *
+ * **Known divergence from the design:** the finished layout groups page links —
+ * Privacidad, Términos, Acreditaciones — under three headed columns. The schema
+ * only admits anchors (`NavItem[]`), by the design decision recorded in T5, so
+ * closing that gap is a change to `design.md` and the schema rather than to this
+ * file.
  */
 export const footer: {
   description: string;
@@ -13,7 +19,7 @@ export const footer: {
   legal: string;
 } = {
   description:
-    "[REVISAR] Descripción del pie pendiente de leer del mockup (nodo 23:396).",
+    "Especialistas en la detección y prevención de delitos financieros en el ecosistema Web3 para profesionales de alto nivel.",
   links: [
     { label: "Programa", href: "#programa" },
     { label: "Audiencia", href: "#audiencia" },
@@ -23,5 +29,5 @@ export const footer: {
     label: "Newsletter",
     href: "https://cryptocrime.academy/newsletter",
   },
-  legal: "© 2026 Crypto Crime Academy",
+  legal: "© 2026 CCA_UNITS. Todos los derechos reservados.",
 };

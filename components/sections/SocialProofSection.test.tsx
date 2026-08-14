@@ -10,9 +10,9 @@ const socialProof = {
   title: "Confianza institucional",
   description: "Descripción de la sección.",
   seals: [
-    { name: "Sello uno", detail: "Detalle uno." },
-    { name: "Sello dos", detail: "Detalle dos." },
-    { name: "Sello tres", detail: "Detalle tres." },
+    { icon: "seal-doj", name: "Sello uno", detail: "Detalle uno." },
+    { icon: "seal-interpol", name: "Sello dos", detail: "Detalle dos." },
+    { icon: "seal-banks", name: "Sello tres", detail: "Detalle tres." },
   ],
   metrics: [
     { value: "5000+", label: "investigadores" },

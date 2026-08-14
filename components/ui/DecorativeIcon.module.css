@@ -1,16 +1,66 @@
 /*
- * The mockup's glyphs were never exported: the Figma read hit the plan quota
- * before the icon assets could be downloaded. Until they exist, the icon holds
- * its designed box so the layout is right and nothing shifts when the real
- * artwork lands.
+ * The glyph is painted as a mask over `currentColor`, not as an `<img>`.
+ *
+ * That way the icon inherits the colour of whatever it sits in — brass on the
+ * cream cards, and whatever a future section needs — from one rule, instead of
+ * shipping a recoloured file per context.
  */
 .icon {
   display: block;
-  inline-size: 1.5rem;
-  block-size: 1.6667rem;
+  inline-size: 1.75rem;
+  block-size: 1.75rem;
   background: currentColor;
   color: var(--gold-line);
   mask-repeat: no-repeat;
   mask-position: center;
   mask-size: contain;
+}
+
+.icon[data-icon="shield"] {
+  mask-image: url("/icons/shield.svg");
+}
+
+.icon[data-icon="scale"] {
+  mask-image: url("/icons/scale.svg");
+}
+
+.icon[data-icon="clipboard-check"] {
+  mask-image: url("/icons/clipboard-check.svg");
+}
+
+.icon[data-icon="magnifier"] {
+  mask-image: url("/icons/magnifier.svg");
+}
+
+.icon[data-icon="institutional"] {
+  mask-image: url("/icons/institutional.svg");
+}
+
+.icon[data-icon="evidence"] {
+  mask-image: url("/icons/evidence.svg");
+}
+
+.icon[data-icon="seal-doj"] {
+  mask-image: url("/icons/seal-doj.svg");
+}
+
+.icon[data-icon="seal-interpol"] {
+  mask-image: url("/icons/seal-interpol.svg");
+}
+
+.icon[data-icon="seal-banks"] {
+  mask-image: url("/icons/seal-banks.svg");
+}
+
+/*
+ * A name with no drawing behind it would otherwise render as a solid block —
+ * which is exactly how this component looked before the files existed. Nothing
+ * is better than a filled square pretending to be an icon.
+ */
+.icon:not([data-icon="shield"]):not([data-icon="scale"]):not([data-icon="clipboard-check"]):not(
+    [data-icon="magnifier"]
+  ):not([data-icon="institutional"]):not([data-icon="evidence"]):not([data-icon="seal-doj"]):not(
+    [data-icon="seal-interpol"]
+  ):not([data-icon="seal-banks"]) {
+  background: none;
 }

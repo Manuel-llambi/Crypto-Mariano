@@ -23,7 +23,7 @@ export function UpdatesSection({ updates }: UpdatesSectionProps) {
   return (
     <section id={SECTION} className={styles.section}>
       <div className={styles.intro}>
-        <Badge>Novedades</Badge>
+        <Badge>Actualizaciones del programa</Badge>
         <h2 className={styles.title}>Actualizaciones del temario</h2>
       </div>
 

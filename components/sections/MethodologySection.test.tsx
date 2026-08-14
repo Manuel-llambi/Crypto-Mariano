@@ -7,8 +7,8 @@ import { MethodologySection } from "./MethodologySection";
 afterEach(cleanup);
 
 const methodology = [
-  { title: "Grado institucional", description: "Plan de estudios en consulta con fiscales." },
-  { title: "Basado en evidencia", description: "Informes admisibles en tribunales." },
+  { icon: "institutional", title: "Grado institucional", description: "Plan de estudios en consulta con fiscales." },
+  { icon: "evidence", title: "Basado en evidencia", description: "Informes admisibles en tribunales." },
 ];
 
 describe("the two blocks (2.4)", () => {

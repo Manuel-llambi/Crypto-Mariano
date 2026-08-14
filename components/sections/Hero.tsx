@@ -1,5 +1,5 @@
-import { accessUrl } from "@/lib/access-url";
 import type { HeroContent } from "@/lib/content/schemas";
+import type { Anchor } from "@/lib/nav/sections";
 
 import styles from "./Hero.module.css";
 
@@ -8,10 +8,14 @@ interface HeroProps {
 }
 
 /**
- * The destination is resolved once, at module scope, so it is a constant string
- * in the build output — there is no runtime work behind the link (6.3).
+ * The hero invites the visitor **into the page**, not out of it.
+ *
+ * In the finished design this button reads «Explorar curso» and jumps to the
+ * syllabus. It is not one of the three enrolment controls of 6.6 — those are the
+ * header, the syllabus and the closing block. Typing the destination as `Anchor`
+ * keeps it a section that exists (1.5).
  */
-const ENROL_HREF = accessUrl("signup");
+const EXPLORE_HREF: Anchor = "#programa";
 
 /**
  * Reserved space for the hero visual, in pixels.
@@ -22,20 +26,19 @@ const ENROL_HREF = accessUrl("signup");
  */
 const PANEL = { width: 480, height: 480 };
 
-/**
- * The opening block: the first level heading of the page and the first
- * enrolment control (6.1).
- */
+/** The opening block: the first level heading of the page. */
 export function Hero({ hero }: HeroProps) {
   return (
     <section className={styles.section}>
       <div className={styles.copy}>
         <p className={styles.eyebrow}>{hero.eyebrow}</p>
         <h1 className={styles.headline}>{hero.headline}</h1>
+
+        {/* The gold rule beside the standfirst is from the design. */}
         <p className={styles.subheadline}>{hero.subheadline}</p>
 
         {/* A plain anchor: no handler, no script navigation (6.3). */}
-        <a className={styles.cta} href={ENROL_HREF}>
+        <a className={styles.cta} href={EXPLORE_HREF}>
           {hero.ctaLabel}
         </a>
       </div>

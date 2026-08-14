@@ -27,7 +27,7 @@ export function SocialProofSection({ socialProof }: SocialProofSectionProps) {
       <ul className={styles.seals}>
         {socialProof.seals.map((seal) => (
           <li key={seal.name} className={styles.seal} data-testid="seal">
-            <DecorativeIcon name="seal" />
+            <DecorativeIcon name={seal.icon} />
             <span className={styles.sealName}>{seal.name}</span>
             <span className={styles.sealDetail}>{seal.detail}</span>
           </li>

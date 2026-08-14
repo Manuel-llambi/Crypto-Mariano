@@ -4,6 +4,23 @@ import type { ReactNode } from "react";
 import { site } from "@/lib/content";
 import { resolveOgImage } from "@/lib/og-image";
 
+/*
+ * The typefaces of the design, self-hosted.
+ *
+ * `@fontsource` rather than `next/font/google`, which downloads while building
+ * and would break a build with no network. The packages are pinned in
+ * package-lock, so the bytes are the same on every machine.
+ *
+ * Only the `latin` subsets are imported: Spanish accents and «ñ» live there, and
+ * pulling cyrillic or greek would be weight nobody on this site can read.
+ */
+import "@fontsource/ibm-plex-sans/latin-400.css";
+import "@fontsource/ibm-plex-sans/latin-600.css";
+import "@fontsource/ibm-plex-mono/latin-400.css";
+import "@fontsource/ibm-plex-mono/latin-600.css";
+import "@fontsource/source-serif-4/latin-400.css";
+import "@fontsource/source-serif-4/latin-600.css";
+
 import "@/styles/tokens.css";
 import "@/styles/global.css";
 

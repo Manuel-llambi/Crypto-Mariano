@@ -6,7 +6,8 @@
   flex: 1 1 0;
   min-inline-size: 0;
   padding: var(--card-padding);
-  background: var(--cream);
+  background: var(--white);
+  border: 1px solid var(--rule);
   text-align: center;
 }
 

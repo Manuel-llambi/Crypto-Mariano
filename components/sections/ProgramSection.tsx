@@ -1,5 +1,6 @@
 import { Badge } from "@/components/ui/Badge";
 import { Disclosure } from "@/components/ui/Disclosure";
+import { accessUrl } from "@/lib/access-url";
 import type { SectionId } from "@/lib/nav/sections";
 import type { DerivedModule, DerivedProgram } from "@/lib/program/derive";
 
@@ -7,9 +8,14 @@ import styles from "./ProgramSection.module.css";
 
 interface ProgramSectionProps {
   program: DerivedProgram;
+  /** The shared enrolment wording, so 6.6 holds across the three controls. */
+  enrollLabel: string;
 }
 
 const SECTION: SectionId = "programa";
+
+/** The second of the three enrolment controls, after the header. */
+const ENROL_HREF = accessUrl("signup");
 
 /** Code and title, the part both branches share. */
 function ModuleHeading({ module }: { module: DerivedModule }) {
@@ -54,12 +60,12 @@ function Module({ module }: { module: DerivedModule }) {
   );
 }
 
-export function ProgramSection({ program }: ProgramSectionProps) {
+export function ProgramSection({ program, enrollLabel }: ProgramSectionProps) {
   return (
     <section id={SECTION} className={styles.section}>
       <Badge className={styles.eyebrow}>Programa</Badge>
 
-      <h2 className={styles.sectionTitle}>[REVISAR] Titular del temario</h2>
+      <h2 className={styles.sectionTitle}>Investigaciones con criptomonedas</h2>
 
       <dl className={styles.figures}>
         {/* 3.5 — with no available module there is no duration to announce, and
@@ -79,6 +85,11 @@ export function ProgramSection({ program }: ProgramSectionProps) {
       </dl>
 
       <p className={styles.description}>{program.description}</p>
+
+      {/* A plain anchor: no handler, no script navigation (6.3). */}
+      <a className={styles.cta} href={ENROL_HREF}>
+        {enrollLabel}
+      </a>
 
       {/* 4.8 — declaration order, straight through. */}
       <div className={styles.modules}>

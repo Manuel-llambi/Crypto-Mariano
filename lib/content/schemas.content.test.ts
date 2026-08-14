@@ -15,8 +15,8 @@ import {
 } from "./schemas";
 
 const profile = { icon: "shield", title: "Fuerzas del orden", description: "Descripción" };
-const methodBlock = { title: "Casos reales", description: "Descripción" };
-const seal = { name: "Sello", detail: "Detalle" };
+const methodBlock = { icon: "institutional", title: "Casos reales", description: "Descripción" };
+const seal = { icon: "seal-doj", name: "Sello", detail: "Detalle" };
 const metric = { value: "5000+", label: "investigadores" };
 const update = { date: "2026-07", title: "Título", description: "Descripción" };
 const faqEntry = { question: "¿Cuánto dura?", answer: "Lo que haga falta." };
@@ -43,7 +43,13 @@ const site = {
     ctaLabel: "Inscribite",
     imageAlt: "Panel de análisis de cadena",
   },
-  finalCta: { headline: "Titular de cierre", body: "Texto", ctaLabel: "Inscribite" },
+  finalCta: {
+    eyebrow: "SESSION_INITIALIZE_REQUEST",
+    headline: "Titular de cierre",
+    body: "Texto",
+    ctaLabel: "Inscribite",
+    footnote: "Entorno certificado",
+  },
 };
 
 const footer = {
