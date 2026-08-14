@@ -180,7 +180,7 @@ abiertas las que ya estaban desplegadas.
 5.3. IF una pregunta frecuente carece de enunciado o de respuesta THEN THE
 SYSTEM SHALL fallar la compilación.
 
-### Requisito 6 — Derivación a la pantalla de acceso
+### Requisito 6 — Derivación a las pantallas de acceso
 
 **Historia de usuario:** Como visitante decidido, quiero pasar del sitio al
 proceso de inscripción en un clic, para no perder el impulso.
@@ -188,7 +188,7 @@ proceso de inscripción en un clic, para no perder el impulso.
 **Criterios de aceptación:**
 
 6.1. WHEN el visitante activa un control de inscripción THE SYSTEM SHALL
-llevarlo a la pantalla de acceso indicando la intención de alta.
+llevarlo a la pantalla de alta indicando la intención de alta.
 
 6.2. WHEN el visitante activa el control de inicio de sesión THE SYSTEM SHALL
 llevarlo a la pantalla de acceso indicando la intención de ingreso.
@@ -196,17 +196,43 @@ llevarlo a la pantalla de acceso indicando la intención de ingreso.
 6.3. THE SYSTEM SHALL implementar ambos controles como enlaces de hipertexto
 estándar, sin navegación por script.
 
-6.4. THE SYSTEM SHALL obtener la dirección base de la pantalla de acceso de la
-configuración del proyecto.
+6.4. ~~THE SYSTEM SHALL obtener la dirección base de la pantalla de acceso de
+la configuración del proyecto.~~ **Superado el 2026-08-14** (ver la nota de
+abajo).
 
-6.5. IF la dirección base de la pantalla de acceso falta o no es una URL válida
-THEN THE SYSTEM SHALL fallar la compilación.
+6.5. ~~IF la dirección base de la pantalla de acceso falta o no es una URL
+válida THEN THE SYSTEM SHALL fallar la compilación.~~ **Superado el
+2026-08-14** (ver la nota de abajo).
 
 6.6. THE SYSTEM SHALL usar la misma forma verbal en los tres controles de
 inscripción de la página.
 
-6.7. THE SYSTEM SHALL NO implementar autenticación, envío de códigos, cobro ni
-gestión de sesión.
+6.7. THE SYSTEM SHALL NO implementar autenticación, envío de códigos,
+verificación de códigos, alta de cuentas, cobro ni gestión de sesión.
+
+**Nota sobre 6.4 y 6.5 — los destinos dejaron de ser externos (2026-08-14).**
+Ambos criterios existían porque la pantalla de acceso vivía fuera de esta
+aplicación y solo conocíamos su dirección. Ya no: el ingreso se implementó en
+`/acceso` el 2026-08-14 y el alta, ese mismo día, en las tres pantallas de
+`/registro`. Los cinco controles apuntan hoy a rutas internas declaradas en
+`lib/routes.ts`, de modo que no hay dirección base que configurar ni que
+validar. `NEXT_PUBLIC_ACCESS_URL` y `lib/access-url.ts` siguen en el
+repositorio pero **ya no los importa ningún componente**; retirarlos es una
+decisión aparte, y hasta que se tome la variable no rompe ninguna compilación
+porque el módulo que la lee no se carga.
+
+La numeración no se reacomoda a propósito: el código, los tests y `tasks.md`
+citan estos números, y renumerar convertiría cada cita en una referencia falsa.
+
+**Nota sobre 6.7 — las pantallas son maquetas.** `/acceso` y las tres de
+`/registro` son solo interfaz. No envían el código, no lo verifican y no crean
+la cuenta: el control de cada pantalla intermedia es un ancla que avanza pase
+lo que pase, incluso sin haber escrito nada. Las dos pantallas que tocan una
+contraseña —`/acceso` y `/registro/crear-cuenta`— cierran con un botón inerte,
+y ninguna de las cuatro renderiza un `<form>`. Esto último no es un detalle de
+estilo: un formulario sin `action` se envía por GET y pondría la contraseña en
+la barra de direcciones, y de ahí en el historial, en los registros del
+servidor y en el `Referer` del pedido siguiente.
 
 ### Requisito 7 — Adaptación a pantallas angostas
 
@@ -313,9 +339,12 @@ inicio.
 
 ## Fuera de alcance
 
-- La pantalla de acceso propiamente dicha: formulario de correo, generación y
-  envío del código, verificación, expiración, limitación de intentos y sesión.
-  Es un subsistema aparte con su propio spec.
+- El comportamiento de las pantallas de acceso y de alta: generación y envío del
+  código, verificación, expiración, limitación de intentos, creación de la
+  cuenta y sesión. Es un subsistema aparte con su propio spec. Desde el
+  2026-08-14 la **interfaz** de esas pantallas sí vive en este repositorio
+  (`/acceso` y las tres de `/registro`), pero como maqueta inerte: sin
+  requisitos numerados propios, y sin publicar hasta que exista el backend.
 - Cobro, precios y facturación. La página no menciona importes.
 - Sección propia de testimonios. El ítem de navegación apunta a prueba social.
 - Sistema de gestión de contenidos, panel de edición o previsualización.

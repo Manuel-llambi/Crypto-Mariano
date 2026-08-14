@@ -1,7 +1,7 @@
 import { Badge } from "@/components/ui/Badge";
 import { Disclosure } from "@/components/ui/Disclosure";
-import { accessUrl } from "@/lib/access-url";
 import type { SectionId } from "@/lib/nav/sections";
+import { SIGNUP_HREF } from "@/lib/routes";
 import type { DerivedModule, DerivedProgram } from "@/lib/program/derive";
 
 import styles from "./ProgramSection.module.css";
@@ -15,7 +15,7 @@ interface ProgramSectionProps {
 const SECTION: SectionId = "programa";
 
 /** The second of the three enrolment controls, after the header. */
-const ENROL_HREF = accessUrl("signup");
+const ENROL_HREF = SIGNUP_HREF;
 
 /** Code and title, the part both branches share. */
 function ModuleHeading({ module }: { module: DerivedModule }) {

@@ -8,6 +8,8 @@ interface FieldProps {
   type: "email" | "password" | "text";
   name: string;
   autoComplete?: string;
+  /** Which keyboard a phone should offer — a code is digits, not prose. */
+  inputMode?: "numeric" | "text";
   /** Optional control beside the label, such as «forgot my password». */
   action?: ReactNode;
 }
@@ -19,7 +21,7 @@ interface FieldProps {
  * placeholder standing in for one: a placeholder disappears the moment someone
  * types, and is never announced as the field's name.
  */
-export function Field({ id, label, type, name, autoComplete, action }: FieldProps) {
+export function Field({ id, label, type, name, autoComplete, inputMode, action }: FieldProps) {
   return (
     <div className={styles.field}>
       <div className={styles.head}>
@@ -35,6 +37,7 @@ export function Field({ id, label, type, name, autoComplete, action }: FieldProp
         name={name}
         type={type}
         autoComplete={autoComplete}
+        inputMode={inputMode}
       />
     </div>
   );

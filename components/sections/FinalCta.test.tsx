@@ -19,11 +19,13 @@ function enrolControl() {
 }
 
 describe("the enrolment control opens the signup flow (6.1)", () => {
-  it("points at a destination carrying intent=signup", () => {
+  it("points at the first step of the flow, carrying intent=signup", () => {
     render(<FinalCta finalCta={finalCta} />);
 
     const href = enrolControl().getAttribute("href")!;
-    expect(new URL(href).searchParams.get("intent")).toBe("signup");
+
+    expect(new URL(href, "https://example.test").searchParams.get("intent")).toBe("signup");
+    expect(href).toBe("/registro?intent=signup");
   });
 
   it("takes its wording from the content", () => {

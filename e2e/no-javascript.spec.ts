@@ -89,19 +89,25 @@ test.describe("anchor navigation works (8.2)", () => {
 // 8.3 — the access controls still navigate, with their intent.
 test.describe("access controls work (8.3)", () => {
   /**
-   * The enrolment control still leaves for the configured host, so the link is
-   * checked rather than followed: that screen is out of scope (6.7).
+   * Signing up is a route of this app now, so the link is followed for real and
+   * the whole flow is walked with scripting off: three screens, two of them
+   * reached by nothing but an anchor.
    */
-  test("the enrolment control carries intent=signup to the configured host", async ({ page }) => {
+  test("the enrolment control walks the sign-up flow with no scripting", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto("/");
 
-    const control = page.locator('header a[href*="intent=signup"]').first();
-    const href = await control.getAttribute("href");
+    await page.locator('header a[href*="intent=signup"]').first().click();
+    await expect(page).toHaveURL(/\/registro\?intent=signup$/);
+    await expect(page.locator('input[type="email"]')).toBeVisible();
 
-    expect(href).toMatch(/^https?:\/\//);
-    expect(href).toContain("intent=signup");
-    await expect(control).toBeVisible();
+    await page.getByRole("link", { name: "Enviar código" }).click();
+    await expect(page).toHaveURL(/\/registro\/codigo$/);
+    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible();
+
+    await page.getByRole("link", { name: "Verificar" }).click();
+    await expect(page).toHaveURL(/\/registro\/crear-cuenta$/);
+    await expect(page.locator('input[type="password"]')).toBeVisible();
   });
 
   /**

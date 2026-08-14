@@ -1,0 +1,25 @@
+/*
+ * The design greys this link down to #76777e, which design.md rejected at
+ * 4.46:1. It takes the corrected grey instead.
+ */
+/*
+ * 7.6 applies here too: the design draws this as a small inline link, but it is
+ * an action control and a finger has to be able to hit it. The global rule of
+ * `styles/global.css` does not reach it — that one covers landmarks and section
+ * links — so the target is grown locally instead of broadening a rule that would
+ * then also inflate prose links.
+ */
+.action {
+  display: inline-flex;
+  align-items: center;
+  min-block-size: 44px;
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  color: var(--grey-text);
+  text-decoration: underline;
+}
+
+.action:hover,
+.action:focus-visible {
+  color: var(--navy);
+}

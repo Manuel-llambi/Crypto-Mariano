@@ -37,7 +37,7 @@ lib/content/index.ts          parsea al importar; lanza si algo no valida (2.3)
       │
       ├──►  lib/program/derive.ts    code, moduleCount, duración (3.1-3.6)
       ├──►  lib/nav/sections.ts      SectionId + tipo de href (1.2, 1.5)
-      └──►  lib/access-url.ts        URL de acceso + intent (6.1, 6.2, 6.4, 6.5)
+      └──►  lib/routes.ts            rutas internas de acceso y alta (6.1, 6.2)
       ▼
 app/page.tsx                  compone y pasa props (1.1)
       ▼
@@ -53,27 +53,41 @@ app/
   layout.tsx            lang="es" (9.1), metadatos (10.1, 10.2)
   page.tsx              composición de secciones (1.1)
   not-found.tsx         404 con encabezado y pie (10.4)
+  acceso/page.tsx       ingreso — maqueta inerte (6.2, 6.7)
+  registro/page.tsx           alta paso 1: correo (6.1, 6.7)
+  registro/codigo/page.tsx    alta paso 2: código (6.7)
+  registro/crear-cuenta/page.tsx  alta paso 3: cuenta (6.7)
 content/
   site.ts  nav.ts  footer.ts  audience.ts  methodology.ts
   updates.ts  program.ts  social-proof.ts  faq.ts
+  access.ts             textos de las cuatro pantallas transaccionales
 lib/
   content/schemas.ts    esquemas Zod
   content/index.ts      carga validada
   program/derive.ts     derivaciones
   nav/sections.ts       SectionId
-  access-url.ts         construcción de URL saliente
+  routes.ts             rutas internas de acceso y alta (6.1, 6.2)
+  access-url.ts         vestigio: ya no lo importa ningún componente
   format/duration.ts    minutos → "1 h 20 min" (3.6)
   format/month.ts       ISO → "JULIO 2026" (2.6)
 components/
   sections/  TopNavBar Hero AudienceSection MethodologySection
              UpdatesSection ProgramSection SocialProofSection
              FaqSection FinalCta SiteFooter
+             AccessScreen AccessTopBar
   ui/        Disclosure Badge MetricCard ProfileCard NavPanel
+             Field FieldAction DecorativeIcon
 styles/
   tokens.css            variables CSS derivadas del mockup
 public/
   og.png                imagen de vista previa (10.2, 10.3)
 ```
+
+Las cuatro pantallas de `app/acceso` y `app/registro` quedan **fuera** del flujo
+de contenido derivado del diagrama de arriba: consumen `content/access.ts` en
+directo y no participan de `deriveProgram` ni de `SECTION_IDS`. Son maquetas de
+interfaz, sin requisitos numerados propios; lo único que el spec les impone es
+6.7, y lo cumplen no haciendo nada.
 
 ## Componentes e interfaces
 
@@ -164,36 +178,41 @@ Las tres rutas de página (`/privacidad`, `/terminos`, `/acreditaciones`) todav�
 no existen; hoy caen en la página 404. En la réplica del diseño esos enlaces son
 `href="#"`, así que tampoco están resueltos allá.
 
-### lib/access-url.ts
+### lib/routes.ts
 
-- **Responsabilidad:** construir el enlace saliente a la pantalla de acceso
-  (6.1, 6.2) y validar la configuración (6.4, 6.5).
+- **Responsabilidad:** las direcciones de las pantallas transaccionales, en un
+  solo lugar (6.1, 6.2).
 - **Interfaz:**
 
 ```ts
-export type AccessIntent = "login" | "signup";
-export function accessUrl(intent: AccessIntent): string;
+export const LOGIN_HREF = "/acceso?intent=login";
+export const SIGNUP_HREF = "/registro?intent=signup";
+export const SIGNUP_CODE_HREF = "/registro/codigo";
+export const SIGNUP_ACCOUNT_HREF = "/registro/crear-cuenta";
 ```
 
-Lee `NEXT_PUBLIC_ACCESS_URL`, la valida con `z.string().url()` al importar el
-módulo y le agrega `?intent=`. Una variable ausente o malformada rompe el build
-(6.5). No implementa nada de autenticación (6.7).
+Constantes, no funciones: no hay nada que construir ni que validar en tiempo de
+ejecución. `SIGNUP_HREF` lo consumen cuatro lugares —los tres controles de
+inscripción y el «reenviar código» del paso 2, que devuelve al paso 1—, y una
+ruta escrita cuatro veces es una ruta que tarde o temprano se contradice.
 
-**Los dos destinos se separaron el 2026-08-14.** La pantalla de acceso para
-quien ya tiene cuenta se implementó dentro de esta aplicación, en `/acceso`, así
-que el control de inicio de sesión apunta a `/acceso?intent=login` y ya no usa
-`accessUrl`. Los tres controles de inscripción siguen saliendo a
-`NEXT_PUBLIC_ACCESS_URL` con `?intent=signup`, porque la pantalla de alta
-—correo y código— todavía no existe acá; mandar a alguien sin cuenta a un
-formulario que pide contraseña sería un camino muerto.
+La intención se conserva en los dos puntos de entrada aunque la ruta ya
+identifique el flujo: 6.1 y 6.2 piden que el destino la indique. Los pasos 2 y 3
+no la llevan porque no son puntos de entrada.
 
-La intención se conserva en la dirección interna aunque la ruta ya identifique
-la pantalla: 6.2 pide que el destino la indique, y deja lugar a que el alta
-aterrice al lado como `?intent=signup` cuando exista.
+**Los destinos dejaron de ser externos el 2026-08-14.** Antes de esa fecha ambos
+controles salían a `NEXT_PUBLIC_ACCESS_URL`, y por eso existían 6.4 y 6.5. Ese
+mismo día se implementó el ingreso en `/acceso` y el alta en las tres pantallas
+de `/registro`, todas dentro de esta aplicación: los cinco controles apuntan hoy
+a rutas internas, no hay dirección base que configurar ni que validar, y
+`requirements.md` marca 6.4 y 6.5 como superados.
 
-`accessUrl` sigue admitiendo las dos intenciones. La landing solo usa `signup`
-hoy; la función no se recortó porque el alta va a volver a necesitarla si esa
-pantalla se aloja fuera.
+**`lib/access-url.ts` quedó como vestigio.** Sigue en el repositorio con su test,
+pero **ningún componente lo importa**. Como el módulo no se carga, la ausencia de
+`NEXT_PUBLIC_ACCESS_URL` ya no rompe ninguna compilación; la variable sobrevive
+en el bloque `test.env` de `vitest.config.ts` únicamente para que su propio test
+siga corriendo. Retirar el módulo, su test y esa entrada de configuración es una
+limpieza pendiente, no una decisión tomada.
 
 ### components/ui/Disclosure
 
@@ -249,6 +268,78 @@ observador de scroll (1.6).
 - Se construye con `<details>` para que abra sin JavaScript (8.4). Un efecto de
   cliente de unas pocas líneas escucha clics en enlaces internos y quita el
   atributo `open` (7.3). Es la única degradación aceptada sin JavaScript (8.5).
+
+### components/sections/AccessScreen
+
+- **Responsabilidad:** la tarjeta de la que están hechas las cuatro pantallas
+  transaccionales — ingreso, y los tres pasos del alta.
+- **Interfaz:**
+
+```ts
+interface AccessScreenProps {
+  siteName: string;
+  title: string;
+  subtitle: string;
+  protocol: string;      // la nota técnica bajo el filete
+  submitLabel: string;
+  submitHref?: string;   // ausente ⇒ botón inerte
+  children: ReactNode;   // los campos, en orden de lectura
+}
+```
+
+Las cuatro pantallas difieren solo en su copia y sus campos, así que el marcado
+se escribe una vez. `submitHref` es lo que decide la naturaleza del control:
+presente, es un `<a>` que avanza al paso siguiente; ausente, es un
+`<button type="button">` que no hace nada.
+
+**Ninguna de las cuatro renderiza un `<form>`, y esa ausencia es el diseño.** Un
+formulario sin `action` se envía por GET, lo que pondría lo tecleado en la
+cadena de consulta —y de ahí en el historial, en los registros del servidor y en
+el `Referer` del pedido siguiente—. Las dos pantallas que tocan una contraseña,
+`/acceso` y `/registro/crear-cuenta`, son justamente las que cierran con el
+botón inerte.
+
+Las cuatro declaran `robots: { index: false, follow: false }`: una pantalla que
+no autentica no tiene nada que hacer en un resultado de búsqueda.
+
+Nada transporta estado entre pasos. El control del paso 1 y el del paso 2
+avanzan pase lo que pase, incluso sin haber escrito nada, porque verificar es
+exactamente lo que 6.7 deja fuera de alcance. Por eso el paso 3 vuelve a pedir
+el correo: cuando exista backend llegará del paso 1 y ese campo pasará a ser un
+eco de solo lectura.
+
+### components/ui/Field y components/ui/FieldAction
+
+- **Responsabilidad:** un campo con su etiqueta, y el enlace chico que a veces
+  la acompaña.
+- **Interfaz:**
+
+```ts
+interface FieldProps {
+  id: string;
+  label: string;
+  type: "email" | "password" | "text";
+  name: string;
+  autoComplete?: string;
+  inputMode?: "numeric" | "text";
+  action?: ReactNode;    // control junto a la etiqueta
+}
+
+interface FieldActionProps { href: string; children: ReactNode; }
+```
+
+Siempre `<label for>`, nunca un `placeholder` haciendo de etiqueta: el
+`placeholder` desaparece apenas alguien teclea y no se anuncia como el nombre
+del campo.
+
+El código de verificación es `type="text"` con `inputMode="numeric"`, no
+`type="number"`. Un código es una cadena de dígitos: `number` traería flechitas,
+agrupación silenciosa por configuración regional y la pérdida del cero inicial.
+`inputMode` es lo que consigue el teclado numérico en el teléfono.
+
+`FieldAction` es un componente y no una clase porque es un control de acción, y
+el objetivo de 44 px que pide 7.6 es de lo que se olvida uno la segunda vez que
+lo escribe a mano.
 
 ### styles/tokens.css — fundamento visual
 
@@ -391,14 +482,15 @@ declarar minutos, y uno `available` no compila sin ellos.
    `id` tomado de `SECTION_IDS` (1.2).
 5. El HTML se sirve estático. No hay peticiones de red (2.1).
 
-**Escenario B — el visitante hace clic en «Inscribite».**
+**Escenario B — el visitante hace clic en «Inscríbete».**
 
-1. El control es un `<a href>` construido por `accessUrl("signup")` en tiempo de
-   build (6.3).
-2. `NEXT_PUBLIC_ACCESS_URL` ya fue validada al importar el módulo; si faltaba,
-   este build nunca existió (6.5).
-3. El navegador navega a la pantalla de acceso con `?intent=signup` (6.1). La
-   landing no participa de lo que pase después (6.7).
+1. El control es un `<a href>` con la constante `SIGNUP_HREF` (6.3). No hay
+   construcción en tiempo de build ni configuración que leer.
+2. El navegador navega a `/registro?intent=signup`, el primer paso del alta
+   (6.1).
+3. Los pasos siguientes son anclas a `/registro/codigo` y
+   `/registro/crear-cuenta`. Ninguno envía, verifica ni crea nada: el recorrido
+   completo es maqueta, y ahí termina el alcance de este repositorio (6.7).
 
 **Escenario C — el visitante despliega dos módulos.**
 
@@ -420,11 +512,13 @@ declarar minutos, y uno `available` no compila sin ellos.
 | Pregunta frecuente sin respuesta | `NonEmpty` rechaza; build falla | 5.3 |
 | Ancla de navegación hacia una sección inexistente | Error de tipos: `href` no es `Anchor`; build falla | 1.5 |
 | Sección declarada en `SECTION_IDS` pero no renderizada | Test de integridad de anclas falla en CI | 1.5 |
-| `NEXT_PUBLIC_ACCESS_URL` ausente o no es una URL | Validación al importar; build falla | 6.5 |
+| Ruta de acceso o de alta mal escrita | Constante única en `lib/routes.ts`; un identificador inexistente es error de tipos | 6.1, 6.2 |
+| Campo de `content/access.ts` ausente o vacío | `AccessSchema` rechaza al importar; build falla | 2.2, 2.3 |
 | Imagen de vista previa ausente en `public/` | Verificación de existencia al importar los metadatos; build falla | 10.3 |
 | Sin módulos disponibles (duración total cero) | `durationLabel = null`; la sección omite el dato | 3.5 |
 | La imagen del hero no carga | Dimensiones explícitas y fondo `--navy`; el layout no salta | — |
-| La pantalla de acceso está caída | Fuera de alcance: es un `<a>` y responde el navegador | 6.3, 6.7 |
+| Alguien escribe correo o código y activa el control | Se descarta en silencio: las pantallas no transportan estado. Deliberado mientras sean maquetas | 6.7 |
+| Alguien sigue «Olvidé mi contraseña» | `/recuperar-acceso` no existe todavía; cae en la 404. Ver preguntas abiertas | 10.4 |
 | Ruta inexistente | `not-found.tsx` con encabezado, pie y enlace al inicio | 10.4 |
 | JavaScript no disponible | Desplegables, anclas, CTA y apertura del panel siguen operativos; solo se pierde el cierre automático | 8.1-8.5 |
 | Violación de accesibilidad detectada | axe sobre la página renderizada falla CI | 9.6 |
@@ -437,8 +531,9 @@ declarar minutos, y uno `available` no compila sin ellos.
   al largo (3.2); `totalMinutes` **excluyendo** los `coming-soon` (3.3);
   `durationLabel === null` con suma cero (3.5); formato horas/minutos (3.6).
 - Esquemas: un caso de rechazo por cada fila IF/THEN de la tabla de errores.
-- `accessUrl`: `?intent=login` y `?intent=signup` (6.1, 6.2); rechazo de URL
-  base inválida (6.5).
+- `lib/routes.ts` no se testea: son constantes literales, y un test que las
+  repita solo afirma que dos copias del mismo string son iguales. Lo que sí se
+  afirma es que cada control apunta a la constante, en el test del componente.
 - `format/month`: ISO → etiqueta mostrada (2.6). Orden descendente (2.7).
 
 **Componentes — solo ramificación, nunca apariencia.**
@@ -448,6 +543,10 @@ declarar minutos, y uno `available` no compila sin ellos.
   (4.3); un `available` sin resumen no (4.4).
 - `Disclosure`: sin `children` no emite `<details>` ni control.
 - `TopNavBar`: los `href` salen de los datos y no hay observador de scroll (1.6).
+- `AccessScreen`: con `submitHref` el control es un `<a>` al paso siguiente, sin
+  él un `<button type="button">` inerte, y **en ninguna de las dos formas se
+  renderiza un `<form>`** (6.7). La barra superior lleva la marca y ningún
+  enlace; la retícula decorativa va con `aria-hidden` (9.3).
 
 **Casos borde.** Un solo módulo, todos `coming-soon`, todos `available`,
 resumen ausente, actualizaciones escritas fuera de orden, duración exactamente
@@ -461,7 +560,16 @@ resumen ausente, actualizaciones escritas fuera de orden, duración exactamente
   «Testimonios» en un fallo automático.
 - **axe (9.6):** auditoría sobre la página renderizada, en CI.
 - **Un solo smoke E2E:** la página carga, un módulo despliega, el CTA apunta a
-  la URL con `?intent=`.
+  `/registro?intent=signup`.
+- **`e2e/acceso.spec.ts` y `e2e/registro.spec.ts`:** las pantallas
+  transaccionales. Recorren el alta de punta a punta por anclas, y afirman lo
+  que ningún test de componente puede ver — que teclear una contraseña y activar
+  el control **no altera la URL**, ni siquiera al presionar Enter dentro de un
+  campo. Ese es el test que protege la decisión de no usar `<form>`. Además:
+  44 px de objetivo (7.6), sin desplazamiento horizontal en angosto (7.8), axe
+  en ambos anchos y `noindex` declarado.
+- **`e2e/no-javascript.spec.ts` camina el alta con el scripting apagado** (8.3):
+  tres pantallas, dos de ellas alcanzadas por nada más que un ancla.
 
 **Explícitamente sin cobertura:** textos concretos, snapshots de marcado, clases
 CSS y posiciones. Son el diseño, no el comportamiento; se rompen con cada
@@ -499,6 +607,23 @@ cambio de copy y no atrapan defectos.
   devuelve el código de referencia y ahorraría traducción. **Es la decisión de
   este documento con más probabilidad de ser revocada; si preferís Tailwind,
   solo cambia esta sección.**
+
+- **Decisión (2026-08-14):** las cuatro pantallas transaccionales no renderizan
+  ningún `<form>` — **Justificación:** todavía no hay a dónde enviar, y un
+  formulario sin `action` se envía por GET: la contraseña terminaría en la barra
+  de direcciones, y de ahí en el historial, en los registros del servidor y en
+  el `Referer` del pedido siguiente. Un ancla o un botón inerte no pueden
+  filtrar nada — **Alternativa:** un `<form>` con `onSubmit` que llame a
+  `preventDefault`; se rechazó porque delega en JavaScript una garantía que el
+  marcado puede dar solo, y se cae justo cuando el script no carga.
+
+- **Decisión (2026-08-14):** rutas internas en constantes, sin variable de
+  entorno — **Justificación:** las pantallas viven en esta aplicación; validar
+  en tiempo de build una dirección que es una ruta literal es ceremonia sin
+  garantía — **Alternativa:** conservar `accessUrl` y `NEXT_PUBLIC_ACCESS_URL`
+  por si el alta se aloja fuera; se rechazó porque mantener configuración para
+  un escenario hipotético cuesta hoy y no compra nada. El módulo sigue en el
+  repositorio si hiciera falta volver.
 
 - **Decisión:** el panel de navegación acepta unas líneas de JavaScript —
   **Justificación:** `<details>` no se cierra solo al navegar a un ancla y

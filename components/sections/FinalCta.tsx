@@ -1,6 +1,6 @@
 import { Badge } from "@/components/ui/Badge";
-import { accessUrl } from "@/lib/access-url";
 import type { FinalCtaContent } from "@/lib/content/schemas";
+import { SIGNUP_HREF } from "@/lib/routes";
 
 import styles from "./FinalCta.module.css";
 
@@ -9,7 +9,7 @@ interface FinalCtaProps {
 }
 
 /** The same constant destination the other two controls use (6.1, 6.6). */
-const ENROL_HREF = accessUrl("signup");
+const ENROL_HREF = SIGNUP_HREF;
 
 /** The closing block: the third and last enrolment control of the page. */
 export function FinalCta({ finalCta }: FinalCtaProps) {

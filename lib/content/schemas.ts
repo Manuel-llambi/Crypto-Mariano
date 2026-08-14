@@ -118,9 +118,52 @@ export const LoginSchema = z.strictObject({
   protocol: NonEmpty,
 });
 
-export const AccessSchema = z.strictObject({ login: LoginSchema });
+/**
+ * The three steps of the sign-up flow, in order.
+ *
+ * Each one is a screen of its own because each one is a single task: the
+ * address, then the code that reaches it, then the account. They share the
+ * shape of a screen — a title, a subtitle, one control, the protocol note —
+ * and differ only in the fields they collect.
+ *
+ * No screen declares where its control leads. Those are routes, they live in
+ * `lib/routes.ts`, and a path spelled in two places eventually disagrees with
+ * itself.
+ */
+const StepSchema = z.strictObject({
+  title: NonEmpty,
+  subtitle: NonEmpty,
+  submitLabel: NonEmpty,
+  protocol: NonEmpty,
+});
+
+export const SignupEmailSchema = StepSchema.extend({ emailLabel: NonEmpty });
+
+export const SignupCodeSchema = StepSchema.extend({
+  codeLabel: NonEmpty,
+  resendLabel: NonEmpty,
+});
+
+export const SignupAccountSchema = StepSchema.extend({
+  emailLabel: NonEmpty,
+  passwordLabel: NonEmpty,
+});
+
+export const SignupSchema = z.strictObject({
+  email: SignupEmailSchema,
+  code: SignupCodeSchema,
+  account: SignupAccountSchema,
+});
+
+export const AccessSchema = z.strictObject({
+  login: LoginSchema,
+  signup: SignupSchema,
+});
 
 export type LoginContent = z.infer<typeof LoginSchema>;
+export type SignupEmailContent = z.infer<typeof SignupEmailSchema>;
+export type SignupCodeContent = z.infer<typeof SignupCodeSchema>;
+export type SignupAccountContent = z.infer<typeof SignupAccountSchema>;
 
 export const SiteSchema = z.strictObject({
   name: NonEmpty,

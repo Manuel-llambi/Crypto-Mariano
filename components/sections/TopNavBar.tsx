@@ -1,6 +1,6 @@
 import { NavPanel } from "@/components/ui/NavPanel";
-import { accessUrl } from "@/lib/access-url";
 import type { NavItem } from "@/lib/nav/sections";
+import { LOGIN_HREF, SIGNUP_HREF } from "@/lib/routes";
 
 import styles from "./TopNavBar.module.css";
 
@@ -18,23 +18,6 @@ interface TopNavBarProps {
    */
   anchorPrefix?: string;
 }
-
-/** Resolved once at module scope: constants in the output, no runtime work. */
-const ENROL_HREF = accessUrl("signup");
-
-/**
- * Signing in happens **inside this app**; signing up still does not.
- *
- * The access screen for an existing account lives at `/acceso`, so the control
- * points there rather than at `NEXT_PUBLIC_ACCESS_URL`. The intent stays in the
- * address because 6.2 asks the destination to state it, and because the sign-up
- * screen will land beside it as `?intent=signup` once it exists.
- *
- * Until then the three enrolment controls keep leaving for the configured host:
- * sending someone who has no account to a form asking for a password would be
- * a dead end.
- */
-const LOGIN_HREF = "/acceso?intent=login";
 
 /**
  * The fixed header: navigation plus the two access controls.
@@ -72,11 +55,13 @@ export function TopNavBar({
       </nav>
 
       <div className={styles.access}>
-        {/* 6.2, 6.3 — plain anchors carrying their intent. */}
+        {/* 6.1, 6.2, 6.3 — plain anchors carrying their intent. Both flows
+            now live in this app: `/acceso` for an existing account, `/registro`
+            for a new one. */}
         <a className={styles.login} href={LOGIN_HREF}>
           {loginLabel}
         </a>
-        <a className={styles.enrol} href={ENROL_HREF}>
+        <a className={styles.enrol} href={SIGNUP_HREF}>
           {enrollLabel}
         </a>
 

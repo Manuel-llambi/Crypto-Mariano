@@ -62,32 +62,15 @@
 }
 
 /*
- * The design greys this link down to #76777e, which design.md rejected at
- * 4.46:1. It takes the corrected grey instead.
+ * One rule for the two shapes the control takes: a button where the screen is
+ * the end of the road, an anchor where it advances to the next step. The
+ * centring properties are what an anchor needs to look like the button; on the
+ * button they change nothing.
  */
-/*
- * 7.6 applies here too: the design draws this as a small inline link, but it is
- * an action control and a finger has to be able to hit it. The global rule of
- * `styles/global.css` does not reach it — that one covers landmarks and section
- * links — so the target is grown locally instead of broadening a rule that would
- * then also inflate prose links.
- */
-.forgot {
-  display: inline-flex;
-  align-items: center;
-  min-block-size: 44px;
-  font-family: var(--font-sans);
-  font-size: 0.875rem;
-  color: var(--grey-text);
-  text-decoration: underline;
-}
-
-.forgot:hover,
-.forgot:focus-visible {
-  color: var(--navy);
-}
-
 .submit {
+  display: flex;
+  align-items: center;
+  justify-content: center;
   min-block-size: 44px;
   padding-block: 1rem;
   border: 0;
@@ -97,6 +80,8 @@
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.15em;
+  text-align: center;
+  text-decoration: none;
   text-transform: uppercase;
   cursor: pointer;
 }
@@ -104,6 +89,7 @@
 .submit:hover,
 .submit:focus-visible {
   background: var(--gold-text);
+  color: var(--white);
 }
 
 .protocol {

@@ -41,6 +41,8 @@ Estado actual del pipeline: **ejecución terminada.** Los tres artefactos están
 
 **Las 27 tareas están hechas.** Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. La implementación está completa; lo que queda son las preguntas abiertas de publicación listadas más abajo.
 
+**Después del spec, y fuera de sus 27 tareas**, se agregaron las cuatro pantallas transaccionales: `app/acceso/` y las tres de `app/registro/`, con `components/sections/AccessScreen` y `AccessTopBar`, `components/ui/Field` y `FieldAction`, `content/access.ts` con su `AccessSchema`, `lib/routes.ts`, y las suites `e2e/acceso.spec.ts` y `e2e/registro.spec.ts`. No tienen entrada en `tasks.md` ni requisitos numerados; se implementaron contra el diseño de Stitch.
+
 Patrón establecido para criterios que se cumplen **por ausencia** (sin scrollspy, sin JavaScript propio): el test lee el archivo fuente y afirma que no contiene `useState`, `useEffect`, `addEventListener`, `IntersectionObserver`, `onClick` ni `use client`. El DOM renderizado no distingue esos casos. **Quitar los comentarios antes de afirmar** — un comentario que menciona la palabra prohibida hace fallar el test (pasó en T17).
 
 `NavPanel` es el **único** componente de cliente del sitio. Su efecto solo retira el atributo `open`; no llama a `preventDefault`, no toca historial ni desplazamiento. Cualquier responsabilidad extra ahí rompe el Requisito 8.
@@ -49,13 +51,13 @@ Commit inicial: `0ceac7e`, cubre T1 a T14. De acá en adelante, un commit por ta
 
 **Un test que pasa en la primera corrida no cuenta como verificado.** Si no lo viste en rojo, comprobalo por mutación: rompé a propósito lo que debería detectar, confirmá que falla *solo* ese test, y restaurá con `git checkout`. Se usó en T18, T19, T20 y T21. En T18 descubrió un defecto real en el mensaje de error. En T24 hizo falta **tres veces**: las dos primeras el test seguía verde sin la implementación, porque el criterio se cumplía por relleno decorativo; recién al afirmar el borde superior de la sección la mutación tumbó los casos. **Ojo:** `git checkout` no restaura un archivo que todavía no está versionado — commitealo antes de mutarlo, o reponé a mano.
 
-`NEXT_PUBLIC_ACCESS_URL` vive en `.env.local` (no versionado) y, para los tests, en el bloque `test.env` de `vitest.config.ts`.
+`NEXT_PUBLIC_ACCESS_URL` sigue declarada en el bloque `test.env` de `vitest.config.ts`, pero **solo la usa el test de `lib/access-url.ts`**. Ningún componente importa ese módulo desde el 2026-08-14 (ver más abajo).
 
 Los tokens de color tienen cuatro categorías en `styles/tokens.ts`: texto (4.5:1), interfaz (3:1), fondo y **decoración** (exenta de umbral). Un token nuevo sin clasificar rompe el test.
 
 Tests de componente: entorno jsdom **por archivo**, con `// @vitest-environment jsdom` en la primera línea. `vitest.config.ts` declara `esbuild.jsx: "automatic"` porque `tsconfig.json` usa `jsx: "preserve"` para Next; sin eso, todo test de componente falla con `React is not defined`.
 
-**Configuración requerida, todavía ausente:** `NEXT_PUBLIC_ACCESS_URL` (la dirección de la pantalla de acceso). No existe `.env.example` ni `.env.local`. `lib/access-url.ts` lanza al importarse sin ella, así que la compilación se romperá en cuanto T13 o T16 la usen.
+**No hace falta configurar nada para compilar.** `NEXT_PUBLIC_ACCESS_URL` ya no bloquea el build: `lib/access-url.ts` sigue lanzando si falta, pero nadie lo importa, así que el módulo no se carga. Retirar ese archivo, su test y la entrada de `vitest.config.ts` es limpieza pendiente, no una decisión tomada.
 
 T7 se ejecutó fuera del orden del listado, a propósito: los esquemas de navegación y pie de T5 validan `href` contra las anclas reales y necesitan `SECTION_IDS`. El orden a respetar es el de **Depende de**, no el numérico.
 
@@ -77,8 +79,10 @@ Otras decisiones cerradas del diseño:
 - Los desplegables son `<details>`/`<summary>` nativos, varios abiertos a la vez. Esto es lo que vuelve alcanzable el Requisito 8 (funcionamiento sin JavaScript).
 - El estado activo de la navegación es **solo hover**. Sin scrollspy, deliberadamente.
 - La autenticación está fuera de alcance: nada en el repositorio autentica, envía códigos ni abre sesión (6.7).
-- **Los dos destinos de acceso están separados (2026-08-14).** «Iniciar sesión» va a `/acceso?intent=login`, una ruta de esta aplicación con la pantalla de correo y contraseña — **solo UI, inerte**. Los tres controles de «Inscríbete» siguen saliendo a `NEXT_PUBLIC_ACCESS_URL` con `?intent=signup`, porque la pantalla de alta (correo + código) todavía no existe acá. La dirección base sale de la configuración; si falta o es inválida, falla la compilación.
-- `/acceso` **no tiene requisitos numerados**: se implementó contra el diseño de Stitch, no contra el spec de la landing. No debe publicarse mientras el formulario siga siendo una maqueta.
+- **Las cuatro pantallas transaccionales viven acá, y las cinco rutas son internas (2026-08-14).** «Iniciar sesión» va a `/acceso?intent=login`. Los tres controles de «Inscríbete» van a `/registro?intent=signup`, paso 1 de un alta de tres pantallas: `/registro` (correo) → `/registro/codigo` (código) → `/registro/crear-cuenta` (cuenta). Todas las direcciones son constantes de `lib/routes.ts`; no hay variable de entorno ni URL saliente. Esto dejó **superados los criterios 6.4 y 6.5**, tachados en `requirements.md` sin renumerar el resto.
+- **Las cuatro son maquetas inertes.** No envían el código, no lo verifican y no crean la cuenta (6.7). El control de cada paso intermedio es un ancla que avanza pase lo que pase, incluso sin escribir nada. Las dos que tocan contraseña —`/acceso` y `/registro/crear-cuenta`— cierran con un botón inerte.
+- **Ninguna renderiza un `<form>`, y no es estilo.** Un formulario sin `action` se envía por GET y pondría la contraseña en la barra de direcciones, y de ahí en el historial, los registros del servidor y el `Referer` siguiente. `e2e/acceso.spec.ts` lo defiende: teclea una contraseña, activa el control, y afirma que la URL no cambió — ni siquiera con Enter dentro del campo. Si alguna vez agregás un `<form>` ahí, ese test es el que te va a frenar.
+- **Ninguna tiene requisitos numerados propios**: se implementaron contra el diseño de Stitch, no contra el spec de la landing. Comparten `AccessScreen`; `submitHref` presente es un `<a>`, ausente es un botón inerte. Las cuatro declaran `noindex`. No deben publicarse mientras sigan siendo maquetas.
 
 ## Preguntas abiertas que bloquean la publicación
 
@@ -93,6 +97,8 @@ No bloquean diseño ni implementación, pero sí salir a producción:
 - **Seguridad, parcialmente resuelta (2026-08-13).** `next` pasó de `15.5.4` a `15.5.23` y `vitest` de `3.1.4` a `3.2.7`: se cerraron las dos críticas, incluida la ejecución remota de código en el protocolo flight de React. Quedan **3 de severidad alta** en `postcss` y `sharp`, ambas transitivas de Next: el único arreglo que ofrece npm es `next@16.3.0`, un cambio mayor. Migrar a Next 16 es una decisión aparte, no un `audit fix`.
 - **Registro verbal: tuteo, decidido por el usuario el 2026-08-13.** Los tres CTA dicen «Inscríbete» (criterio 6.6). El mockup usaba las tres formas —«Explorar curso» en el hero, «Inscríbete» en el temario, «Inscribite» en el cierre—; se unificó en tuteo. Cualquier texto nuevo de interfaz sigue el mismo registro: nada de voseo.
 - Pendiente de revisar por el cambio de registro: `content/methodology.ts` dice «Aprenda a redactar…», que es forma de usted. Es copia literal del mockup, pero convive mal con el tuteo de los CTA.
+- **Mismo problema dentro de `content/access.ts`:** `login` trata de usted («Acceda a su terminal…»), copia literal del mockup, mientras las tres pantallas de `signup` son tuteo. Dos pantallas contiguas del mismo flujo tratan al visitante de distinta forma.
+- **`forgotHref` apunta a `/recuperar-acceso`, que no existe**: hoy cae en la 404. Además está declarado en `content/access.ts`, no en `lib/routes.ts`, lo que contradice el criterio que el propio archivo enuncia («las direcciones son rutas y viven en `lib/routes.ts`»).
 - Copia del mockup que T6 no pudo leer (límite del plan Starter del MCP de Figma): subtítulo del hero (nodo 23:279), titular y texto del cierre (23:379, 23:381), titular y descripción de prueba social (23:232, 23:234), descripción del pie (23:396), rótulo del botón de acceso (23:445) y etiqueta de marca (23:431). Todos llevan marcador `[REVISAR]` en `content/`.
 - La duración por módulo de `EXP-00` y `EXP-01` (35 y 45 min) está inventada para sumar los «1 H 20 MIN» del mockup, que solo declara el total.
 - El pie del mockup enlaza Privacidad, Términos, Acreditaciones y Newsletter — páginas, no secciones. `design.md` modela `footer.links` como anclas. Si el pie debe enlazar páginas legales, hay que cambiar el diseño y el esquema, no el archivo de contenido.

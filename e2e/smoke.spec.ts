@@ -103,8 +103,7 @@ test("the enrolment control points at the access screen with intent=signup (6.1)
   await expect(controls).toHaveCount(3);
 
   const href = await controls.first().getAttribute("href");
-  expect(href).toContain("intent=signup");
-  expect(href).toMatch(/^https?:\/\//);
+  expect(href).toBe("/registro?intent=signup");
 });
 
 // 10.4 — the status code, which jsdom could not observe in T21.
