@@ -52,7 +52,23 @@ export const TYPOGRAPHY_TOKENS = {
  * breakpoint — no media query redefines them.
  */
 export const SPACE_TOKENS = {
-  "--section-inline": "clamp(1.25rem, 5vw, 4rem)",
+  /**
+   * The widest the content ever gets: the content width of the 1280px mockup,
+   * once its 64px margins are taken off.
+   */
+  "--content-max": "1152px",
+  /** The breathing room a narrow screen needs, before any centring. */
+  "--section-inset": "clamp(1.25rem, 5vw, 4rem)",
+  /**
+   * Horizontal padding for every full-bleed block.
+   *
+   * `max()` of the inset and half the leftover width: below 1152px it is just
+   * the inset and nothing changes, above it the padding grows so the content
+   * stays 1152px wide and centred. Done as padding rather than a wrapper with
+   * `max-inline-size`, so the section keeps painting its background edge to
+   * edge — the margins grow, the colour does not stop.
+   */
+  "--section-inline": "max(var(--section-inset), (100% - var(--content-max)) / 2)",
   "--section-block": "clamp(3rem, 8vw, 6rem)",
   "--card-padding": "clamp(1.5rem, 4vw, 2.5rem)",
   "--row-padding": "clamp(1.25rem, 3vw, 2rem)",

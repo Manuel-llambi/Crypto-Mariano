@@ -41,6 +41,106 @@ test.describe("no horizontal scrolling (7.8)", () => {
   }
 });
 
+/**
+ * The content stops at 1152px; the backgrounds do not.
+ *
+ * Implemented as horizontal padding rather than a wrapper with
+ * `max-inline-size`, so each section keeps painting its colour edge to edge
+ * while the text inside it stays centred and capped. Both halves are asserted:
+ * a wrapper would satisfy the first and fail the second.
+ */
+test.describe("content is capped at 1152px", () => {
+  const CAP = 1152;
+
+  for (const width of [1440, 1920, 2560]) {
+    test(`keeps the content at ${CAP}px on a ${width}px viewport`, async ({ page }) => {
+      await at(page, width);
+
+      const measured = await page.evaluate(() => {
+        const boxes = [...document.querySelectorAll<HTMLElement>("main > section")].map((section) => {
+          const style = getComputedStyle(section);
+          const left = Number.parseFloat(style.paddingLeft);
+          const right = Number.parseFloat(style.paddingRight);
+          return Math.round(section.getBoundingClientRect().width - left - right);
+        });
+        return boxes;
+      });
+
+      expect(measured.length).toBeGreaterThan(5);
+      for (const box of measured) {
+        expect(box).toBeLessThanOrEqual(CAP);
+        expect(box).toBeGreaterThanOrEqual(CAP - 1);
+      }
+    });
+
+    test(`keeps the backgrounds full width on a ${width}px viewport`, async ({ page }) => {
+      await at(page, width);
+
+      const client = await page.evaluate(() => document.documentElement.clientWidth);
+      const widths = await page.evaluate(() =>
+        [...document.querySelectorAll("main > section, header, footer")].map((element) =>
+          Math.round(element.getBoundingClientRect().width),
+        ),
+      );
+
+      for (const measured of widths) {
+        expect(measured).toBe(client);
+      }
+    });
+  }
+
+  test("centres the capped content", async ({ page }) => {
+    await at(page, 1920);
+
+    const offsets = await page.evaluate(() =>
+      [...document.querySelectorAll<HTMLElement>("main > section")].map((section) => {
+        const style = getComputedStyle(section);
+        return Math.round(
+          Number.parseFloat(style.paddingLeft) - Number.parseFloat(style.paddingRight),
+        );
+      }),
+    );
+
+    for (const offset of offsets) {
+      expect(offset).toBe(0);
+    }
+  });
+
+  // Below the cap nothing changes: the inset alone governs.
+  test("does not cap anything at 1024px", async ({ page }) => {
+    await at(page, 1024);
+
+    const client = await page.evaluate(() => document.documentElement.clientWidth);
+    const box = await page.evaluate(() => {
+      const section = document.querySelector<HTMLElement>("main > section")!;
+      const style = getComputedStyle(section);
+      return (
+        section.getBoundingClientRect().width -
+        Number.parseFloat(style.paddingLeft) -
+        Number.parseFloat(style.paddingRight)
+      );
+    });
+
+    expect(box).toBeLessThan(client);
+    expect(box).toBeGreaterThan(client - 200);
+  });
+
+  test("aligns the header with the sections below it", async ({ page }) => {
+    await at(page, 1920);
+
+    const gap = await page.evaluate(() => {
+      const header = document.querySelector<HTMLElement>("header")!;
+      const section = document.querySelector<HTMLElement>("main > section")!;
+      return (
+        Number.parseFloat(getComputedStyle(header).paddingLeft) -
+        Number.parseFloat(getComputedStyle(section).paddingLeft)
+      );
+    });
+
+    expect(Math.abs(gap)).toBeLessThanOrEqual(1);
+  });
+});
+
 // 7.4 — below 768 the hero stacks, copy first.
 test.describe("hero stacking (7.4)", () => {
   test("puts the copy above the visual panel at 375px", async ({ page }) => {

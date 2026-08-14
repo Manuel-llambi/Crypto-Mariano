@@ -16,8 +16,14 @@
    * anything above ~14px here would push the bar past `--header-height` — and
    * that value is what `scroll-padding` subtracts, so the bar growing past it
    * puts anchor targets back underneath it (1.3).
+   *
+   * Horizontally it takes its own tighter inset but the same 1152px ceiling as
+   * every section: the bar would otherwise stretch its navigation across a wide
+   * monitor while the content below stayed centred, and the two would stop
+   * lining up.
    */
-  padding: 0.5rem clamp(0.75rem, 3vw, 1.5rem);
+  padding-block: 0.5rem;
+  padding-inline: max(clamp(0.75rem, 3vw, 1.5rem), (100% - var(--content-max)) / 2);
   background: var(--white);
   border-block-end: 1px solid var(--rule);
   color: var(--navy);
@@ -40,6 +46,18 @@
   font-size: clamp(0.875rem, 3.5vw, 1.25rem);
   font-weight: 600;
   text-transform: uppercase;
+}
+
+/*
+ * Wrapping is only allowed where it is needed. Below 640px the name must give
+ * way so the enrolment control survives (7.2); above it there is room, and
+ * letting it break into two lines made the bar taller than `--header-height`
+ * and pushed anchor targets back under it (1.3).
+ */
+@media (min-width: 640px) {
+  .name {
+    white-space: nowrap;
+  }
 }
 
 /*
