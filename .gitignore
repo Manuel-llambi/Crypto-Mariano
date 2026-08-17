@@ -5,6 +5,8 @@ coverage/
 test-results/
 playwright-report/
 .playwright/
+# Console logs and page snapshots dropped by the Playwright MCP server.
+.playwright-mcp/
 *.tsbuildinfo
 .env*.local
 .DS_Store
