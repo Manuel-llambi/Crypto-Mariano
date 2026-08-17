@@ -4,6 +4,7 @@ import { AccessScreen } from "@/components/sections/AccessScreen";
 import { Field } from "@/components/ui/Field";
 import { FieldAction } from "@/components/ui/FieldAction";
 import { access, site } from "@/lib/content";
+import { PANEL_HREF } from "@/lib/routes";
 
 /**
  * Not indexable.
@@ -20,10 +21,15 @@ export const metadata: Metadata = {
  * The access screen for someone who already has an account (UI only).
  *
  * Nothing here authenticates, sends a code or opens a session: 6.7 forbids all
- * three and this screen honours it by doing nothing at all. The submit control
- * takes no `href`, which is what makes `AccessScreen` render it as an inert
- * button — the detail that matters, because this is the one screen of the four
- * that holds a password.
+ * three, and the control below checks no credential — it walks to the dashboard
+ * whatever was typed, exactly as the intermediate steps of `/registro` do.
+ *
+ * That control is an anchor, and on the one screen of the five that holds a
+ * password it has to be. What must never appear here is a `<form>`: one with no
+ * action submits by GET and puts every field into the query string, and from
+ * there the password reaches browser history, server logs and the referrer of
+ * the next request. An anchor serialises nothing, so the destination stays a
+ * bare `/panel`. `e2e/acceso.spec.ts` is what holds that line.
  *
  * Signing up is a separate flow of three screens under `/registro`; this one is
  * reached from «Iniciar sesión».
@@ -38,6 +44,7 @@ export default function AccesoPage() {
       subtitle={login.subtitle}
       protocol={login.protocol}
       submitLabel={login.submitLabel}
+      submitHref={PANEL_HREF}
     >
       <Field id="email" name="email" type="email" label={login.emailLabel} autoComplete="email" />
 

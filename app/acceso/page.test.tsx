@@ -6,6 +6,7 @@ import { afterEach, describe, expect, it } from "vitest";
 
 import AccesoPage, { metadata } from "./page";
 import { access } from "@/lib/content";
+import { PANEL_HREF } from "@/lib/routes";
 
 afterEach(cleanup);
 
@@ -53,11 +54,13 @@ describe("the fields are properly labelled", () => {
 });
 
 /**
- * 6.7 — the screen authenticates nothing, and the submit control is inert.
+ * 6.7 — the screen authenticates nothing.
  *
- * The detail that matters is the absence of a `<form>`: one with no action
- * submits by GET, which would put the password in the URL and from there into
- * browser history, server logs and referrer headers.
+ * It walks to the dashboard whatever was typed, and the detail that makes that
+ * safe is the absence of a `<form>`: one with no action submits by GET, which
+ * would put the password in the URL and from there into browser history, server
+ * logs and referrer headers. An anchor serialises no field, so the destination
+ * stays a bare path.
  */
 describe("the screen is inert (6.7)", () => {
   it("renders no form at all", () => {
@@ -66,11 +69,24 @@ describe("the screen is inert (6.7)", () => {
     expect(container.querySelector("form")).toBeNull();
   });
 
-  it("gives the submit control type button, never submit", () => {
+  it("walks to the dashboard through an anchor, not a submit", () => {
     render(<AccesoPage />);
 
-    const control = screen.getByRole("button", { name: access.login.submitLabel });
-    expect(control.getAttribute("type")).toBe("button");
+    const control = screen.getByRole("link", { name: access.login.submitLabel });
+
+    expect(control.tagName).toBe("A");
+    expect(control.getAttribute("href")).toBe(PANEL_HREF);
+  });
+
+  // Nothing is checked, so nothing of what was typed may reach the address.
+  it("carries no field value in the destination", () => {
+    render(<AccesoPage />);
+
+    const href = screen.getByRole("link", { name: access.login.submitLabel }).getAttribute("href")!;
+
+    expect(href).not.toContain("?");
+    expect(href).not.toContain("password");
+    expect(href).not.toContain("email");
   });
 
   it("wires no handler and opens no session", () => {
