@@ -1,0 +1,38 @@
+/*
+ * On a desktop the mockup pins the frame to the viewport and scrolls the two
+ * columns separately. Below 64rem that would trap the content in a short box,
+ * so the shell simply grows and the document scrolls as a whole.
+ */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-block-size: 0;
+}
+
+.main {
+  flex: 1;
+  min-inline-size: 0;
+  background: var(--white);
+}
+
+@media (min-width: 64rem) {
+  .shell {
+    block-size: 100vh;
+    overflow: hidden;
+  }
+
+  .body {
+    flex-direction: row;
+  }
+
+  .main {
+    overflow-y: auto;
+  }
+}

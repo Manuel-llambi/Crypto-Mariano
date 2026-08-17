@@ -1,0 +1,88 @@
+.page {
+  max-inline-size: var(--content-max);
+  margin-inline: auto;
+  padding: clamp(1.5rem, 4vw, 2.5rem) clamp(1.25rem, 4vw, 2rem);
+}
+
+.welcome {
+  margin-block-end: 2.5rem;
+}
+
+.eyebrow {
+  margin: 0 0 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 600;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--grey-text);
+}
+
+.greeting {
+  margin: 0 0 1rem;
+  font-size: clamp(2rem, 5vw, 3rem);
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--navy);
+}
+
+.body {
+  max-inline-size: 48rem;
+  margin: 0;
+  font-size: 1.0625rem;
+  line-height: 1.6;
+  color: var(--grey-text);
+}
+
+.rule {
+  margin: 0 0 2.5rem;
+  border: 0;
+  border-block-start: 1px solid var(--rule);
+}
+
+.top {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin-block-end: 3rem;
+}
+
+@media (min-width: 64rem) {
+  .top {
+    flex-direction: row;
+  }
+}
+
+.filterRow {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-end: 1.5rem;
+  padding-block-end: 1rem;
+  border-block-end: 1px solid var(--rule);
+}
+
+/* 7.6 — the control is 44 tall even though its label is small. */
+.filter {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 44px;
+  padding-inline: 0.75rem;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--grey-text);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.filter:hover,
+.filter:focus-visible {
+  color: var(--navy);
+}
+
+.filterIcon {
+  inline-size: 1rem;
+  block-size: 1rem;
+}

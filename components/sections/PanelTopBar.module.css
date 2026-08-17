@@ -1,0 +1,55 @@
+/*
+ * Unlike the transactional bar, this one runs edge to edge and holds two
+ * controls, so it spreads instead of centring. The height token is shared, so
+ * a visitor moving from `/acceso` to `/panel` sees the bar stay put.
+ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: var(--header-height);
+  padding: 0.75rem clamp(1rem, 3vw, 1.5rem);
+  background: var(--white);
+  border-block-end: 1px solid var(--rule);
+  color: var(--navy);
+}
+
+.name {
+  font-family: var(--font-sans);
+  font-size: 0.875rem;
+  font-weight: 600;
+  letter-spacing: 0.15em;
+  text-transform: uppercase;
+}
+
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* 7.6 — 44x44 even though the glyph inside is 20. */
+.action {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 44px;
+  block-size: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius);
+  background: none;
+  color: var(--grey-text);
+  cursor: pointer;
+}
+
+.action:hover,
+.action:focus-visible {
+  color: var(--navy);
+}
+
+.icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}

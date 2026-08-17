@@ -1,0 +1,148 @@
+/*
+ * The mockup fixes the sidebar to the full height of a desktop viewport. Below
+ * 64rem there is no room for a second column, so it becomes a band above the
+ * content and the page scrolls as one — no drawer, which would need a script,
+ * and `NavPanel` stays the only client component of the site.
+ */
+.sidebar {
+  display: flex;
+  flex-direction: column;
+  background: var(--cream);
+  border-block-end: 1px solid var(--rule);
+}
+
+@media (min-width: 64rem) {
+  .sidebar {
+    inline-size: 16rem;
+    flex-shrink: 0;
+    border-block-end: 0;
+    border-inline-end: 1px solid var(--rule);
+    overflow-y: auto;
+  }
+}
+
+.student {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 1.5rem;
+  border-block-end: 1px solid var(--rule);
+}
+
+.avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  inline-size: 2.5rem;
+  block-size: 2.5rem;
+  flex-shrink: 0;
+  border-radius: var(--radius);
+  background: var(--navy);
+  color: var(--white);
+}
+
+.avatarIcon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+}
+
+.identity {
+  display: flex;
+  flex-direction: column;
+  min-inline-size: 0;
+}
+
+.name {
+  font-size: 0.875rem;
+  font-weight: 600;
+  color: var(--navy);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.status {
+  margin-block-start: 0.125rem;
+  font-size: 0.6875rem;
+  line-height: 1.2;
+  color: var(--grey-text);
+}
+
+.nav {
+  display: flex;
+  flex-direction: column;
+  padding-block: 1rem;
+}
+
+/*
+ * An entry with no `href` is a screen that does not exist yet. It renders as
+ * plain text on purpose, and the cursor says so: nothing here pretends to lead
+ * somewhere it cannot.
+ */
+.item {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-block-size: 44px;
+  padding: 0.75rem 1.5rem;
+  border-inline-start: 4px solid transparent;
+  color: var(--grey-text);
+  font-size: 0.9375rem;
+  text-decoration: none;
+}
+
+.item:not([href]) {
+  cursor: default;
+}
+
+.item[href]:hover,
+.item[href]:focus-visible {
+  background: var(--white);
+  color: var(--navy);
+}
+
+.itemCurrent {
+  border-inline-start-color: var(--navy);
+  background: var(--white);
+  color: var(--navy);
+  font-weight: 600;
+}
+
+.icon {
+  inline-size: 1.25rem;
+  block-size: 1.25rem;
+  flex-shrink: 0;
+  opacity: 0.75;
+}
+
+.footer {
+  margin-block-start: auto;
+  padding: 1rem;
+  border-block-start: 1px solid var(--rule);
+}
+
+.minorItem {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-block-size: 44px;
+  padding-inline: 1rem;
+  color: var(--grey-text);
+  font-size: 0.875rem;
+  text-decoration: none;
+}
+
+.minorItem:not([href]) {
+  cursor: default;
+}
+
+.minorItem[href]:hover,
+.minorItem[href]:focus-visible {
+  color: var(--navy);
+}
+
+.minorIcon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  flex-shrink: 0;
+}

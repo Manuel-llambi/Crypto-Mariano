@@ -19,3 +19,12 @@ export const SIGNUP_CODE_HREF = "/registro/codigo";
 
 /** Step 3 — the new account. */
 export const SIGNUP_ACCOUNT_HREF = "/registro/crear-cuenta";
+
+/**
+ * The student dashboard, where signing in lands.
+ *
+ * Still a mock: nothing guards it, because nothing authenticates. It is reached
+ * from the control of `/acceso` and by typing the address, and those are the
+ * same thing until there is a session to check.
+ */
+export const PANEL_HREF = "/panel";
