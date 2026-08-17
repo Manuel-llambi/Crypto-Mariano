@@ -4,6 +4,7 @@ import { faq as rawFaq } from "@/content/faq";
 import { footer as rawFooter } from "@/content/footer";
 import { methodology as rawMethodology } from "@/content/methodology";
 import { nav as rawNav } from "@/content/nav";
+import { panel as rawPanel } from "@/content/panel";
 import { program as rawProgram } from "@/content/program";
 import { socialProof as rawSocialProof } from "@/content/social-proof";
 import { site as rawSite } from "@/content/site";
@@ -17,6 +18,7 @@ import {
   FooterSchema,
   MethodologySchema,
   NavSchema,
+  PanelSchema,
   ProgramSchema,
   SiteSchema,
   SocialProofSchema,
@@ -48,6 +50,7 @@ export const socialProof = parseContent(
 );
 export const faq = parseContent("content/faq.ts", FaqListSchema, rawFaq);
 export const access = parseContent("content/access.ts", AccessSchema, rawAccess);
+export const panel = parseContent("content/panel.ts", PanelSchema, rawPanel);
 
 /**
  * Newest first (2.7).

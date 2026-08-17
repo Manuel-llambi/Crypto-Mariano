@@ -165,6 +165,83 @@ export type SignupEmailContent = z.infer<typeof SignupEmailSchema>;
 export type SignupCodeContent = z.infer<typeof SignupCodeSchema>;
 export type SignupAccountContent = z.infer<typeof SignupAccountSchema>;
 
+/**
+ * The student dashboard (out of the landing's numbered requirements).
+ *
+ * Copy plus a sample record. The syllabus is not part of it: `/panel` reads the
+ * same modules as the landing, so this only describes where the student stands
+ * in them.
+ *
+ * `record` is strict for the same reason `ProgramSchema` is (3.4): module codes
+ * are derived from the position in the syllabus, so a `currentModuleCode` here
+ * would be a second source of truth, and the strict object turns it into an
+ * error naming the surplus key instead of a value silently ignored.
+ */
+const PanelNavItemSchema = z.strictObject({
+  /** A key the component resolves to a route — never an address itself. */
+  id: NonEmpty,
+  icon: NonEmpty,
+  label: NonEmpty,
+});
+
+export type PanelNavItem = z.infer<typeof PanelNavItemSchema>;
+
+/** A share of something, as the interface writes it: whole percent, 0 to 100. */
+const Percent = z.number().int().min(0).max(100);
+
+export const PanelRecordSchema = z.strictObject({
+  /** Zero-based position in the syllabus; the range is checked against it later. */
+  currentModuleIndex: z.number().int().nonnegative(),
+  currentModulePercent: Percent,
+  overallPercent: Percent,
+  hoursSpent: z.number().nonnegative(),
+  estimatedMinutes: z.number().int().positive(),
+  attachmentCount: z.number().int().nonnegative(),
+});
+
+export type PanelRecord = z.infer<typeof PanelRecordSchema>;
+
+export const PanelSchema = z.strictObject({
+  title: NonEmpty,
+  student: z.strictObject({
+    name: NonEmpty,
+    statusLabel: NonEmpty,
+    statusValue: NonEmpty,
+  }),
+  nav: z.array(PanelNavItemSchema).min(1),
+  settingsLabel: NonEmpty,
+  logoutLabel: NonEmpty,
+  welcome: z.strictObject({
+    eyebrow: NonEmpty,
+    greeting: NonEmpty,
+    body: NonEmpty,
+  }),
+  continueCard: z.strictObject({
+    eyebrow: NonEmpty,
+    durationLabel: NonEmpty,
+    attachmentsLabel: NonEmpty,
+    ctaLabel: NonEmpty,
+  }),
+  progressCard: z.strictObject({
+    title: NonEmpty,
+    completedLabel: NonEmpty,
+    modulesLabel: NonEmpty,
+    hoursLabel: NonEmpty,
+    hoursSuffix: NonEmpty,
+  }),
+  modules: z.strictObject({
+    filterLabel: NonEmpty,
+    passedBadge: NonEmpty,
+    passedLabel: NonEmpty,
+    currentBadge: NonEmpty,
+    lockedBadge: NonEmpty,
+    lockedPrefix: NonEmpty,
+  }),
+  record: PanelRecordSchema,
+});
+
+export type PanelContent = z.infer<typeof PanelSchema>;
+
 export const SiteSchema = z.strictObject({
   name: NonEmpty,
   title: NonEmpty, // 10.1
