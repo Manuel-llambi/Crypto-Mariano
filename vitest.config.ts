@@ -22,6 +22,13 @@ export default defineConfig({
     // per case to cover the rejections of 6.5.
     env: {
       NEXT_PUBLIC_ACCESS_URL: "https://acceso.test/acceso",
+      // Every module that talks to Supabase imports `lib/supabase/env`, which
+      // throws at import time when either of these is missing. The address is
+      // the local instance declared in `supabase/config.toml`;
+      // `lib/supabase/env.test.ts` still overrides both per case to cover the
+      // rejections of 6.1.
+      SUPABASE_URL: "http://127.0.0.1:55321",
+      SUPABASE_PUBLISHABLE_KEY: "sb_publishable_test_key",
     },
   },
 });
