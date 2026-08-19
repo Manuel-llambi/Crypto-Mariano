@@ -4,8 +4,12 @@
  * Versioned and validated like every other string of the project: a screen is
  * not an exception to 2.2 and 2.3.
  *
- * `login` addresses the visitor as «usted», which is how the mockup wrote it.
- * Everything under `signup` is tuteo, the register closed on 2026-08-13.
+ * `login.subtitle` addresses the visitor as «usted», which is how the mockup
+ * wrote it, and it stays that way: rewriting it is a copy decision the login
+ * spec of 2026-08-17 deliberately left alone. The new string here —
+ * `login.errorMessage` — and everything under `signup` are tuteo, the register
+ * closed on 2026-08-13. The two registers do sit a few centimetres apart on the
+ * same card; that debt is recorded, not resolved.
  * Addresses are not here: they are routes, and they live in `lib/routes.ts`.
  */
 export const access = {
@@ -17,6 +21,13 @@ export const access = {
     forgotLabel: "Olvidé mi contraseña",
     forgotHref: "/recuperar-acceso",
     submitLabel: "Acceder al sistema",
+    /**
+     * Tuteo, the register the project closed on 2026-08-13 for new copy.
+     *
+     * It says nothing about which half failed: the same text covers a wrong
+     * password and an address that was never registered (2.2).
+     */
+    errorMessage: "No pudimos verificar tus credenciales. Revisa el correo y la contraseña.",
     protocol: "Protocolo de acceso: AUTH-2024",
   },
 

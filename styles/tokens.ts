@@ -6,7 +6,10 @@
  * token measurable instead of a claim in a document.
  *
  * The Figma file defines no variables, so every value below was read off the
- * mockup by hand — except the two colours design.md corrected.
+ * mockup by hand — except the two colours design.md corrected and
+ * `--error-text`, which has no origin in the design at all: the Stitch screens
+ * are inert mock-ups with no error state, and design.md cites no node for it.
+ * It was picked to clear 4.5:1 on both backgrounds and measured here.
  */
 export const COLOR_TOKENS = {
   /** Headings, buttons, the visual panel of the hero. */
@@ -28,6 +31,14 @@ export const COLOR_TOKENS = {
    * chevron, never by this rule.
    */
   "--rule": "#c6c6ce",
+  /**
+   * A rejected sign-in attempt (2.1).
+   *
+   * Measured against `--cream` and not `--white`: the message lives inside the
+   * card, and the card is cream. Cream is darker, so it is the demanding one —
+   * 6.10:1 there, 6.54:1 on white.
+   */
+  "--error-text": "#b3261e",
 } as const;
 
 /**
@@ -139,7 +150,12 @@ export const TOKENS = {
 export type ColorToken = keyof typeof COLOR_TOKENS;
 
 /** Used as text, so 9.4 asks them for 4.5:1. */
-export const TEXT_TOKENS = ["--navy", "--gold-text", "--grey-text"] as const satisfies ColorToken[];
+export const TEXT_TOKENS = [
+  "--navy",
+  "--gold-text",
+  "--grey-text",
+  "--error-text",
+] as const satisfies ColorToken[];
 
 /** Used as interface element or decoration, so 9.4 asks them for 3:1. */
 export const UI_TOKENS = ["--gold-line"] as const satisfies ColorToken[];

@@ -1,8 +1,9 @@
 // @vitest-environment jsdom
 import { readFileSync } from "node:fs";
 import { resolve } from "node:path";
-import { cleanup, render, screen } from "@testing-library/react";
-import { afterEach, describe, expect, it } from "vitest";
+import { cleanup, fireEvent, render, screen } from "@testing-library/react";
+import type { ReactNode } from "react";
+import { afterEach, describe, expect, it, vi } from "vitest";
 
 import { AccessScreen } from "./AccessScreen";
 
@@ -10,7 +11,14 @@ afterEach(cleanup);
 
 const source = readFileSync(resolve(process.cwd(), "components/sections/AccessScreen.tsx"), "utf8");
 
-function renderScreen(submitHref?: string) {
+interface Options {
+  submitHref?: string;
+  submitAction?: (formData: FormData) => Promise<void>;
+  error?: string;
+  children?: ReactNode;
+}
+
+function renderScreen({ submitHref, submitAction, error, children }: Options = {}) {
   return render(
     <AccessScreen
       siteName="Crypto Crime Academy"
@@ -19,24 +27,29 @@ function renderScreen(submitHref?: string) {
       protocol="Protocolo: PRUEBA"
       submitLabel="Continuar"
       submitHref={submitHref}
+      submitAction={submitAction}
+      error={error}
     >
-      <input aria-label="Un campo" />
+      {children ?? <input aria-label="Un campo" />}
     </AccessScreen>,
   );
 }
 
 /**
- * The two shapes of the control, and the reason they are two.
+ * The three shapes of the control, and the reason they are three.
  *
- * A screen that advances gets an anchor, which the browser follows on its own.
- * A screen that is the end of the road gets a button that does nothing. What
- * neither of them gets is a `<form>`: one with no action submits by GET and
- * puts every field into the query string, which is how a password reaches
- * browser history, server logs and the referrer of the next request.
+ * A screen that posts to the server gets a `<form>` with a submit button. A
+ * screen that only advances gets an anchor, which the browser follows on its
+ * own. A screen that is the end of the road gets a button that does nothing.
+ *
+ * The form is safe precisely because it has an action: a form with none submits
+ * by GET and puts every field into the query string, which is how a password
+ * reaches browser history, server logs and the referrer of the next request.
+ * The two shapes without an action are the two that must never grow a `<form>`.
  */
 describe("the submit control", () => {
   it("is an anchor to the next step when the screen advances", () => {
-    renderScreen("/registro/codigo");
+    renderScreen({ submitHref: "/registro/codigo" });
 
     const control = screen.getByRole("link", { name: "Continuar" });
     expect(control.tagName).toBe("A");
@@ -51,13 +64,107 @@ describe("the submit control", () => {
     expect(screen.queryByRole("link", { name: "Continuar" })).toBeNull();
   });
 
-  it("renders no form in either shape (6.7)", () => {
-    const withHref = renderScreen("/registro/codigo");
+  // The two shapes with no action are the ones 6.7 still covers: the three
+  // screens of `/registro` stay mock-ups and must not grow a form.
+  it("renders no form in either action-less shape (6.7)", () => {
+    const withHref = renderScreen({ submitHref: "/registro/codigo" });
     expect(withHref.container.querySelector("form")).toBeNull();
     cleanup();
 
     const withoutHref = renderScreen();
     expect(withoutHref.container.querySelector("form")).toBeNull();
+  });
+});
+
+// 5.3 — the third shape, the one `/acceso` uses: a form that posts.
+describe("the submit control that posts", () => {
+  it("puts the fields and the control inside a form", () => {
+    const { container } = renderScreen({ submitAction: vi.fn(async () => {}) });
+
+    const form = container.querySelector("form");
+    expect(form).not.toBeNull();
+    expect(form!.querySelector("input")).not.toBeNull();
+
+    const control = screen.getByRole("button", { name: "Continuar" });
+    expect(control.getAttribute("type")).toBe("submit");
+    expect(form!.contains(control)).toBe(true);
+    expect(screen.queryByRole("link", { name: "Continuar" })).toBeNull();
+  });
+
+  /*
+   * 1.5 — the fields travel in the body, and this is where that is observable.
+   *
+   * Nothing is asserted about `method` or the `action` attribute: React writes
+   * a `javascript:throw …` sentinel into `action` and leaves `method` unset,
+   * because the real markup comes from the server renderer of a Server Action,
+   * which this test does not run. What the FormData proves instead is that the
+   * fields ended up inside the form — which is the only reason they are in the
+   * body rather than in the address bar.
+   */
+  it("calls the action once, with the typed fields in the body", async () => {
+    const submitAction = vi.fn<(formData: FormData) => Promise<void>>(async () => {});
+
+    renderScreen({
+      submitAction,
+      children: (
+        <>
+          <input aria-label="Correo" name="email" defaultValue="alguien@ejemplo.test" />
+          <input aria-label="Contraseña" name="password" defaultValue="una-contraseña" />
+        </>
+      ),
+    });
+
+    fireEvent.click(screen.getByRole("button", { name: "Continuar" }));
+
+    await vi.waitFor(() => expect(submitAction).toHaveBeenCalledTimes(1));
+
+    const formData = submitAction.mock.calls[0]![0];
+    expect(formData.get("email")).toBe("alguien@ejemplo.test");
+    expect(formData.get("password")).toBe("una-contraseña");
+  });
+});
+
+describe("the error message", () => {
+  const MESSAGE = "No pudimos verificar tus credenciales.";
+
+  // 2.1 — the half of the criterion that lives in the component. Producing the
+  // text is the page's job, and seeing it in a browser is CF-01's.
+  it("shows the text it is given, inside the card", () => {
+    renderScreen({ error: MESSAGE });
+
+    expect(screen.getByText(MESSAGE)).not.toBeNull();
+  });
+
+  // Read before typing again: that is the whole reason for the position.
+  it("precedes the fields in document order", () => {
+    const { container } = renderScreen({ error: MESSAGE });
+
+    const message = container.querySelector("[class*='error']")!;
+    const field = container.querySelector("input")!;
+
+    expect(message.compareDocumentPosition(field) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
+  });
+
+  /*
+   * 2.5 — with no error there is no node at all.
+   *
+   * Not merely an empty one: an unconditional `<p>{error}</p>` leaves an empty
+   * paragraph in the DOM, and a null `queryByText` would sail past it. The
+   * assertion goes against the element, not against the text.
+   */
+  it("does not exist at all without an error", () => {
+    const { container } = renderScreen();
+
+    expect(container.querySelector("[class*='error']")).toBeNull();
+  });
+
+  // The message is already in the document when the page loads — a full server
+  // round trip brought it — so there is no change to announce.
+  it("declares neither role=alert nor a live region", () => {
+    const { container } = renderScreen({ error: MESSAGE });
+
+    expect(container.querySelector("[role='alert']")).toBeNull();
+    expect(container.querySelector("[aria-live]")).toBeNull();
   });
 });
 

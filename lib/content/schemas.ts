@@ -104,8 +104,9 @@ export type Footer = z.infer<typeof FooterSchema>;
 /**
  * The access screen (out of the landing's numbered requirements).
  *
- * Copy only. Nothing here authenticates, sends a code or opens a session — 6.7
- * forbids all three, and this screen is deliberately inert.
+ * Copy only — no schema authenticates anything. Since the login spec of
+ * 2026-08-17, `/acceso` does verify credentials and open a session; what stays
+ * inert is the three screens of `/registro`.
  */
 export const LoginSchema = z.strictObject({
   title: NonEmpty,
@@ -115,6 +116,14 @@ export const LoginSchema = z.strictObject({
   forgotLabel: NonEmpty,
   forgotHref: NonEmpty,
   submitLabel: NonEmpty,
+  /**
+   * What a rejected attempt says (2.4).
+   *
+   * One message, not one per kind of failure: 2.2 asks invalid credentials and
+   * an account that does not exist to look the same, so that the screen never
+   * tells a stranger which addresses are registered.
+   */
+  errorMessage: NonEmpty,
   protocol: NonEmpty,
 });
 

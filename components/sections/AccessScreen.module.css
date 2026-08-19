@@ -55,6 +55,19 @@
   color: var(--grey-text);
 }
 
+/*
+ * Inside `.intro`, so it inherits the centring and the space before the fields
+ * that the block already carries. The only new thing is the colour, which is
+ * measured against `--cream` — the background of the card, not of the page.
+ */
+.error {
+  margin: 1rem 0 0;
+  font-family: var(--font-sans);
+  font-size: 1rem;
+  line-height: 1.5rem;
+  color: var(--error-text);
+}
+
 .form {
   display: flex;
   flex-direction: column;
@@ -62,10 +75,10 @@
 }
 
 /*
- * One rule for the two shapes the control takes: a button where the screen is
- * the end of the road, an anchor where it advances to the next step. The
- * centring properties are what an anchor needs to look like the button; on the
- * button they change nothing.
+ * One rule for the three shapes the control takes: a submit button where the
+ * screen posts, an anchor where it advances to the next step, an inert button
+ * where it is the end of the road. The centring properties are what an anchor
+ * needs to look like the button; on either button they change nothing.
  */
 .submit {
   display: flex;

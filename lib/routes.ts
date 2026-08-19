@@ -11,6 +11,23 @@
  */
 export const LOGIN_HREF = "/acceso?intent=login";
 
+/**
+ * Where a rejected sign-in lands (2.3).
+ *
+ * Derived from `LOGIN_HREF` rather than spelled out, so the two server-side
+ * redirections to this screen — the guard of the dashboard and this one — can
+ * never end up as two different spellings of the same address. It carries the
+ * intent for the same reason the entry points do: the destination states which
+ * flow it belongs to.
+ *
+ * It carries no e-mail and no password. That is the point: a password in the
+ * query string reaches browser history, server logs and the referrer of the
+ * next request.
+ */
+export const LOGIN_ERROR_CODE = "credenciales";
+
+export const LOGIN_ERROR_HREF = `${LOGIN_HREF}&error=${LOGIN_ERROR_CODE}`;
+
 /** Step 1 of the sign-up flow, and the target of every enrolment control. */
 export const SIGNUP_HREF = "/registro?intent=signup";
 
@@ -23,8 +40,8 @@ export const SIGNUP_ACCOUNT_HREF = "/registro/crear-cuenta";
 /**
  * The student dashboard, where signing in lands.
  *
- * Still a mock: nothing guards it, because nothing authenticates. It is reached
- * from the control of `/acceso` and by typing the address, and those are the
- * same thing until there is a session to check.
+ * Guarded since the login spec of 2026-08-17: its shared chrome checks the
+ * session against the authentication server before it emits any content, so
+ * typing the address no longer opens it.
  */
 export const PANEL_HREF = "/panel";

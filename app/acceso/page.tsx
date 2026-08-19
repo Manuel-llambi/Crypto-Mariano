@@ -4,38 +4,57 @@ import { AccessScreen } from "@/components/sections/AccessScreen";
 import { Field } from "@/components/ui/Field";
 import { FieldAction } from "@/components/ui/FieldAction";
 import { access, site } from "@/lib/content";
-import { PANEL_HREF } from "@/lib/routes";
+import { LOGIN_ERROR_CODE } from "@/lib/routes";
+
+import { signIn } from "./actions";
 
 /**
  * Not indexable.
  *
- * An access screen that does not authenticate has no business in a search
- * result, and this one is a shell: it collects nothing and goes nowhere.
+ * The screen authenticates for real now, but the flow it belongs to is not
+ * finished: signing up is still a mock-up, so none of these screens is meant to
+ * be published yet.
  */
 export const metadata: Metadata = {
   title: `${access.login.title} — ${site.name}`,
   robots: { index: false, follow: false },
 };
 
+interface AccesoPageProps {
+  /*
+   * Declared wide and narrowed after the await.
+   *
+   * `tsconfig.json` includes `.next/types/**`, where Next generates the check
+   * that a route's props match the ones it passes; a shape narrowed by hand can
+   * clash there even when `tsc --noEmit` passes before those types exist.
+   */
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
+}
+
 /**
- * The access screen for someone who already has an account (UI only).
+ * The access screen for someone who already has an account.
  *
- * Nothing here authenticates, sends a code or opens a session: 6.7 forbids all
- * three, and the control below checks no credential — it walks to the dashboard
- * whatever was typed, exactly as the intermediate steps of `/registro` do.
+ * The control posts to a Server Action that verifies the credentials against
+ * the local Supabase instance and opens a session in cookies. The `<form>` is
+ * what makes that work with no script of any kind, and it is safe because it
+ * has an action: a form with none submits by GET and would put the password in
+ * the query string, and from there into browser history, server logs and the
+ * referrer of the next request.
  *
- * That control is an anchor, and on the one screen of the five that holds a
- * password it has to be. What must never appear here is a `<form>`: one with no
- * action submits by GET and puts every field into the query string, and from
- * there the password reaches browser history, server logs and the referrer of
- * the next request. An anchor serialises nothing, so the destination stays a
- * bare `/panel`. `e2e/acceso.spec.ts` is what holds that line.
- *
- * Signing up is a separate flow of three screens under `/registro`; this one is
- * reached from «Iniciar sesión».
+ * Signing up is a separate flow of three screens under `/registro`, and those
+ * are still mock-ups; this one is reached from «Iniciar sesión».
  */
-export default function AccesoPage() {
+export default async function AccesoPage({ searchParams }: AccesoPageProps) {
   const { login } = access;
+  const { error } = await searchParams;
+
+  /*
+   * The message shows if and only if the value is exactly the marker the action
+   * emits. A different value, an empty one, or a repeated parameter — which
+   * arrives as an array and so fails a comparison against a string — all mean
+   * nobody had a failed attempt (2.5).
+   */
+  const errorMessage = error === LOGIN_ERROR_CODE ? login.errorMessage : undefined;
 
   return (
     <AccessScreen
@@ -44,7 +63,8 @@ export default function AccesoPage() {
       subtitle={login.subtitle}
       protocol={login.protocol}
       submitLabel={login.submitLabel}
-      submitHref={PANEL_HREF}
+      submitAction={signIn}
+      error={errorMessage}
     >
       <Field id="email" name="email" type="email" label={login.emailLabel} autoComplete="email" />
 

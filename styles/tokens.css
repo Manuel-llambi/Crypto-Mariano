@@ -13,6 +13,7 @@
   --white: #ffffff;
   --cream: #f8f7f4;
   --rule: #c6c6ce;
+  --error-text: #b3261e;
   --font-sans: var(--font-sans-face), system-ui, sans-serif;
   --font-mono: var(--font-mono-face), ui-monospace, monospace;
   --font-serif: var(--font-serif-face), Georgia, serif;

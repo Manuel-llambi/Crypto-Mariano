@@ -25,7 +25,9 @@ const base = configured.data;
  * The outbound link to the access screen, carrying the intent (6.1, 6.2).
  *
  * This builds a string and nothing else. No credentials, no code delivery, no
- * session, no payment — authentication is out of scope for this landing (6.7).
+ * session, no payment. Nothing has imported this module since 2026-08-14, when
+ * the transactional screens moved into the app; signing in now happens in
+ * `app/acceso/actions.ts`. Removing this file is pending cleanup.
  */
 export function accessUrl(intent: AccessIntent): string {
   const url = new URL(base);
