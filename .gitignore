@@ -14,3 +14,13 @@ playwright-report/
 # Auto-generated skill index: regenerable, and it records absolute paths of the
 # machine that built it.
 .atl/
+
+# Git worktrees Claude Code checks out inside the repository. They are working
+# copies of branches already tracked in the same repository, not sources.
+.claude/worktrees/
+
+# Design tooling, not sources of the site. 3.8 MB of catalogues plus compiled
+# Python bytecode, regenerable from the upstream repository recorded in
+# skills-lock.json, which is ignored with it.
+.claude/Skills/ui-ux-pro-max/
+skills-lock.json

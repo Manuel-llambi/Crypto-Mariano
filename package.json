@@ -12,9 +12,6 @@
     "verify": "npm run typecheck && npm test && npm run build && npm run test:e2e"
   },
   "dependencies": {
-    "@fontsource/ibm-plex-mono": "5.2.6",
-    "@fontsource/ibm-plex-sans": "5.2.6",
-    "@fontsource/source-serif-4": "5.2.6",
     "next": "15.5.23",
     "react": "19.1.1",
     "react-dom": "19.1.1",

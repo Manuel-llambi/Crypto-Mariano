@@ -66,11 +66,22 @@
   color: var(--grey-text);
 }
 
+/*
+ * Capped narrower than the content column, and centred inside it.
+ *
+ * Stretched to the full 1152px each card was around 560px wide holding a
+ * six-character number, so most of the box was empty and the pair drifted apart
+ * to the two edges of the page. Two figures that are meant to be read together
+ * have to sit near each other.
+ */
 .metrics {
   display: grid;
   grid-template-columns: 1fr;
   gap: 2rem;
   align-self: stretch;
+  inline-size: 100%;
+  max-inline-size: 44rem;
+  margin-inline: auto;
 }
 
 @media (min-width: 640px) {

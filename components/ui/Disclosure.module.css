@@ -11,6 +11,22 @@
   padding: var(--row-padding);
   cursor: pointer;
   color: var(--navy);
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * The rows of the syllabus and the questions of the FAQ are the most clicked
+ * things on the page, and they were also the only controls with no hover state
+ * at all — the pointer crossed a full-width row and nothing said it was a
+ * control. The cream is the same one the alternating sections use, so the row
+ * lights up in a colour the page already owns.
+ *
+ * It applies to `:hover` on the summary and not to the open row: this reports
+ * where the pointer is, not which rows are expanded. Several can be open at
+ * once, and painting all of them would say nothing.
+ */
+.summary:hover {
+  background: var(--cream);
 }
 
 /*
@@ -50,8 +66,15 @@
   color: var(--navy);
 }
 
-@media (prefers-reduced-motion: no-preference) {
-  .summary::after {
-    transition: transform 150ms ease;
-  }
+/*
+ * The chevron travels 180 degrees, so it takes the longer of the two durations:
+ * `--duration-fast` is for colour swapping in place, and at that speed the
+ * rotation reads as a jump rather than as the row turning over.
+ *
+ * The `no-preference` guard this rule used to carry is gone. `global.css` now
+ * removes every transition under reduced motion in one place, which covers the
+ * rules nobody remembered to guard — including the three added above.
+ */
+.summary::after {
+  transition: transform var(--duration-base) var(--ease-out);
 }

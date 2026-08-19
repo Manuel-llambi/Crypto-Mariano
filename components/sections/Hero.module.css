@@ -117,6 +117,21 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
+  transition: background-color var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * The same navy-to-brass swap the header and the syllabus already use, so the
+ * three primary buttons of the page answer the pointer in one voice. It was
+ * missing here and on the closing block: the first thing the visitor reaches
+ * for was also the one thing that never acknowledged being reached for.
+ *
+ * `:focus-visible` shares the rule so a keyboard gets the same answer as a
+ * mouse, on top of the ring `global.css` draws.
+ */
+.cta:hover,
+.cta:focus-visible {
+  background: var(--gold-text);
 }
 
 /*
@@ -129,12 +144,47 @@
  * Narrow: a plain block under the copy, holding the minimum height the element
  * declares inline (7.4).
  */
+/*
+ * The surface itself: a navy ground with a ledger grid ruled over it and one
+ * warm pool of light near the top left.
+ *
+ * Until a photograph exists this box is half the screen on a desktop, and flat
+ * navy at that size does not read as «a picture is coming», it reads as a
+ * region that failed to paint. The grid gives the eye something with structure
+ * to land on and belongs to the subject — a ruled ledger is what these
+ * investigations are actually made of.
+ *
+ * All of it is drawn by the browser: no file to ship, nothing to lazy-load, no
+ * layout shift when it arrives, because it arrives with the stylesheet. It is
+ * decoration in the sense 9.4 means — the panel carries `role="img"` and its
+ * `aria-label`, so nothing here is the only source of anything.
+ *
+ * `color-mix` rather than a second set of hex values: the grid and the glow are
+ * the palette diluted, so they follow `--white` and `--gold-line` instead of
+ * drifting from them the first time a token is corrected.
+ */
 .panel {
   flex: 1 1 auto;
   min-inline-size: 0;
   max-inline-size: 100%;
   border-radius: var(--radius);
-  background: var(--navy);
+  background-color: var(--navy);
+  background-image:
+    radial-gradient(
+      120% 90% at 28% 12%,
+      color-mix(in srgb, var(--gold-line) 22%, transparent) 0%,
+      transparent 62%
+    ),
+    repeating-linear-gradient(
+      to right,
+      color-mix(in srgb, var(--white) 7%, transparent) 0 1px,
+      transparent 1px 4rem
+    ),
+    repeating-linear-gradient(
+      to bottom,
+      color-mix(in srgb, var(--white) 7%, transparent) 0 1px,
+      transparent 1px 4rem
+    );
 }
 
 /*

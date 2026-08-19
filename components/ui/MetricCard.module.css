@@ -8,13 +8,34 @@
   padding: var(--card-padding);
   background: var(--white);
   border: 1px solid var(--rule);
+  /*
+   * A brass edge along the top, heavier than the hairline around the rest.
+   *
+   * The figure is the credibility claim of the section, and framing it in the
+   * same grey on all four sides made it read as one more box. The rule is the
+   * gesture the page already uses to mark what matters — the standfirst of the
+   * hero and the tick in the footer are the same two pixels of brass.
+   */
+  border-block-start: 2px solid var(--gold-line);
   text-align: center;
 }
 
+/*
+ * The figure carries the card, so it is sized like it.
+ *
+ * At 2.25rem inside a box this wide the number floated in its own padding and
+ * the card looked half-empty; the eye read the whitespace before it read the
+ * value. `clamp` keeps it from doing the same thing in reverse at 320px.
+ *
+ * `tabular-nums` holds the digits on a common width, so «5,000+» and «120+»
+ * sit on the same rhythm instead of one looking loose beside the other.
+ */
 .value {
   margin: 0;
-  font-size: 2.25rem;
-  line-height: 2.7rem;
+  font-size: clamp(2.5rem, 6vw, 3.5rem);
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  font-variant-numeric: tabular-nums;
   font-weight: 600;
   color: var(--navy);
 }

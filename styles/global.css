@@ -16,6 +16,30 @@ body {
 }
 
 /*
+ * Wrapping, declared once for the whole document.
+ *
+ * `balance` on headings evens the length of the lines instead of filling each
+ * one and dropping whatever is left onto the last — which is what left «MUNDO»
+ * alone under a two-line section title. It is a heuristic, not a promise: the
+ * browser caps it at a few lines and falls back to normal wrapping, so nothing
+ * here depends on a particular break. That is also why no `&nbsp;` or `<br>` is
+ * used to force one — those survive into widths where they are wrong.
+ *
+ * `pretty` on body copy is the cheaper cousin: it only avoids leaving a single
+ * word on the final line.
+ */
+:is(h1, h2, h3, h4) {
+  text-wrap: balance;
+}
+
+p,
+li,
+dd,
+figcaption {
+  text-wrap: pretty;
+}
+
+/*
  * 9.5 — one focus ring for the whole site.
  *
  * `:focus-visible` and not `:focus`, so the ring appears for keyboard and
@@ -67,5 +91,27 @@ html {
 @media (prefers-reduced-motion: reduce) {
   html {
     scroll-behavior: auto;
+  }
+
+  /*
+   * The same principle applied to every transition on the site, once.
+   *
+   * Each hover state below could guard itself with `no-preference`, and the
+   * disclosure chevron used to. That only works for the rules somebody
+   * remembered — the transition added next month is the one that ships
+   * unguarded. Declared here it is the default, and a component has to opt out
+   * on purpose.
+   *
+   * `0.01ms` rather than `none`: a transition that never runs still fires
+   * `transitionend`, so anything that ever waits on the event keeps working.
+   * The `!important` is what lets a document-level rule beat the module
+   * stylesheets, which is the whole point of putting it here.
+   */
+  *,
+  *::before,
+  *::after {
+    transition-duration: 0.01ms !important;
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
   }
 }

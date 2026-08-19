@@ -65,4 +65,22 @@
   letter-spacing: 0.04em;
   text-transform: uppercase;
   text-decoration: none;
+  transition:
+    background-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+}
+
+/*
+ * The one button on the site that cannot swap to brass on hover.
+ *
+ * The other three sit on white and darken into `--gold-text`. This one sits on
+ * the navy ground, where darkening the button is the same as deleting it — it
+ * would sink into its own background. So the ground stays light and the
+ * *lettering* carries the state instead: cream fill, brass text, which is
+ * 5.34:1 and holds 9.4 without needing the fill to move.
+ */
+.cta:hover,
+.cta:focus-visible {
+  background: var(--cream);
+  color: var(--gold-text);
 }

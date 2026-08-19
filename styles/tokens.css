@@ -13,9 +13,9 @@
   --white: #ffffff;
   --cream: #f8f7f4;
   --rule: #c6c6ce;
-  --font-sans: 'IBM Plex Sans', system-ui, sans-serif;
-  --font-mono: 'IBM Plex Mono', ui-monospace, monospace;
-  --font-serif: 'Source Serif 4', Georgia, serif;
+  --font-sans: var(--font-sans-face), system-ui, sans-serif;
+  --font-mono: var(--font-mono-face), ui-monospace, monospace;
+  --font-serif: var(--font-serif-face), Georgia, serif;
   --content-max: 1152px;
   --nav-max: 1232px;
   --section-inset: clamp(1.25rem, 5vw, 4rem);
@@ -28,4 +28,7 @@
   --label-inline: 9px;
   --label-block: 3px;
   --radius: 4px;
+  --duration-fast: 120ms;
+  --duration-base: 200ms;
+  --ease-out: cubic-bezier(0.2, 0, 0, 1);
 }

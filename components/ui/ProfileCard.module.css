@@ -7,6 +7,18 @@
   min-inline-size: 0;
   padding: var(--card-padding);
   background: var(--white);
+  /*
+   * White on cream is a two-percent difference in luminance: at a glance the
+   * four cards dissolved into the section behind them and the row read as one
+   * pale band rather than as four objects.
+   *
+   * The hairline is not an invention — `MetricCard` and the entries of the
+   * updates list already draw exactly this border. This card being the only one
+   * of the three without it was inconsistency, not a decision. The brass edge
+   * along the top follows the same rule as the metrics.
+   */
+  border: 1px solid var(--rule);
+  border-block-start: 2px solid var(--gold-line);
   text-align: center;
 }
 

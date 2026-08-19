@@ -31,16 +31,30 @@ export const COLOR_TOKENS = {
 } as const;
 
 /**
- * The three families of the design, loaded from `@fontsource` in `app/layout.tsx`.
+ * The three families of the design, loaded by `app/layout.tsx`.
  *
  * The fallbacks are not decoration: until the font files arrive the page paints
  * with them, and for a long stretch of this project they were all the page ever
  * used, because the families were declared here and nothing loaded them.
+ *
+ * The families come from the layout, never named literally here.
+ *
+ * Each `--font-*-face` variable is emitted by `next/font/local` and already
+ * resolves to the real typeface followed by a fallback carrying `size-adjust`
+ * and the ascent/descent overrides measured from the font file. Writing
+ * `'IBM Plex Sans', system-ui` instead would render the same letters and
+ * quietly drop that adjusted fallback, which is the whole point of loading
+ * them through `next/font` — so `app/fonts.test.ts` fails if a family name
+ * reappears in this block.
+ *
+ * The generic that follows is a last resort, for the case where the variable
+ * itself is missing: a stray render outside the layout, or the stylesheet
+ * loaded on its own in a test.
  */
 export const TYPOGRAPHY_TOKENS = {
-  "--font-sans": "'IBM Plex Sans', system-ui, sans-serif",
-  "--font-mono": "'IBM Plex Mono', ui-monospace, monospace",
-  "--font-serif": "'Source Serif 4', Georgia, serif",
+  "--font-sans": "var(--font-sans-face), system-ui, sans-serif",
+  "--font-mono": "var(--font-mono-face), ui-monospace, monospace",
+  "--font-serif": "var(--font-serif-face), Georgia, serif",
 } as const;
 
 /**
@@ -94,10 +108,32 @@ export const SPACE_TOKENS = {
   "--radius": "4px",
 } as const;
 
+/**
+ * Motion.
+ *
+ * Two durations, not one. A colour swapping under the pointer has no distance
+ * to cover and reads as lag past roughly 150ms; anything that actually moves —
+ * the chevron of a disclosure, a card lifting — needs longer to be legible.
+ * Copying a single duration onto every transition is the usual way this goes
+ * wrong, so the two tiers are named rather than typed in at each call site.
+ *
+ * The curve leaves fast and settles slowly, which is what makes a hover state
+ * feel like an answer instead of an animation. Reduced motion does not scale
+ * these down: `styles/global.css` removes the transitions outright.
+ */
+export const MOTION_TOKENS = {
+  /** Colour, border and opacity feedback directly under the pointer. */
+  "--duration-fast": "120ms",
+  /** Anything that changes geometry: transforms, shadows, revealed rules. */
+  "--duration-base": "200ms",
+  "--ease-out": "cubic-bezier(0.2, 0, 0, 1)",
+} as const;
+
 export const TOKENS = {
   ...COLOR_TOKENS,
   ...TYPOGRAPHY_TOKENS,
   ...SPACE_TOKENS,
+  ...MOTION_TOKENS,
 };
 
 export type ColorToken = keyof typeof COLOR_TOKENS;

@@ -5,6 +5,14 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": fileURLToPath(new URL("./", import.meta.url)),
+      // `next/font/local` is rewritten by Next's SWC plugin at build time, so
+      // outside a Next build it resolves to something that is not callable and
+      // every test that imports `app/layout.tsx` fails on import. The stub
+      // returns the shape the layout consumes; see the file for why nothing is
+      // asserted through it.
+      "next/font/local": fileURLToPath(
+        new URL("./test/next-font-local.ts", import.meta.url),
+      ),
     },
   },
   // tsconfig says `jsx: "preserve"` because Next does its own transform. Vitest
@@ -15,7 +23,16 @@ export default defineConfig({
   },
   test: {
     include: ["**/*.test.ts", "**/*.test.tsx"],
-    exclude: ["node_modules/**", ".next/**", "e2e/**"],
+    // Declaring `exclude` replaces vitest's defaults rather than adding to
+    // them, so every directory to skip has to be spelled out here.
+    //
+    // `**/node_modules/**`, not `node_modules/**`: the unprefixed form only
+    // matches the one at the root. A git worktree checked out inside the
+    // project brings its own, and then React resolves twice — the hook
+    // dispatcher comes back null and every component test dies on `useRef`.
+    // `.claude/**` covers the worktrees themselves, whose test files are real
+    // and would otherwise be collected a second time from a stale commit.
+    exclude: ["**/node_modules/**", ".next/**", "e2e/**", ".claude/**"],
     // Any component that links to the access screen imports `lib/access-url`,
     // which throws at import time when this is missing. A fixed test address
     // keeps those imports working; `lib/access-url.test.ts` still overrides it
