@@ -16,8 +16,9 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      # The access screen is out of scope for this landing; the build only needs
-      # a valid address to link to. `lib/access-url.ts` throws without it (6.5).
+      # `lib/access-url.ts` throws without it. Nothing imports that module since
+      # the routes moved into `lib/routes.ts`, so this only keeps the old guard
+      # satisfied; retiring both is pending cleanup.
       NEXT_PUBLIC_ACCESS_URL: https://acceso.test/acceso
 
     steps:
@@ -43,6 +44,20 @@ jobs:
 
       - name: Install the browser
         run: npx playwright install --with-deps chromium
+
+      - uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      # The end-to-end suites sign in for real, so they need the local instance
+      # up and seeded. `supabase/config.toml` pins the 553xx ports the runner
+      # binds here, the same ones `.env` points at. `db reset` applies the
+      # migrations and `supabase/seed.sql`, which is where the test account
+      # comes from; without it every sign-in fails on correct credentials.
+      - name: Start Supabase
+        run: |
+          supabase start
+          supabase db reset
 
       # This one command carries the end-to-end suites and the accessibility
       # audit: a violation reported by axe fails the job here (9.6).
