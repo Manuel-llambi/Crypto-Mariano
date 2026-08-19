@@ -24,3 +24,7 @@ playwright-report/
 # skills-lock.json, which is ignored with it.
 .claude/Skills/ui-ux-pro-max/
 skills-lock.json
+
+# Session state Playwright writes when it signs in for the dashboard suite.
+# Live tokens: a local test account does not make them versionable.
+e2e/.auth/

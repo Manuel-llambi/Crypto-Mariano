@@ -1,9 +1,13 @@
 import { expect, test } from "@playwright/test";
 
+import { SEEDED_EMAIL, SEEDED_PASSWORD } from "./seeded-account";
+
 /**
  * The page with JavaScript blocked.
  *
- * This is the suite that protects the native `<details>` decision. Any
+ * This is the suite that protects the native `<details>` decision, and since
+ * the login spec of 2026-08-17 also the one that proves signing in works with
+ * no script at all. Any
  * regression toward a React-state disclosure keeps passing every jsdom test and
  * fails here — which is the whole reason the design chose the native element
  * over a component that looks identical in the markup.
@@ -182,5 +186,61 @@ test.describe("the degradation is exactly one thing (8.5)", () => {
     }
     await expect(page.locator('a[href*="intent=signup"]')).toHaveCount(3);
     await expect(page.locator("#faq details")).toHaveCount(3);
+  });
+});
+
+/**
+ * Signing in with the script blocked — spec 2026-08-17-login-supabase.
+ *
+ * These two are the only cases in the whole plan that prove the Server Action
+ * is progressive enhancement in fact and not just in theory. The numbers here
+ * are 5.1 and 5.2 of that spec, not the 8.x of the landing that the rest of
+ * this file uses.
+ *
+ * Both enter through the address the site actually links to. With no script the
+ * browser posts natively against the URL in flight, so entering by the right
+ * one is what makes the refusal land on exactly `?intent=login&error=credenciales`.
+ *
+ * The instance has to be up (`supabase start`) and seeded (`supabase db reset`).
+ */
+test.describe("signing in with no scripting (login spec)", () => {
+  const LOGIN = "/acceso?intent=login";
+  const ERROR_MESSAGE = "No pudimos verificar tus credenciales. Revisa el correo y la contraseña.";
+
+  test("5.1 — completes a sign-in and reaches the dashboard", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto(LOGIN);
+
+    await page.locator('input[type="email"]').fill(SEEDED_EMAIL);
+    await page.locator('input[type="password"]').fill(SEEDED_PASSWORD);
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL("**/panel**");
+
+    expect(new URL(page.url()).pathname).toBe("/panel");
+    expect(new URL(page.url()).search).toBe("");
+
+    // Arriving is not the same as the panel being there: it renders entirely on
+    // the server, so with no script it has to look the same. A URL-only check
+    // would let a blank dashboard through.
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  test("5.2 — shows the message of a refused attempt", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto(LOGIN);
+
+    await page.locator('input[type="email"]').fill(SEEDED_EMAIL);
+    await page.locator('input[type="password"]').fill("centinela-contrasena-equivocada");
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL("**/acceso**");
+
+    expect(new URL(page.url()).pathname).toBe("/acceso");
+    expect(new URL(page.url()).search).toBe("?intent=login&error=credenciales");
+
+    // The text is a literal here, as in CF-01. That it is the one declared in
+    // content is asserted by `app/acceso/page.test.tsx`, by reference.
+    await expect(page.getByText(ERROR_MESSAGE)).toBeVisible();
   });
 });

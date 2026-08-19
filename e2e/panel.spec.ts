@@ -1,14 +1,25 @@
 import AxeBuilder from "@axe-core/playwright";
 import { expect, test } from "@playwright/test";
 
+import { STORAGE_STATE } from "./storage-state";
+
 /**
- * The student dashboard, in a real browser.
+ * The student dashboard, in a real browser, behind its guard.
  *
- * It is UI only: nothing authenticates, nothing guards the route, and no
- * control on it does anything. The checks below are about that being true
- * rather than merely intended, and about the screen holding the same
- * accessibility bar as the rest of the site.
+ * The route **is** guarded: without a session every request here lands on
+ * `/acceso`. The session these cases enter with is opened once per run by
+ * `e2e/auth.setup.ts`, and the credentials are typed in that one place only —
+ * nothing below fills a form.
+ *
+ * The dashboard itself still authenticates nothing and none of its controls
+ * does anything; the checks are about that being true rather than merely
+ * intended, and about the screen holding the same accessibility bar as the rest
+ * of the site.
+ *
+ * Only this file declares `storageState`. The other specs keep running without
+ * a session, which is what several of them assert.
  */
+test.use({ storageState: STORAGE_STATE });
 
 const WIDE = { width: 1280, height: 900 };
 const NARROW = { width: 375, height: 720 };
@@ -18,6 +29,11 @@ test.describe("the screen renders", () => {
   test("shows the greeting, the ring and the whole syllabus", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto("/panel");
+
+    // 4.2 — served normally, stated rather than implied: without this the
+    // criterion is only met in passing, and this says the request was not
+    // redirected.
+    expect(new URL(page.url()).pathname).toBe("/panel");
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.getByText("35%")).toBeVisible();

@@ -26,6 +26,16 @@ const BASE_URL = `http://${HOST}:${PORT}`;
  */
 export default defineConfig({
   testDir: "./e2e",
+
+  /*
+   * Aborts the run when the local Supabase instance is down (7.1).
+   *
+   * It runs *after* the web server, because Playwright pushes its plugin setup
+   * tasks ahead of `globalSetups` and the web server is one of those plugins.
+   * So this does not save the build — it replaces a suite of expired `expect`s
+   * pointing at healthy code with one message naming the real cause.
+   */
+  globalSetup: "./playwright.global-setup.ts",
   fullyParallel: true,
   forbidOnly: Boolean(process.env.CI),
   retries: process.env.CI ? 2 : 0,
@@ -48,9 +58,22 @@ export default defineConfig({
   },
 
   projects: [
+    /*
+     * Signs in once per run and saves the session for `e2e/panel.spec.ts`.
+     *
+     * The default `testMatch` only picks up `*.spec.ts` and `*.test.ts`, so no
+     * other project collects `auth.setup.ts`; `dependencies` is what makes it
+     * run even for `npx playwright test e2e/panel.spec.ts`. The resulting order
+     * is webServer → globalSetup → setup → chromium.
+     */
+    {
+      name: "setup",
+      testMatch: /auth\.setup\.ts/,
+    },
     {
       name: "chromium",
       use: { ...devices["Desktop Chrome"] },
+      dependencies: ["setup"],
     },
   ],
 
