@@ -207,8 +207,9 @@ válida THEN THE SYSTEM SHALL fallar la compilación.~~ **Superado el
 6.6. THE SYSTEM SHALL usar la misma forma verbal en los tres controles de
 inscripción de la página.
 
-6.7. THE SYSTEM SHALL NO implementar autenticación, envío de códigos,
-verificación de códigos, alta de cuentas, cobro ni gestión de sesión.
+6.7. THE SYSTEM SHALL NO implementar ~~autenticación,~~ envío de códigos,
+verificación de códigos, alta de cuentas, cobro ~~ni gestión de sesión~~.
+**Acotado el 2026-08-18** (ver la nota de abajo).
 
 **Nota sobre 6.4 y 6.5 — los destinos dejaron de ser externos (2026-08-14).**
 Ambos criterios existían porque la pantalla de acceso vivía fuera de esta
@@ -224,15 +225,26 @@ porque el módulo que la lee no se carga.
 La numeración no se reacomoda a propósito: el código, los tests y `tasks.md`
 citan estos números, y renumerar convertiría cada cita en una referencia falsa.
 
-**Nota sobre 6.7 — las pantallas son maquetas.** `/acceso` y las tres de
-`/registro` son solo interfaz. No envían el código, no lo verifican y no crean
-la cuenta: el control de cada pantalla intermedia es un ancla que avanza pase
-lo que pase, incluso sin haber escrito nada. Las dos pantallas que tocan una
-contraseña —`/acceso` y `/registro/crear-cuenta`— cierran con un botón inerte,
-y ninguna de las cuatro renderiza un `<form>`. Esto último no es un detalle de
-estilo: un formulario sin `action` se envía por GET y pondría la contraseña en
-la barra de direcciones, y de ahí en el historial, en los registros del
-servidor y en el `Referer` del pedido siguiente.
+**Nota sobre 6.7 — qué se revirtió y qué sigue vigente (2026-08-18).** Desde el
+spec `2026-08-17-login-supabase`, `/acceso` verifica las credenciales contra la
+instancia local de Supabase, abre sesión en cookies, y el panel la consulta
+antes de emitir contenido. Eso levanta dos de las seis prohibiciones del
+criterio —autenticación y gestión de sesión— y **solo en esa pantalla**.
+
+El resto sigue en pie. Las tres pantallas de `/registro` son solo interfaz: no
+envían el código, no lo verifican y no crean la cuenta, y el control de cada
+paso intermedio es un ancla que avanza pase lo que pase, incluso sin haber
+escrito nada. `/registro/crear-cuenta` cierra con un botón inerte. El cobro
+sigue fuera de alcance en todo el proyecto.
+
+**El argumento del formulario se conserva, reencuadrado.** Ninguna de las tres
+pantallas de `/registro` renderiza un `<form>`, y eso no es un detalle de
+estilo: un formulario **sin `action`** se envía por GET y pondría la contraseña
+en la barra de direcciones, y de ahí en el historial, en los registros del
+servidor y en el `Referer` del pedido siguiente. El `<form>` que sí aparece en
+`/acceso` no contradice ese razonamiento sino que lo respeta: postea a una
+Server Action, así que ningún campo se serializa en la dirección (1.5 del spec
+de acceso).
 
 ### Requisito 7 — Adaptación a pantallas angostas
 

@@ -20,7 +20,7 @@ La verificación de toda tarea es `npm run typecheck && npm test`. Las tareas T2
 |---|---|
 | `npm run typecheck` | `tsc --noEmit`, con `strict` y `noUncheckedIndexedAccess` |
 | `npm test` | `vitest run` |
-| `npm run test:e2e` | `playwright test` — compila y sirve antes de correr |
+| `npm run test:e2e` | `playwright test` — compila y sirve antes de correr. **Exige Docker con `supabase start` arriba y la base sembrada** |
 | `npm run verify` | encadena typecheck, test, build y test:e2e — lo mismo que CI |
 | `npm run build` | `next build` |
 | `npm run dev` | Servidor de desarrollo |
@@ -41,7 +41,12 @@ No afirmar que la suite está en verde sin haberla corrido.
 - **`generate-tests`** (subagente, `.claude/agents/generate-tests.md`) — traduce ese plan a un único `.spec.ts` en `e2e/`, con los IDs `CP-01`/`CF-01`/`CF-02` en los títulos. No corre lo que escribe, y ese reparto es a propósito: quien corre el test tiene la tentación de ajustar la aserción hasta que pase.
 - **`healer`** (subagente, `.claude/agents/healer.md`) — corre el script y diagnostica cada fallo decidiendo si la culpa es del test, del código o del plan. **No cura nada, pese al nombre**: el único archivo que puede crear o modificar es `E2E-test-cases-report.md`. Un veredicto de «Código» sin archivo y línea citados no es válido.
 
-Estado actual del pipeline: **ejecución terminada.** Los tres artefactos están en `docs/specs/2026-08-12-landing-publica/` y las 27 tareas están en `[x] Hecha`. La tabla **Resumen de tareas** de ese archivo sigue siendo la fuente de verdad.
+Estado actual del pipeline: **dos specs ejecutados.**
+
+- `docs/specs/2026-08-12-landing-publica/` — las 27 tareas en `[x] Hecha`.
+- `docs/specs/2026-08-17-login-supabase/` — las 16 tareas en `[x] Hecha` (2026-08-18). Dejó el acceso real: `.env` versionado, `lib/supabase/{env,server,health}.ts`, `app/acceso/actions.ts`, `middleware.ts`, la guardia de `app/panel/layout.tsx`, `supabase/seed.sql`, y las suites `e2e/{acceso,no-javascript,panel}.spec.ts` con su `auth.setup.ts`.
+
+La tabla **Resumen de tareas** de cada archivo sigue siendo la fuente de verdad.
 
 **Las 27 tareas están hechas.** Dejaron `lib/`, `styles/tokens.{ts,css}`, `components/ui/` (`Disclosure`, `Badge`, `ProfileCard`, `MetricCard`, `DecorativeIcon`), `components/sections/` (`Hero`, `FinalCta`, `ProgramSection`, `FaqSection`, `UpdatesSection`, `AudienceSection`, `MethodologySection`, `SocialProofSection`, `TopNavBar`, `SiteFooter`) y los nueve archivos de `content/`. La implementación está completa; lo que queda son las preguntas abiertas de publicación listadas más abajo.
 
@@ -63,7 +68,11 @@ Los tokens de color tienen cuatro categorías en `styles/tokens.ts`: texto (4.5:
 
 Tests de componente: entorno jsdom **por archivo**, con `// @vitest-environment jsdom` en la primera línea. `vitest.config.ts` declara `esbuild.jsx: "automatic"` porque `tsconfig.json` usa `jsx: "preserve"` para Next; sin eso, todo test de componente falla con `React is not defined`.
 
-**No hace falta configurar nada para compilar.** `NEXT_PUBLIC_ACCESS_URL` ya no bloquea el build: `lib/access-url.ts` sigue lanzando si falta, pero nadie lo importa, así que el módulo no se carga. Retirar ese archivo, su test y la entrada de `vitest.config.ts` es limpieza pendiente, no una decisión tomada.
+**No hace falta configurar nada para compilar**, y ahora es una promesa sostenida por un archivo versionado: `.env` trae `SUPABASE_URL` y `SUPABASE_PUBLISHABLE_KEY` de la instancia local, que son públicas e idénticas en cualquier máquina. `.env.local` sigue ignorado y lo pisa, que es por donde entraría una instancia alojada.
+
+**6.1 dejó de ser un mecanismo y pasó a ser una protección real.** `lib/supabase/env.ts` lanza al importar, y desde el 2026-08-18 hay dos rutas que lo meten en el grafo que `next build` **carga** — `/acceso` y `/panel` —, así que sin el `.env` el build **falla de verdad**: `Failed to collect configuration for /acceso` con `- SUPABASE_URL: Invalid input`. Es lo contrario de lo que pasaba con `NEXT_PUBLIC_ACCESS_URL`: `lib/access-url.ts` sigue lanzando si falta, pero nadie lo importa desde el 2026-08-14, así que el módulo no se carga y no protege nada. Retirar ese archivo, su test y la entrada de `vitest.config.ts` es limpieza pendiente, no una decisión tomada.
+
+**La suite de punta a punta depende de Docker.** `supabase start` tiene que estar arriba y la base sembrada (`supabase db reset`). Si la instancia no responde, el `globalSetup` de Playwright aborta la corrida con un mensaje que nombra esa causa y **cero casos ejecutados**, en vez de dejar que cada caso muera en un `expect` vencido apuntando a código sano. Ojo: ese setup corre **después** del `webServer`, así que no ahorra el build — solo reemplaza el diagnóstico.
 
 T7 se ejecutó fuera del orden del listado, a propósito: los esquemas de navegación y pie de T5 validan `href` contra las anclas reales y necesitan `SECTION_IDS`. El orden a respetar es el de **Depende de**, no el numérico.
 
@@ -84,18 +93,24 @@ Otras decisiones cerradas del diseño:
 - Los módulos son una **unión discriminada por `status`**: `available` (exige `videoMinutes`, resumen desplegable opcional) frente a `coming-soon` (adelanto siempre visible, NO debe declarar `videoMinutes` ni resumen).
 - Los desplegables son `<details>`/`<summary>` nativos, varios abiertos a la vez. Esto es lo que vuelve alcanzable el Requisito 8 (funcionamiento sin JavaScript).
 - El estado activo de la navegación es **solo hover**. Sin scrollspy, deliberadamente.
-- La autenticación está fuera de alcance: nada en el repositorio autentica, envía códigos ni abre sesión (6.7).
+- **La autenticación dejó de estar fuera de alcance, y solo en `/acceso` (2026-08-18).** El spec `2026-08-17-login-supabase` revirtió dos de las seis prohibiciones de 6.7 —autenticar y gestionar sesión— para esa pantalla; el criterio quedó tachado parcialmente en `requirements.md` de la landing. El alta de cuentas, el envío y la verificación de códigos y el cobro siguen prohibidos.
 - **Las pantallas transaccionales viven acá, y todas las rutas son internas (2026-08-14).** «Iniciar sesión» va a `/acceso?intent=login`. Los tres controles de «Inscríbete» van a `/registro?intent=signup`, paso 1 de un alta de tres pantallas: `/registro` (correo) → `/registro/codigo` (código) → `/registro/crear-cuenta` (cuenta). Y `/acceso` desemboca en `/panel`. Todas las direcciones son constantes de `lib/routes.ts`; no hay variable de entorno ni URL saliente. Esto dejó **superados los criterios 6.4 y 6.5**, tachados en `requirements.md` sin renumerar el resto.
-- **Son maquetas inertes.** No envían el código, no lo verifican, no crean la cuenta y no abren sesión (6.7). El control de cada paso intermedio es un ancla que avanza pase lo que pase, incluso sin escribir nada — y desde el 2026-08-14 el de `/acceso` también: entra al panel sin mirar la contraseña. La única que cierra con un botón inerte es `/registro/crear-cuenta`.
-- **Ninguna renderiza un `<form>`, y no es estilo.** Un formulario sin `action` se envía por GET y pondría la contraseña en la barra de direcciones, y de ahí en el historial, los registros del servidor y el `Referer` siguiente. Un ancla no serializa ningún campo, que es lo que vuelve seguro que `/acceso` navegue. `e2e/acceso.spec.ts` lo defiende: teclea una contraseña, activa el control, y afirma que aterriza en `/panel` **pelado** —sin `?`, sin la contraseña, sin el correo— y que Enter dentro del campo no navega. Si alguna vez agregás un `<form>` ahí, ese test es el que te va a frenar.
-- **Ninguna tiene requisitos numerados propios**: se implementaron contra el diseño de Stitch, no contra el spec de la landing. Las cuatro transaccionales comparten `AccessScreen`; `submitHref` presente es un `<a>`, ausente es un botón inerte. Todas, panel incluido, declaran `noindex`. No deben publicarse mientras sigan siendo maquetas.
-- **El panel no tiene guardia de ruta**, porque no hay sesión que mirar: `/panel` se abre escribiendo la dirección. Cuando exista autenticación de verdad, esa guardia es trabajo aparte.
+- **Las tres de `/registro` siguen siendo maquetas inertes.** No envían el código, no lo verifican y no crean la cuenta (6.7). El control de cada paso intermedio es un ancla que avanza pase lo que pase, incluso sin escribir nada; la única que cierra con un botón inerte es `/registro/crear-cuenta`. **`/acceso` ya no es una de ellas:** verifica las credenciales contra la instancia local de Supabase y abre sesión.
+- **`/acceso` renderiza un `<form>`, y las otras tres no. La regla es el `action`, no el `<form>`.** Un formulario **sin `action`** se envía por GET y pondría la contraseña en la barra de direcciones, y de ahí en el historial, los registros del servidor y el `Referer` siguiente. El de `/acceso` postea a una Server Action, así que ningún campo se serializa en la URL — y encima es lo que hace que el acceso funcione sin JavaScript. `e2e/acceso.spec.ts` lo defiende por el lado que importa: afirma que un rechazo aterriza en `?intent=login&error=credenciales` **exacto**, sin la contraseña ni el correo. Si alguna vez agregás un `<form>` a las de `/registro`, los tres tests de esas pantallas te van a frenar.
+- **Ninguna tiene requisitos numerados propios del spec de la landing**: se implementaron contra el diseño de Stitch. `/acceso` sí los tiene ahora, en `docs/specs/2026-08-17-login-supabase/`. Las cuatro transaccionales comparten `AccessScreen`, que tiene **tres** modos: `submitAction` es un `<form>` que postea, `submitHref` es un `<a>`, ninguno de los dos es un botón inerte. Todas, panel incluido, declaran `noindex`, y no deben publicarse mientras el alta siga siendo maqueta.
+- **El panel tiene guardia de ruta desde el 2026-08-18.** Vive en `app/panel/layout.tsx` —el chrome compartido, para que alcance a las pantallas que se agreguen debajo— y consulta la sesión con `getUser()`, que valida contra el servidor de autenticación, nunca con `getSession()`, que le cree a la cookie. `middleware.ts` renueva el token en `/panel/:path*` y **no autoriza nada**: la decisión de dejar pasar es del layout.
+- **Un solo módulo toca cookies de sesión: `lib/supabase/server.ts`.** Fuerza `httpOnly: true` sobre lo que la librería mande, se lo haya pedido o no, y se traga la excepción que Next arroja al escribir cookies desde un componente de servidor. `middleware.ts` arma su propio adaptador porque la renovación tiene que viajar en la **respuesta**, un objeto que aquel módulo no ve.
+- **La cuenta de trabajo y de pruebas es una sola**, sembrada por `supabase/seed.sql`: `alumno@crypto-crime.test` / `investigacion-2024`. El SQL no puede importar nada, así que los mismos literales viven una segunda vez en `e2e/seeded-account.ts`; si los dos archivos se separan, el síntoma es «credenciales inválidas» sobre credenciales correctas. **Las ocho columnas de token de `auth.users` van en cadena vacía y no en NULL:** GoTrue las escanea hacia un `string` de Go y un NULL devuelve `500 Database error querying schema` al iniciar sesión.
 - **El panel deriva el estado del alumno de un solo número.** `content/panel.ts` declara `record.currentModuleIndex` y nada más sobre la posición; `lib/panel/derive.ts` saca de ahí qué módulo está aprobado, cuál en curso, cuáles bloqueados y qué `EXP-NN` desbloquea a cada uno. Es la misma regla del criterio 3.4: el archivo de contenido declara una posición, nunca un código. `overallPercent` sí está declarado a mano, y el comentario del archivo dice por qué (2 de 7 es 28,6%, no 35%).
 
 ## Preguntas abiertas que bloquean la publicación
 
 No bloquean diseño ni implementación, pero sí salir a producción:
 
+- **El acceso solo existe contra la instancia local.** `.env` apunta a `http://127.0.0.1:55321` con la clave publicable de demo; una instancia alojada entra por `.env.local` o por el entorno del proveedor, y esa decisión no se tomó. Mientras tanto, `supabase/seed.sql` versiona un usuario con contraseña en claro — inofensivo en una base local que se recrea con `db reset`, inaceptable si ese archivo llegara a correrse contra otra cosa.
+- **El alta de cuentas sigue siendo maqueta.** Se puede entrar, pero no registrarse: `/registro` no envía el código, no lo verifica y no crea la cuenta. Publicar un acceso que funciona junto a un alta que no lo hace es peor que no publicar ninguno. Conectarlo es un spec posterior.
+- **No hay forma de cerrar sesión**, y está declarado fuera de alcance en el spec de acceso: el enlace «Cerrar sesión» del panel lleva a `/acceso` sin terminar nada. Las cookies se limpian a mano.
+- **`/panel` no tiene recuperación de contraseña**: `forgotHref` apunta a `/recuperar-acceso`, que no existe y cae en la 404 (ver más abajo).
 - Sin respuestas de FAQ ni contenido desplegado para `EXP-00`/`EXP-01` — hasta que exista, esos módulos van sin control de despliegue (criterio 4.4).
 - Los adelantos de `EXP-02` a `EXP-06` arrancan con el marcador `[REVISAR]`.
 - Las métricas `5000+` investigadores y `120+` agencias no tienen respaldo. Este público evalúa evidencia de forma profesional: una cifra que no se sostiene es riesgo de credibilidad.

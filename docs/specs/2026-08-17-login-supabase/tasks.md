@@ -1,4 +1,4 @@
-# Tareas — Acceso real contra Supabase local
+# Tareas — Acceso real contra Supabase local[x] Hecha |[~] Escrita, sin verificar contra la base |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[x] Hecha |[~] Escrita, sin correr |[~] Escrita, sin correr |[~] Escrita, sin correr |[x] Hecha |
 
 **Estado:** Borrador
 **Fecha:** 2026-08-17
@@ -9,22 +9,22 @@
 
 | ID | Tarea | Requisitos | Estado |
 |----|-------|------------|--------|
-| T1 | Configuración de Supabase validada al importar (`lib/supabase/env.ts`) | 6.1, 6.3 | [ ] Pendiente |
-| T2 | Siembra de la cuenta de trabajo (`supabase/seed.sql`) | 6.2 | [ ] Pendiente |
-| T3 | Cliente de servidor atado a cookies (`lib/supabase/server.ts`) | 3.1, 3.4 | [ ] Pendiente |
-| T4 | `login.errorMessage` en `content/access.ts` y su esquema | 2.4 | [ ] Pendiente |
-| T5 | `AccessScreen`: tercer modo, el `<form>` que postea | 1.5, 5.3 | [ ] Pendiente |
-| T6 | `AccessScreen`: el mensaje de error y el token `--error-text` | 2.1, 2.5 | [ ] Pendiente |
-| T7 | La acción `signIn`: autentica y redirige | 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1 | [ ] Pendiente |
-| T8 | La acción `signIn`: valida antes de consultar a Supabase | 1.4 | [ ] Pendiente |
-| T9 | `/acceso` postea a la acción y muestra el error de la query | 2.1, 2.4, 2.5, 5.3, 5.4, 6.1 | [ ] Pendiente |
-| T10 | `middleware.ts`: renovación del token de sesión | 3.2, 3.3 | [ ] Pendiente |
-| T11 | La guardia en `app/panel/layout.tsx` | 3.3, 4.1, 4.2, 4.3, 4.4, 6.1 | [ ] Pendiente |
-| T12 | `globalSetup` de Playwright: la instancia local responde | 7.1 | [ ] Pendiente |
-| T13 | `e2e/acceso.spec.ts` reescrito: CP-01, CF-01 y CF-02 | 1.1, 1.2, 1.5, 2.1, 3.1, 3.2, 3.4, 4.1, 7.2, 7.3 | [ ] Pendiente |
-| T14 | Cobertura del acceso sin JavaScript en `e2e/no-javascript.spec.ts` | 5.1, 5.2 | [ ] Pendiente |
-| T15 | `e2e/panel.spec.ts` entra con sesión antes de mirar el panel | 3.2, 4.2, 7.2 | [ ] Pendiente |
-| T16 | Acotar el criterio 6.7 en el spec de la landing | — (Relación con el spec) | [ ] Pendiente |
+| T1 | Configuración de Supabase validada al importar (`lib/supabase/env.ts`) | 6.1, 6.3 | [x] Hecha |
+| T2 | Siembra de la cuenta de trabajo (`supabase/seed.sql`) | 6.2 | [x] Hecha |
+| T3 | Cliente de servidor atado a cookies (`lib/supabase/server.ts`) | 3.1, 3.4 | [x] Hecha |
+| T4 | `login.errorMessage` en `content/access.ts` y su esquema | 2.4 | [x] Hecha |
+| T5 | `AccessScreen`: tercer modo, el `<form>` que postea | 1.5, 5.3 | [x] Hecha |
+| T6 | `AccessScreen`: el mensaje de error y el token `--error-text` | 2.1, 2.5 | [x] Hecha |
+| T7 | La acción `signIn`: autentica y redirige | 1.1, 1.2, 1.3, 2.1, 2.2, 2.3, 3.1 | [x] Hecha |
+| T8 | La acción `signIn`: valida antes de consultar a Supabase | 1.4 | [x] Hecha |
+| T9 | `/acceso` postea a la acción y muestra el error de la query | 2.1, 2.4, 2.5, 5.3, 5.4, 6.1 | [x] Hecha |
+| T10 | `middleware.ts`: renovación del token de sesión | 3.2, 3.3 | [x] Hecha |
+| T11 | La guardia en `app/panel/layout.tsx` | 3.3, 4.1, 4.2, 4.3, 4.4, 6.1 | [x] Hecha |
+| T12 | `globalSetup` de Playwright: la instancia local responde | 7.1 | [x] Hecha |
+| T13 | `e2e/acceso.spec.ts` reescrito: CP-01, CF-01 y CF-02 | 1.1, 1.2, 1.5, 2.1, 3.1, 3.2, 3.4, 4.1, 7.2, 7.3 | [x] Hecha |
+| T14 | Cobertura del acceso sin JavaScript en `e2e/no-javascript.spec.ts` | 5.1, 5.2 | [x] Hecha |
+| T15 | `e2e/panel.spec.ts` entra con sesión antes de mirar el panel | 3.2, 4.2, 7.2 | [x] Hecha |
+| T16 | Acotar el criterio 6.7 en el spec de la landing | — (Relación con el spec) | [x] Hecha |
 
 ## Cobertura de requisitos
 
@@ -147,11 +147,13 @@ a la clave secreta y confirmando que falla solo ese caso.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- La pregunta abierta 1 se resolvió por el lado del `.env` versionado, así que la tarea quedó desbloqueada. Se creó `.env` en la raíz con `SUPABASE_URL=http://127.0.0.1:55321` y la clave publicable de la instancia local. `git check-ignore` no lo reclama: `.gitignore` solo ignora `.env*.local`, de modo que no hubo que tocar ningún ignorado.
+- La clave publicable se leyó de `supabase/.temp/start-secrets/.../docker.env` (`SUPABASE_INTERNAL_PUBLISHABLE_KEY`), porque la instancia no estaba levantada para correr `supabase status`. Es la clave por omisión de cualquier instancia local, idéntica en toda máquina.
+- El módulo y su test ya existían del commit `1bdbc21`; esta ejecución cerró la mitad que faltaba.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`lib/supabase/env.ts` y `lib/supabase/env.test.ts` en verde, con las dos variables en el bloque `test.env` de `vitest.config.ts`. La protección de 6.1 quedó comprobada de verdad en T9: sin `.env`, `npm run build` cae con `Failed to collect configuration for /acceso` y `- SUPABASE_URL: Invalid input`.
 
 ## T2 — Siembra de la cuenta de trabajo (`supabase/seed.sql`)
 
@@ -255,11 +257,19 @@ autonomía que `design.md` solo aceptó perder en `test:e2e`.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Se escribió `supabase/seed.sql` con la cuenta `alumno@crypto-crime.test` / `investigacion-2024`, id literal `9b2c4f8e-1d3a-4c5b-8e7f-2a6d0b4c9e13`, `on conflict (id) do nothing` en `auth.users` y `on conflict (provider_id, provider) do nothing` en `auth.identities`.
+- Las ocho columnas de token van en cadena vacía, tal como la entrada de la tarea documenta; `phone` queda en NULL.
+- `crypt()` y `gen_salt()` se llaman calificadas como `extensions.…`, la variante defensiva.
+- `git check-ignore` no reclama el archivo.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+El ciclo entero se corrió contra la instancia local, después de reiniciar Docker Desktop —su motor Linux devolvía `500` en la API del named pipe y hubo que matar los procesos, hacer `wsl --shutdown` y relanzarlo—.
+
+1. **Rojo.** Con la base sin la cuenta, `POST /auth/v1/token?grant_type=password` devolvió `400 {"error_code":"invalid_credentials"}`.
+2. **Verde.** Tras `supabase db reset` —que imprime `Seeding data from supabase/seed.sql...`— el mismo pedido devolvió `200` con `access_token`, `user.email` igual a `alumno@crypto-crime.test` y `user.identities` de largo 1. **Ningún `Database error querying schema`:** las ocho columnas de token en cadena vacía eran efectivamente lo que hacía falta.
+3. **Idempotencia.** Aplicar `seed.sql` una segunda vez sobre la base ya sembrada terminó con `INSERT 0 0` en los dos `insert` y dejó `1 | 1` al contar `auth.users` y `auth.identities`.
+4. **Sin NULL.** `select … is null` sobre las ocho columnas devolvió `f` en las ocho.
 
 ## T3 — Cliente de servidor atado a cookies (`lib/supabase/server.ts`)
 
@@ -343,11 +353,13 @@ los dos casos deben caer, y solo esos.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Se instalaron `@supabase/ssr` y `@supabase/supabase-js` como dependencias de ejecución, dentro de esta tarea, tal como la entrada indica.
+- El montaje de dobles quedó como el plan lo pedía: `next/headers` devuelve un almacén de mentira que registra cada `set`, y `@supabase/ssr` captura el objeto `cookies`. Es el primer `vi.mock` del repositorio y lo reusan T7, T10 y T11.
+- Los dos casos de 3.4 entran por el lado contrario —opciones sin `httpOnly` y con `httpOnly: false`—, así que no pueden pasar por reenvío.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`lib/supabase/server.ts` con `createClient()` en verde, seis casos. **Mutación corrida:** reemplazar el forzado por un reenvío directo de las opciones tumbó exactamente los dos casos de 3.4 y ninguno más; revertida con Edit.
 
 ## T4 — `login.errorMessage` en `content/access.ts` y su esquema
 
@@ -436,11 +448,14 @@ recorre una lista literal de nombres de campo, no las claves del objeto.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- El rojo dirigido salió contra `LoginSchema`, antes de tocar los dos archivos, tal como la entrada lo pedía: el caso «declares a single message» y el de la clave faltante fallaron con `content/access.ts` y `lib/content/schemas.ts` intactos.
+- Se creó `lib/content/schemas.access.test.ts`, siguiendo la convención de `schemas.panel.test.ts`.
+- Texto elegido, en tuteo: «No pudimos verificar tus credenciales. Revisa el correo y la contraseña.» No distingue contraseña equivocada de cuenta inexistente.
+- Se actualizó el comentario de cabecera de `content/access.ts`, que documentaba el reparto usted/tú: ahora dice que `login.subtitle` sigue en usted a propósito y que el texto nuevo es tuteo, con la deuda anotada.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`LoginSchema` gana `errorMessage: NonEmpty`, `content/access.ts` lo declara, y `lib/content/schemas.access.test.ts` cubre los esquemas de acceso —que eran los únicos del proyecto sin test propio—. Siete casos nuevos en verde.
 
 ## T5 — `AccessScreen`: tercer modo, el `<form>` que postea
 
@@ -540,11 +555,14 @@ El mensaje de error no entra acá: es T6.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Tres ramas por precedencia: `submitAction` primero, después `submitHref`, y el botón inerte al final. No se retipó ninguna de las cuatro pantallas.
+- El helper `renderScreen` pasó de un parámetro posicional a un objeto de opciones, como T6 necesitaba.
+- No se afirma nada sobre `method` ni sobre el atributo `action`: se confirmó lo que la entrada anticipaba, React deja `method` sin poner y escribe un centinela en `action`. Lo que sí se afirma es que `submitAction` se llama una vez con un `FormData` que trae los campos tecleados.
+- Se corrigieron los tres comentarios que quedaban mintiendo: la cabecera de `AccessScreen.tsx`, el `describe` de la prueba y el bloque `.submit` del CSS.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`AccessScreen` con su tercer modo, en verde. Los tests de las cuatro pantallas que ya usaban el componente pasaron sin tocar ninguno de esos archivos, y el caso «renders no form in either action-less shape (6.7)» se conservó cubriendo las dos ramas sin acción.
 
 ## T6 — `AccessScreen`: el mensaje de error y el token `--error-text`
 
@@ -654,11 +672,14 @@ leer `searchParams.error` es T9. Tampoco se tocan los campos, que llegan por
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- El mensaje va **dentro de `.intro`**, después del subtítulo: hereda el centrado y el `margin-block-end` del bloque, así que no necesita espaciado propio.
+- `--error-text` es `#b3261e`, el valor que la propia entrada de la tarea ya había medido: 6.54:1 sobre blanco y 6.10:1 sobre crema. Clasificado en `TEXT_TOKENS`.
+- Se actualizó la cabecera de `styles/tokens.ts`, que afirmaba que todos los valores salían del mockup: `--error-text` es el primer color del proyecto sin origen en el diseño.
+- La aserción de 2.5 va contra `container.querySelector`, no contra `queryByText`, para que un párrafo vacío no la pase.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`error?: string` en `AccessScreen`, token replicado en `styles/tokens.css`, y `styles/tokens.test.ts` pasó de 16 a 18 casos en verde. **Mutación corrida:** renderizar el mensaje sin condicionar tumbó **solo** el caso «does not exist at all without an error»; revertida con Edit.
 
 ## T7 — La acción `signIn`: autentica y redirige
 
@@ -786,11 +807,14 @@ solo produce el marcador `error=credenciales` en la dirección.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- `LOGIN_ERROR_HREF` se derivó de `LOGIN_HREF` en `lib/routes.ts` y lleva el intent, discrepando de `design.md` por las tres razones de la entrada.
+- El `try` abraza solo la llamada a `signInWithPassword`; los dos `redirect` quedan fuera.
+- **Dos trampas del montaje que la entrada no anticipaba, y valen para las tareas que reusen este patrón:** (1) `vi.mock` se iza por encima de las declaraciones del archivo, así que los dobles tienen que construirse dentro de `vi.hoisted`; (2) vitest lee una función devuelta por `beforeEach` como callback de limpieza, y `mockImplementation` devuelve el propio mock — con `beforeEach(arrange)` a secas, vitest **llamaba** al doble después de cada caso y el que lanzaba producía un rechazo no manejado que se leía como fallo del código. Se envolvió el arrange en llaves.
+- El caso de la instancia caída usa `mockImplementation(async () => { throw … })` y no `mockRejectedValue`, que arma su promesa rechazada en el momento de arreglarse.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`app/acceso/actions.ts` con `"use server"` y `signIn`, nueve casos en verde. **Mutación corrida:** mover los dos `redirect` dentro del `try` tumbó seis de los nueve —los tres caminos, como el criterio anticipaba—; revertida con Edit.
 
 ## T8 — La acción `signIn`: valida antes de consultar a Supabase
 
@@ -878,11 +902,13 @@ prueba nada. Tres cosas mantienen honesto el ciclo:
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- `CredentialsSchema` con `z.strictObject({ email: z.email(), password: z.string().min(1) })`, parseado con `safeParse` sobre un objeto armado con dos `formData.get()` explícitos.
+- El parseo va antes de `createClient()`, así que un intento malformado ni siquiera arma el cliente; es lo que la aserción sobre `createClient` con cero llamadas ata.
+- Los tres casos nacieron en rojo de verdad contra la `signIn` de T7, que llamaba a Supabase incondicionalmente.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+Seis casos nuevos en verde y el camino feliz de T7 —el contracaso— sigue pasando: credenciales bien formadas llegan a `signInWithPassword` con exactamente `{ email, password }` y terminan en `/panel` pelado.
 
 ## T9 — `/acceso` postea a la acción y muestra el error de la query
 
@@ -1048,11 +1074,16 @@ se toca: sus dos propiedades nuevas ya existen tras T5 y T6.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- `lib/routes.ts` ganó `LOGIN_ERROR_CODE = "credenciales"` y `LOGIN_ERROR_HREF` pasó a derivarse de él; el valor resultante no cambió, así que las aserciones literales de T7 y T8 siguieron verdes.
+- El montaje del test se rehízo entero con el helper `renderPage(searchParams = {})`, que invoca la función `async` y renderiza lo que resuelve. Las tres aserciones negativas de 2.5 llevan al lado el ancla positiva del `<h1>`.
+- La aserción de 5.4 recorre el directorio `app/acceso/` en vez de nombrar un archivo, y afirma que hay más de una fuente para que no pase por directorio vacío.
+- Se corrigieron los dos bloques de comentario de `page.tsx`: el `noindex` se conserva con su razón cambiada, y la nota sobre el `<form>` quedó invertida.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+17 casos en verde. **Mutación corrida:** renderizar el mensaje sin condicionarlo al valor tumbó **solo** los tres casos de 2.5; revertida con Edit.
+
+**6.1, comprobado con el build (una corrida):** con el `.env` retirado, `npm run build` termina en 1 y el log dice `[Error: Failed to collect configuration for /acceso]` con `- SUPABASE_URL: Invalid input` como causa. Repuesto el archivo, el build termina en 0 y `/acceso` figura como `ƒ Dynamic`. Es la primera vez que 6.1 protege algo de verdad en este repositorio.
 
 ## T10 — `middleware.ts`: renovación del token de sesión
 
@@ -1193,11 +1224,14 @@ reescriba.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- `middleware.ts` en la raíz, con `config.matcher = ["/panel/:path*"]`. Arma la respuesta **antes** de `getUser()` y se la entrega a `setAll`, que es lo que evita descartar lo que la librería renueva.
+- Fuerza `httpOnly: true` también acá, por la misma razón que `lib/supabase/server.ts`.
+- No importa `next/headers` ni `lib/supabase/server`: el adaptador va sobre `request.cookies` / `response.cookies`. `lib/supabase/env` sí se comparte.
+- El caso «sin sesión no redirige» afirma además que `getUser()` se llamó y que la respuesta es de continuación (200, sin `location`), de modo que no pasa contra un middleware inerte.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+Seis casos en verde, en entorno `node` y sin jsdom. **Mutación corrida:** borrar la llamada a `getUser()` tumbó el caso de la cookie renovada y, como estaba previsto por el diseño de los casos, los dos que afirman explícitamente que `getUser` fue llamado; revertida con Edit. El build compila el middleware aparte (`ƒ Middleware`, 109 kB) y las seis rutas restantes siguen estáticas salvo `/acceso` y `/panel`.
 
 ## T11 — La guardia en `app/panel/layout.tsx`
 
@@ -1391,11 +1425,16 @@ para 6.1. **No** `npm run test:e2e`: `e2e/acceso.spec.ts` está en rojo desde T9
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- La guardia va al principio de `app/panel/layout.tsx`, con `getUser()` y `redirect(LOGIN_HREF)`. El layout pasó a `async` y `/panel` pasó de `○ Static` a `ƒ Dynamic`, como la entrada anticipaba.
+- El caso con usuario se monta con `render(await PanelLayout({ children }))`; el caso sin usuario no usa `render` en absoluto y deduce la ausencia de contenido del rechazo.
+- El `children` de los casos es un párrafo arbitrario que no tiene nada que ver con el panel, que es lo que vuelve observable la mitad de 4.4 que sí se puede ver.
+- Se corrigieron los tres comentarios listados: `metadata` de `app/panel/layout.tsx`, el componente de `app/panel/page.tsx` y el de `PANEL_HREF` en `lib/routes.ts`.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+Seis casos en verde, y `app/panel/page.test.tsx` siguió pasando pese a que ahora arrastra `lib/supabase/env`. **Las dos mutaciones se corrieron:** `if (true)` tumbó **solo** los dos casos con sesión viva; borrar el `if` tumbó **solo** los dos casos sin sesión. Las dos revertidas con Edit.
+
+**6.1 por el lado de `/panel`:** la corrida de build sin `.env` aborta en `/acceso`, que es la primera ruta que se recoge, así que el fallo por `/panel` no se observó por separado. Lo que sí quedó comprobado es que el módulo entra en el grafo: `/panel` figura como `ƒ Dynamic` en la tabla de rutas del build, que es la consecuencia directa de leer cookies por pedido.
 
 ## T12 — `globalSetup` de Playwright: la instancia local responde
 
@@ -1528,11 +1567,16 @@ resultado esperado.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Reparto tal como la entrada lo fijaba: `lib/supabase/health.ts` con su test en Vitest, y `playwright.global-setup.ts` en la raíz. Ninguno bajo `e2e/`, así que los dos entran en `npm run typecheck`.
+- **Hizo falta un tercer archivo, `playwright.load-env.ts`, y esto corrige el camino que la entrada proponía.** El `await import("./lib/supabase/env")` después de `process.loadEnvFile()` **no funciona**: Playwright no transforma un `.ts` resuelto en tiempo de ejecución y la corrida muere con `SyntaxError: Cannot use import statement outside a module`. La forma que sí anda es explotar el orden de evaluación de ESM: un módulo aparte que llama a `loadEnvFile()` como efecto de importación, importado **encima** de `lib/supabase/env` en el `globalSetup`. Los dos imports quedan estáticos y la transformación de Playwright los alcanza.
+- `AbortSignal.timeout(5000)` en el pedido, para que un Docker colgado no deje el setup esperando para siempre.
+- El chequeo no manda `apikey` ni `Authorization`, y un caso lo afirma.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+Cuatro casos en verde en `lib/supabase/health.test.ts`.
+
+**Cableado comprobado, y contra el caso real en vez del puerto muerto simulado:** con Docker caído en esta máquina, `npx playwright test e2e/acceso.spec.ts` termina en 1 después del `build` + `next start`, con `Error: The local Supabase instance is not answering at http://127.0.0.1:55321. Start it with \`supabase start\` and seed it with \`supabase db reset\`.` y **cero casos ejecutados**, sin abrir el navegador. La sustitución de síntoma que la tarea existe para conseguir quedó demostrada de punta a punta.
 
 ## T13 — `e2e/acceso.spec.ts` reescrito: CP-01, CF-01 y CF-02
 
@@ -1762,11 +1806,24 @@ loop escribe el suyo.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- `e2e/acceso.spec.ts` se reescribió entero. Se creó `e2e/seeded-account.ts` con los dos literales y el comentario que nombra `supabase/seed.sql` como la fuente.
+- Se retiraron el bloque `toHaveCount(0)` sobre `form`, el selector `a[href="/panel"]`, el caso «lands on the dashboard with a bare address», el bloque «entered from the address the site links to» y el comentario de cabecera que decía que nada acá autentica.
+- El caso de Enter quedó invertido dentro del bloque de CF-01, sin ID.
+- Las corridas de axe se extendieron a `LOGIN_ERROR_HREF`, así que el bloque pasó de dos a cuatro casos.
+- Se conservaron pantalla angosta (7.8), recorrido por teclado, 44 por 44 (7.6) y `noindex`, todos del spec de la landing.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+El archivo quedó en verde, y las **tres mutaciones se corrieron y se revirtieron con Edit**. Cada una tumbó lo previsto y nada más:
+
+1. **Quitar `action={submitAction}`** — cayeron CP-01, CF-01 y el caso de Enter. El log de Playwright muestra la causa exacta que 1.5 existe para impedir: `navigated to http://127.0.0.1:3100/acceso?email=alumno%40crypto-crime.test&password=investigacion-2024`. La contraseña en la barra de direcciones. Matiz honesto: los tres caen por vencimiento del `waitForURL` sobre esa dirección equivocada, no por la línea de la aserción de igualdad; es la misma observación un paso antes.
+2. **Ignorar `searchParams.error`** — cayó **solo** la mitad de CF-01 que mira el mensaje, en `expect(locator).toBeVisible()`. CP-01 y CF-02 quedaron verdes.
+3. **Quitar el `if (!user) redirect(…)` del layout** — cayó **solo** CF-02.
+
+**Dos defectos del propio archivo que las corridas destaparon, y valen para quien escriba specs de esta pantalla:**
+
+- `waitForURL("**/acceso**")` tras enviar el formulario **resuelve al instante**: el formulario postea a la dirección en la que ya está, y ese glob la matchea antes de que ocurra la redirección. Los dos casos de CF-01 leían la dirección del intento en vez de la de la respuesta. Se cambió por `waitForURL(/error=credenciales/)`. En CF-02 el glob sí sirve, porque el pedido arranca en `/panel`.
+- El caso de 44 por 44 empezó a fallar con un `INPUT` de 0 por 0: es el `<input type="hidden" name="$ACTION_ID_…">` que React inyecta en un formulario que postea a una Server Action. Se excluyen los `input[type="hidden"]` y solo esos —acotar por tipo y no por tamaño es lo que impide que se cuele un control realmente chico—.
 
 ## T14 — Cobertura del acceso sin JavaScript en `e2e/no-javascript.spec.ts`
 
@@ -1887,11 +1944,18 @@ porque la corrida de punta a punta le borra `.next`.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Los dos casos se agregaron a `e2e/no-javascript.spec.ts`, en un `test.describe` propio que nombra el spec de acceso, para que sus números no se confundan con la numeración 8.x de la landing que el resto del archivo ocupa.
+- Los dos entran por `/acceso?intent=login`, no por un `/acceso` pelado, que es lo que hace determinista el destino del rechazo.
+- Las credenciales se importan de `e2e/seeded-account.ts`; no hay literales de credenciales en el archivo.
+- Se extendió el comentario de cabecera para nombrar también el acceso.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+El archivo entero quedó en verde, no solo los dos casos nuevos.
+
+**La mutación se corrió y se revirtió, y el reparto de rojos NO fue el previsto. Se anota lo observado.** Convertir `AccessScreen` en componente de cliente con un `onClick` que navega a `/panel` tumbó los dos casos nuevos, que es lo que la tarea pedía comprobar — pero **`e2e/acceso.spec.ts` no quedó en verde**: cayeron también cuatro de sus casos. La predicción era optimista, y la razón es estructural: un `onClick` que navega por script no autentica, así que CP-01 no puede llegar al panel con sesión, CF-01 no puede producir el mensaje, y el selector `button[type="submit"]` deja de existir. No hay forma de romper el camino sin script conservando el camino con script, que es exactamente lo que la propia entrada de la tarea ya anticipaba al decir que el diseño tiene un solo camino de envío.
+
+El rojo colateral previsto sí apareció: `components/sections/AccessScreen.test.tsx` falló en `not.toContain("use client")`, junto con cuatro casos más de las dos suites unitarias de la pantalla.
 
 ## T15 — `e2e/panel.spec.ts` entra con sesión antes de mirar el panel
 
@@ -2065,11 +2129,21 @@ el servidor de desarrollo queda sirviendo páginas sin estilos.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- Se eligió `storageState` producido una vez por corrida, por el límite `sign_in_sign_ups = 30` que la entrada documenta.
+- `e2e/auth.setup.ts` comprueba que hay al menos una cookie `sb-` antes de guardar, y si no la hay falla nombrando la cuenta sembrada y `supabase db reset`.
+- `playwright.config.ts` ganó un proyecto `setup` con `testMatch: /auth\.setup\.ts/` y `dependencies: ["setup"]` en `chromium`. No se tocaron `webServer`, `workers: 1` ni el `globalSetup` de T12.
+- `e2e/panel.spec.ts` declara `test.use({ storageState })` a nivel de módulo y ninguna de sus aserciones cambió, salvo la de 4.2 que se agregó al primer caso.
+- `.gitignore` ignora `e2e/.auth/`.
+- El comentario de cabecera del archivo ya no dice que nada guarda la ruta.
+- El caso de «Cerrar sesión» quedó intacto: cerrar sesión está fuera de alcance.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+**`npm run verify` termina en verde de punta a punta**: typecheck, 439 casos de Vitest, build, y 136 casos de Playwright. `git status` queda limpio después de la corrida completa.
+
+**El rojo natural se vio, y el reparto NO fue el previsto. Se anota lo observado.** Quitando el `test.use({ storageState })`, caen **cinco** de los once casos, no los once: el saludo y el temario, los estados de los módulos, el panel sin script, «Cerrar sesión» y los 44 por 44. Los otros seis —el ajuste a 375, los destinos internos, axe en 1280 y 375, el recorrido por teclado y el `noindex`— **pasan igual contra `/acceso`**, porque esa pantalla también los satisface. No debilita el ciclo: los cinco que caen no se pueden poner en verde sin una sesión de verdad, y `e2e/auth.setup.ts` falla ruidosamente si el estado guardado sale sin cookie `sb-`.
+
+**Un impedimento de Playwright que la entrada no anticipaba:** una spec **no puede importar un archivo de test**, y `auth.setup.ts` lo es —`Error: test file "panel.spec.ts" should not import test file "auth.setup.ts"`—. La constante `STORAGE_STATE` no puede vivir junto al setup que la produce; se movió a `e2e/storage-state.ts`, que importan los dos.
 
 ## T16 — Acotar el criterio 6.7 en el spec de la landing
 
@@ -2224,8 +2298,12 @@ decida. Tampoco se tocan 6.1 a 6.6 ni sus notas.
 
 **Decision log:**
 
-_(vacío hasta la ejecución)_
+- El tachado es parcial y cae sobre «autenticación,» y «ni gestión de sesión», con el marcador **Acotado el 2026-08-18** y el puntero a la nota. Los otros cuatro ítems quedan sin tachar.
+- La nota vieja se reemplazó entera en su lugar, no se le agregó un párrafo al lado. Su título dejó de ser «las pantallas son maquetas».
+- Se conservó el argumento del GET, reencuadrado: explica por qué el `<form>` de `/acceso` no lo contradice.
+- **Dos citas de 6.7 en el código que ninguna otra tarea nombraba y que quedaron corregidas acá:** el comentario de `app/panel/page.test.tsx` («the panel is a mock, like the four screens before it») y el de `lib/access-url.ts` («authentication is out of scope for this landing»), que además ahora dice que el módulo está muerto desde el 2026-08-14. La cabecera de `components/sections/AccessScreen.tsx` y la de `lib/content/schemas.ts` ya se habían corregido en T5 y T4.
+- No se tocó `design.md` de la landing, cuyo árbol de rutas rotula `acceso/page.tsx` como «ingreso — maqueta inerte (6.2, 6.7)». **Queda para que lo decida el usuario:** corregirlo es una decisión sobre el spec de otra feature.
 
 **Outcome:**
 
-_(vacío hasta que la tarea esté terminada)_
+`rg -n "^6\.\d"` sigue devolviendo las mismas siete entradas, 6.1 a 6.7. `rg -c "Nota sobre 6\.7"` devuelve 1. El diff toca un solo archivo. La frase «las cuatro» desapareció; «son solo interfaz» y «botón inerte» siguen en el archivo pero ahora en su forma verdadera —referidas a las tres pantallas de `/registro` y a `/registro/crear-cuenta`—. `npm run typecheck && npm test` en verde.
