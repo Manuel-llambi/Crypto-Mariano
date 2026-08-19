@@ -89,7 +89,7 @@ describe("the card that resumes the course", () => {
 });
 
 /**
- * 6.7 — the panel is a mock, like the four screens before it.
+ * The panel screen itself does nothing — the guard is in its layout.
  *
  * Every control on it is an inert button. It shows a course nobody can open,
  * because there is no lesson viewer in this repository yet, and a link into a

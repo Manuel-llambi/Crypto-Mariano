@@ -21,9 +21,10 @@ export const metadata: Metadata = {
  * here about that position — which module is passed, which is locked, what
  * unlocks it — is derived from a single index declared in `content/panel.ts`.
  *
- * Nothing authenticates and nothing guards the route: 6.7 still holds, and this
- * screen is reached both from the control of `/acceso` and by typing the
- * address, which are the same thing until there is a session to check.
+ * The route is guarded, and not here: the check lives in the shared chrome of
+ * `app/panel/layout.tsx`, so every screen added below `/panel` inherits it.
+ * This one only draws. What it draws is still versioned content — the session
+ * says who may look, not what is shown.
  */
 export default function PanelPage() {
   const { record } = panel;
