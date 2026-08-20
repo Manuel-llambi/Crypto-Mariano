@@ -19,12 +19,19 @@ const valid = {
   ],
   settingsLabel: "Ajustes",
   logoutLabel: "Cerrar sesión",
-  welcome: { eyebrow: "Curso", greeting: "Bienvenido", body: "Tu expediente está activo." },
+  welcome: {
+    eyebrow: "Curso",
+    greeting: "Bienvenido",
+    body: "Tu expediente está activo.",
+    startBody: "Tu expediente está listo.",
+  },
   continueCard: {
     eyebrow: "Continuar aprendizaje",
+    startEyebrow: "Comenzar aprendizaje",
     durationLabel: "Duración est.",
     attachmentsLabel: "Archivos adjuntos",
     ctaLabel: "Reanudar",
+    startCtaLabel: "Comenzar",
   },
   progressCard: {
     title: "Progreso del expediente",
@@ -38,6 +45,8 @@ const valid = {
     passedBadge: "Completado",
     passedLabel: "Aprobado",
     currentBadge: "En curso",
+    availableBadge: "Disponible",
+    availableLabel: "Sin comenzar",
     lockedBadge: "Bloqueado",
     lockedPrefix: "Requiere",
   },
@@ -97,6 +106,17 @@ describe("PanelSchema", () => {
     });
 
     expect(result.success).toBe(false);
+  });
+
+  /**
+   * The screen picks its copy from the record, so both branches have to exist.
+   * Dropping the «sin empezar» half would leave a new student reading
+   * «Reanudar» over a course they never opened.
+   */
+  it("needs the copy of both branches, started and not", () => {
+    const { startCtaLabel: _dropped, ...withoutStart } = valid.continueCard;
+
+    expect(PanelSchema.safeParse({ ...valid, continueCard: withoutStart }).success).toBe(false);
   });
 
   it("rejects a blank label", () => {

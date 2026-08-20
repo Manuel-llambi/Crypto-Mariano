@@ -2,7 +2,13 @@ import { describe, expect, it } from "vitest";
 
 import { access } from "@/content/access";
 
-import { AccessSchema, LoginSchema } from "./schemas";
+import {
+  AccessSchema,
+  LoginSchema,
+  SignupAccountSchema,
+  SignupCodeSchema,
+  SignupEmailSchema,
+} from "./schemas";
 
 /**
  * The access schemas, which were the only ones of the project without a test of
@@ -66,5 +72,85 @@ describe("AccessSchema", () => {
     const spoiled = { ...access, login: { ...access.login, extra: "de más" } };
 
     expect(AccessSchema.safeParse(spoiled).success).toBe(false);
+  });
+});
+
+/**
+ * The five messages the three sign-up steps show when an attempt is refused.
+ *
+ * They are declared as content like every other string (8.1), so the schema is
+ * what turns a missing one into a build failure rather than an empty node on a
+ * screen nobody looks at until it matters.
+ */
+describe("the sign-up steps declare their refusals", () => {
+  /** A well formed step block, to be spoiled one field at a time. */
+  const steps = [
+    ["email", SignupEmailSchema, ["errorMessage", "expiredMessage"]],
+    ["code", SignupCodeSchema, ["errorMessage"]],
+    ["account", SignupAccountSchema, ["errorMessages"]],
+  ] as const;
+
+  for (const [step, schema, fields] of steps) {
+    describe(step, () => {
+      it("accepts the real content", () => {
+        expect(schema.safeParse(access.signup[step]).success).toBe(true);
+      });
+
+      for (const field of fields) {
+        it(`rejects a block with no ${field}`, () => {
+          const spoiled: Record<string, unknown> = { ...access.signup[step] };
+          delete spoiled[field];
+
+          const result = schema.safeParse(spoiled);
+
+          expect(result.success).toBe(false);
+          expect(JSON.stringify(result.error?.issues)).toContain(field);
+        });
+      }
+    });
+  }
+
+  it("rejects an empty message on any step", () => {
+    expect(SignupEmailSchema.safeParse({ ...access.signup.email, errorMessage: "" }).success).toBe(
+      false,
+    );
+    expect(SignupCodeSchema.safeParse({ ...access.signup.code, errorMessage: "  " }).success).toBe(
+      false,
+    );
+  });
+
+  /*
+   * 3.2 — two messages on step 3, and the asymmetry with step 2 is deliberate.
+   *
+   * On steps 1 and 2 every refusal says the same thing, because telling them
+   * apart would leak which addresses are registered. By step 3 the visitor has
+   * already proved the mailbox is theirs, so naming the cause costs nothing and
+   * saves them from guessing what to fix.
+   */
+  it("gives step 3 exactly the two reasons, and no more", () => {
+    const result = SignupAccountSchema.safeParse({
+      ...access.signup.account,
+      errorMessages: { ...access.signup.account.errorMessages, otro: "de más" },
+    });
+
+    expect(result.success).toBe(false);
+    expect(Object.keys(access.signup.account.errorMessages).sort()).toEqual(["generic", "weak"]);
+  });
+
+  /*
+   * 4.3 — the one assertion that cannot be satisfied by copying the message
+   * next door.
+   *
+   * The two step 1 messages answer different questions. `errorMessage` is a
+   * rejection of what was typed; `expiredMessage` is for someone who did
+   * nothing wrong and simply arrived at step 2 with no pending address. The
+   * criterion asks for a message that says to ask for a new code, so if the two
+   * texts were the same the requirement would be met on paper only.
+   */
+  it("says something different when the pending address is gone", () => {
+    const { errorMessage, expiredMessage } = access.signup.email;
+
+    expect(expiredMessage).not.toBe(errorMessage);
+    expect(expiredMessage).toMatch(/código/i);
   });
 });

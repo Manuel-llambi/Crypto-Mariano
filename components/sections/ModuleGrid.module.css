@@ -26,6 +26,13 @@
   border: 2px solid var(--navy);
 }
 
+/* Open but untouched: the same weight as the card in progress, since it is the
+   one the student can act on, and equally not dashed like the locked ones. */
+.cardAvailable {
+  background: var(--white);
+  border: 2px solid var(--navy);
+}
+
 .cardLocked {
   background: var(--white);
   border-style: dashed;
@@ -70,6 +77,11 @@
   color: var(--white);
 }
 
+.badgeAvailable {
+  background: var(--navy);
+  color: var(--white);
+}
+
 .badgeLocked {
   border: 1px solid var(--rule);
   color: var(--grey-text);
@@ -108,6 +120,13 @@
   inline-size: 1rem;
   block-size: 1rem;
   flex-shrink: 0;
+}
+
+.availableIcon {
+  inline-size: 1rem;
+  block-size: 1rem;
+  flex-shrink: 0;
+  color: var(--navy);
 }
 
 .bar {

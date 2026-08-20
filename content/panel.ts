@@ -6,9 +6,12 @@
  * instead of two that drift apart. What this file adds is the student's
  * position in it.
  *
- * `record` is a fixture, and deliberately so: the screen is a mock. Nothing
- * authenticates, nothing reads a session, and these numbers describe a made-up
- * student called Mariano — the same one the Stitch mockup shows.
+ * `record` is a fixture, and deliberately so: nothing here is stored per user.
+ * `/panel` is guarded — the session decides who may look — but not personalised,
+ * so the same numbers reach everyone. They describe an account that has just
+ * been opened: nothing done, first module available, the rest locked. The
+ * mockup's half-finished student (index 2, 35%) can be restored by editing the
+ * record; every branch below still exists for it.
  *
  * Note what `record` does not declare: no `EXP-NN` anywhere. The codes are
  * derived from the position in the syllabus (3.1) and this file states a
@@ -49,13 +52,25 @@ export const panel = {
     /** The name is appended by the screen, from `student.name`. */
     greeting: "Bienvenido",
     body: "Tu expediente formativo está activo. Continúa analizando las trazas digitales y documentando la cadena de custodia en el entorno blockchain.",
+    /** Replaces `body` while the record shows no progress at all. */
+    startBody:
+      "Tu expediente formativo está activo. Empieza por el primer módulo para aprender a seguir las trazas digitales y a documentar la cadena de custodia en el entorno blockchain.",
   },
 
+  /**
+   * Both branches of the card, chosen by `derivePanel`'s `started`.
+   *
+   * Telling a student to «reanudar» a course they have not opened is a claim
+   * the record contradicts, so the copy has a second half rather than one
+   * wording that has to fit every case.
+   */
   continueCard: {
     eyebrow: "Continuar aprendizaje",
+    startEyebrow: "Comenzar aprendizaje",
     durationLabel: "Duración est.",
     attachmentsLabel: "Archivos adjuntos",
     ctaLabel: "Reanudar",
+    startCtaLabel: "Comenzar",
   },
 
   progressCard: {
@@ -71,26 +86,40 @@ export const panel = {
     passedBadge: "Completado",
     passedLabel: "Aprobado",
     currentBadge: "En curso",
+    /** The module the student may open and has not: neither locked nor begun. */
+    availableBadge: "Disponible",
+    availableLabel: "Sin comenzar",
     lockedBadge: "Bloqueado",
     /** Prefix of «Requiere EXP-NN». The code itself is derived. */
     lockedPrefix: "Requiere",
   },
 
   /**
-   * The made-up student record.
+   * The student record, describing an account that has just been opened.
    *
-   * `overallPercent` is stated rather than computed: two modules of seven is
-   * 28.6%, and the mockup's ring reads 35% because the module in progress
-   * counts for part of it. Which part is a product decision nobody has taken,
-   * so inventing a formula here would be dressing a guess up as arithmetic.
+   * Every zero here is load-bearing: `currentModuleIndex: 0` puts the student
+   * on the first module, and `currentModulePercent: 0` says none of it is done,
+   * which is what makes `derivePanel` call that module «disponible» instead of
+   * «en curso» and the card offer «Comenzar» instead of «Reanudar».
+   *
+   * `overallPercent` stays stated rather than computed. It is zero now and the
+   * arithmetic would agree, but the moment the student advances the two part
+   * ways: two modules of seven is 28.6%, and the mockup's ring read 35% because
+   * the module in progress counted for part of it. Which part is a product
+   * decision nobody has taken, so a formula here would dress a guess up as
+   * arithmetic.
+   *
+   * `estimatedMinutes` is the length of the module the card shows — EXP-00,
+   * 35 minutes. The schema forbids zero, and rightly: a module that lasts no
+   * time is a content mistake, not a starting state.
    */
   record: {
     /** Zero-based position in the syllabus. Everything before it is passed. */
-    currentModuleIndex: 2,
-    currentModulePercent: 40,
-    overallPercent: 35,
-    hoursSpent: 12.5,
-    estimatedMinutes: 45,
+    currentModuleIndex: 0,
+    currentModulePercent: 0,
+    overallPercent: 0,
+    hoursSpent: 0,
+    estimatedMinutes: 35,
     attachmentCount: 3,
   },
 };

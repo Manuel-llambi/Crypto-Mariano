@@ -13,25 +13,34 @@ interface ModuleGridProps {
   currentPercent: number;
 }
 
-/** The class of the card, and the badge, for each of the three states. */
+/**
+ * The class of the card, and the badge, for each state.
+ *
+ * Indexed by `ModuleState`, so adding a state to the union leaves these
+ * incomplete and `tsc` says which one — the case cannot fall through to a
+ * silent default.
+ */
 const CARD_CLASS = {
   passed: styles.cardPassed,
   "in-progress": styles.cardCurrent,
+  available: styles.cardAvailable,
   locked: styles.cardLocked,
 } as const;
 
 const BADGE_CLASS = {
   passed: styles.badgePassed,
   "in-progress": styles.badgeCurrent,
+  available: styles.badgeAvailable,
   locked: styles.badgeLocked,
 } as const;
 
 /**
  * The seven modules of the syllabus, each showing where the student stands.
  *
- * The three shapes differ in their footer: a passed module states that it is
- * passed, the one in progress shows a bar, a locked one names the module that
- * unlocks it. Never colour alone (9.4) — every state is also written out.
+ * The four shapes differ in their footer: a passed module states that it is
+ * passed, the one in progress shows a bar, one that is open but untouched says
+ * so, and a locked one names the module that unlocks it. Never colour alone
+ * (9.4) — every state is also written out.
  */
 export function ModuleGrid({ copy, modules, currentPercent }: ModuleGridProps) {
   const bar = { "--percent": `${currentPercent}%` } as CSSProperties;
@@ -39,6 +48,7 @@ export function ModuleGrid({ copy, modules, currentPercent }: ModuleGridProps) {
   const badgeLabel = {
     passed: copy.passedBadge,
     "in-progress": copy.currentBadge,
+    available: copy.availableBadge,
     locked: copy.lockedBadge,
   } as const;
 
@@ -66,6 +76,14 @@ export function ModuleGrid({ copy, modules, currentPercent }: ModuleGridProps) {
           {module.state === "in-progress" && (
             <p className={styles.bar} style={bar} aria-hidden="true">
               <span className={styles.barFill} />
+            </p>
+          )}
+
+          {/* No bar here on purpose: one at 0% would read as barely begun. */}
+          {module.state === "available" && (
+            <p className={styles.footnote}>
+              <PanelIcon name="arrow" className={styles.availableIcon} />
+              {copy.availableLabel}
             </p>
           )}
 

@@ -1,0 +1,21 @@
+<!--
+  The code that proves the visitor controls the address (7.1).
+
+  Sent when the address has no account yet. `magic-link.html` is its twin for an
+  address that already has one; Supabase picks between the two, so both have to
+  carry the code or half the visitors get nothing they can type (7.2).
+
+  `{{ .Token }}` and not `{{ .ConfirmationURL }}`: the built-in template sends a
+  link to click, and the flow this belongs to asks for a code to type. Verifying
+  by link is out of scope.
+
+  The copy is Spanish and tuteo (8.3), like every interface string of the
+  project. The comments are English, like every comment of the project.
+-->
+<h2>Tu código de verificación</h2>
+
+<p>Usa este código para continuar con tu inscripción:</p>
+
+<p style="font-size: 28px; font-weight: bold; letter-spacing: 4px;">{{ .Token }}</p>
+
+<p>El código vence en una hora. Si no pediste este correo, puedes ignorarlo.</p>

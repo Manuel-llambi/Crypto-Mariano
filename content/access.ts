@@ -38,6 +38,25 @@ export const access = {
       subtitle: "Ingresa tu email institucional y te enviamos un código de verificación",
       emailLabel: "Email institucional",
       submitLabel: "Enviar código",
+      /**
+       * Every refusal of step 1, in one sentence (1.2, 1.4).
+       *
+       * It names no cause because it cannot: the same text covers an address
+       * that is empty, one that is malformed, an instance that did not answer,
+       * and an address that already has an account. That last one is the reason
+       * this is one message and not four — saying so would tell whoever typed it
+       * which addresses are registered (1.3).
+       */
+      errorMessage:
+        "No pudimos enviar el código. Revisa tu email institucional e inténtalo de nuevo.",
+      /**
+       * For someone who did nothing wrong (4.3).
+       *
+       * They got to step 2 with no pending address — the code expired, or the
+       * cookie did — so the message tells them the one thing that fixes it
+       * rather than suggesting they made a mistake.
+       */
+      expiredMessage: "Tu solicitud caducó. Pide un código nuevo con tu email institucional.",
       protocol: "Protocolo de alta: AUTH-2024 · Paso 1 de 3",
     },
 
@@ -48,6 +67,13 @@ export const access = {
       codeLabel: "Código de verificación",
       resendLabel: "Reenviar código",
       submitLabel: "Verificar",
+      /**
+       * The three ways a code fails, said the same way (2.2).
+       *
+       * Wrong, expired and already used are one message, and it points at the
+       * way out the screen already offers: asking for another one.
+       */
+      errorMessage: "El código no es válido o ya caducó. Revísalo o pide uno nuevo.",
       protocol: "Protocolo de alta: AUTH-2024 · Paso 2 de 3",
     },
 
@@ -58,6 +84,19 @@ export const access = {
       emailLabel: "Email institucional",
       passwordLabel: "Contraseña",
       submitLabel: "Crear cuenta",
+      /**
+       * Two messages, unlike the two steps before (3.2).
+       *
+       * Whoever gets here has already proved the mailbox is theirs, so there is
+       * nothing left to hide and a vague message would only leave them guessing
+       * what to change. `weak` says the rule without restating it — the length
+       * lives in `supabase/config.toml` and a number copied here would go stale
+       * the day it changes (3.3).
+       */
+      errorMessages: {
+        weak: "Esa contraseña es demasiado débil. Elige una más larga y menos previsible.",
+        generic: "No pudimos guardar tu contraseña. Inténtalo de nuevo.",
+      },
       protocol: "Protocolo de alta: AUTH-2024 · Paso 3 de 3",
     },
   },

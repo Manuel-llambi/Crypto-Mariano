@@ -11,9 +11,10 @@ import { signIn } from "./actions";
 /**
  * Not indexable.
  *
- * The screen authenticates for real now, but the flow it belongs to is not
- * finished: signing up is still a mock-up, so none of these screens is meant to
- * be published yet.
+ * Signing up works for real too since the spec of 2026-08-19, so the flow is
+ * complete end to end. What is still missing is everything around it — there is
+ * no way to sign out and no password recovery of its own — so none of these
+ * screens is meant to be published yet.
  */
 export const metadata: Metadata = {
   title: `${access.login.title} — ${site.name}`,
@@ -41,8 +42,8 @@ interface AccesoPageProps {
  * the query string, and from there into browser history, server logs and the
  * referrer of the next request.
  *
- * Signing up is a separate flow of three screens under `/registro`, and those
- * are still mock-ups; this one is reached from «Iniciar sesión».
+ * Signing up is a separate flow of three screens under `/registro`, which
+ * create the account for real; this one is reached from «Iniciar sesión».
  */
 export default async function AccesoPage({ searchParams }: AccesoPageProps) {
   const { login } = access;
