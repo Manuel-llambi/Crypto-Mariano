@@ -104,9 +104,9 @@ export type Footer = z.infer<typeof FooterSchema>;
 /**
  * The access screen (out of the landing's numbered requirements).
  *
- * Copy only — no schema authenticates anything. Since the login spec of
- * 2026-08-17, `/acceso` does verify credentials and open a session; what stays
- * inert is the three screens of `/registro`.
+ * Copy only — no schema authenticates anything. All four screens work for real
+ * now: `/acceso` since the login spec of 2026-08-17, and the three steps of
+ * `/registro` since the sign-up spec of 2026-08-19.
  */
 export const LoginSchema = z.strictObject({
   title: NonEmpty,
@@ -146,16 +146,56 @@ const StepSchema = z.strictObject({
   protocol: NonEmpty,
 });
 
-export const SignupEmailSchema = StepSchema.extend({ emailLabel: NonEmpty });
+export const SignupEmailSchema = StepSchema.extend({
+  emailLabel: NonEmpty,
+  /**
+   * A rejection of what was typed (1.2, 1.4).
+   *
+   * One text for every cause, because the causes must not be told apart: an
+   * empty address, a malformed one, an instance that did not answer and an
+   * address that already has an account all end here. Naming any of them would
+   * turn the screen into a way of asking which addresses are registered (1.3).
+   */
+  errorMessage: NonEmpty,
+  /**
+   * Not a rejection at all (4.3).
+   *
+   * This one is for someone who did nothing wrong: they reached step 2 with no
+   * pending address, because the cookie expired or was never written. The
+   * criterion asks to send them back here *with a message*, and the message has
+   * to say what to do about it — ask for a new code. Sharing the text with
+   * `errorMessage` would satisfy the schema and not the criterion.
+   */
+  expiredMessage: NonEmpty,
+});
 
 export const SignupCodeSchema = StepSchema.extend({
   codeLabel: NonEmpty,
   resendLabel: NonEmpty,
+  /**
+   * One text for the three ways a code fails (2.2).
+   *
+   * Wrong, expired and already used are indistinguishable on purpose, for the
+   * same reason step 1 keeps its causes to itself.
+   */
+  errorMessage: NonEmpty,
 });
 
 export const SignupAccountSchema = StepSchema.extend({
   emailLabel: NonEmpty,
   passwordLabel: NonEmpty,
+  /**
+   * Two texts here, and the asymmetry with the steps above is deliberate (3.2).
+   *
+   * By this point the visitor has proved the mailbox is theirs, so there is
+   * nothing left to hide from them, and a generic message would leave them
+   * guessing what to correct. `weak` is the instance's password policy talking;
+   * `generic` is everything else.
+   *
+   * A strict object of exactly two keys: a third reason would be a third branch
+   * in the action, and 3.2 asks for these two.
+   */
+  errorMessages: z.strictObject({ weak: NonEmpty, generic: NonEmpty }),
 });
 
 export const SignupSchema = z.strictObject({

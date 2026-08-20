@@ -1,5 +1,6 @@
 import { expect, test } from "@playwright/test";
 
+import { SIGNUP_ADDRESS, freshPassword, readLatestCode, respectSendFrequency } from "./mailbox";
 import { SEEDED_EMAIL, SEEDED_PASSWORD } from "./seeded-account";
 
 /**
@@ -93,25 +94,21 @@ test.describe("anchor navigation works (8.2)", () => {
 // 8.3 — the access controls still navigate, with their intent.
 test.describe("access controls work (8.3)", () => {
   /**
-   * Signing up is a route of this app now, so the link is followed for real and
-   * the whole flow is walked with scripting off: three screens, two of them
-   * reached by nothing but an anchor.
+   * The enrolment control reaches step 1 with no scripting.
+   *
+   * It used to walk all three screens by anchor, which is what the mock-up did.
+   * The screens post now, so the walk moved to the sign-up cases at the bottom
+   * of this file, where it is done for real against the instance.
    */
-  test("the enrolment control walks the sign-up flow with no scripting", async ({ page }) => {
+  test("the enrolment control reaches the sign-up screen with no scripting", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto("/");
 
     await page.locator('header a[href*="intent=signup"]').first().click();
+
     await expect(page).toHaveURL(/\/registro\?intent=signup$/);
     await expect(page.locator('input[type="email"]')).toBeVisible();
-
-    await page.getByRole("link", { name: "Enviar código" }).click();
-    await expect(page).toHaveURL(/\/registro\/codigo$/);
-    await expect(page.locator('input[inputmode="numeric"]')).toBeVisible();
-
-    await page.getByRole("link", { name: "Verificar" }).click();
-    await expect(page).toHaveURL(/\/registro\/crear-cuenta$/);
-    await expect(page.locator('input[type="password"]')).toBeVisible();
+    await expect(page.locator('button[type="submit"]')).toBeVisible();
   });
 
   /**
@@ -242,5 +239,110 @@ test.describe("signing in with no scripting (login spec)", () => {
     // The text is a literal here, as in CF-01. That it is the one declared in
     // content is asserted by `app/acceso/page.test.tsx`, by reference.
     await expect(page.getByText(ERROR_MESSAGE)).toBeVisible();
+  });
+});
+
+/**
+ * Signing up with the script blocked — spec 2026-08-19-registro-supabase.
+ *
+ * The oldest promise of this project, extended to the newest flow: the whole
+ * sign-up completes with nothing running, from the first screen to the
+ * dashboard. It lives here and not in `e2e/registro.spec.ts` because the
+ * scriptless context is declared per file.
+ *
+ * These two are the only cases in the plan that prove the three Server Actions
+ * are progressive enhancement in fact and not just in theory. If anyone ever
+ * turns one of those screens into a client component, the jsdom suites see it
+ * in the source and this sees it in the browser.
+ *
+ * The numbers are 6.1 and 6.2 of that spec, not the 8.x of the landing that the
+ * rest of this file uses. The instance and its mailbox have to be up.
+ */
+test.describe("signing up with no scripting (sign-up spec)", () => {
+  // 6.1 — every step of the flow, with nothing running.
+  test("6.1 — completes the whole sign-up and reaches the dashboard", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+
+    // Two sends to the same address inside a second come back 429, which the
+    // action reports as an ordinary refusal. Waiting keeps a rate limit from
+    // being read as a broken flow.
+    await respectSendFrequency();
+
+    await page.goto("/registro?intent=signup");
+    await page.locator('input[type="email"]').fill(SIGNUP_ADDRESS);
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL("**/registro/codigo");
+
+    // Read from the mailbox mid-run, exactly as the scripted suite does.
+    const code = await readLatestCode(SIGNUP_ADDRESS);
+
+    await page.locator('input[inputmode="numeric"]').fill(code);
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL("**/registro/crear-cuenta");
+
+    // The echo of the address, which is what tells the visitor whose account
+    // this is. It carries no `name`, so the browser leaves it out of the post.
+    await expect(page.locator('input[type="email"]')).toHaveValue(SIGNUP_ADDRESS);
+
+    /*
+     * A password this account has never had: Supabase refuses one identical to
+     * the current password, so a constant would pass once and fail on every
+     * later run — and on the scripted suite running the same flow minutes
+     * earlier.
+     */
+    const password = freshPassword("nojs");
+
+    await page.locator('input[type="password"]').fill(password);
+    await page.locator('button[type="submit"]').click();
+
+    await page.waitForURL("**/panel**");
+
+    expect(new URL(page.url()).pathname).toBe("/panel");
+    expect(page.url()).not.toContain(password);
+
+    // Arriving is not the same as the dashboard being there: it renders on the
+    // server, so with no script it has to look the same.
+    await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
+  });
+
+  /**
+   * 6.2 — a refusal says so, with nothing running.
+   *
+   * This is what proves the message travels in the HTML the server sent rather
+   * than being painted afterwards by something. The address never reaches
+   * Supabase, so it costs no e-mail either.
+   *
+   * `a@b` and not `no-es-una-direccion`, and the difference is the whole reason
+   * this case works: the field is `type="email"`, so the browser's own
+   * validation refuses to submit something with no `@` at all and the request
+   * is never made — there would be nothing for the server to reject. `a@b`
+   * satisfies the browser, which asks only for `something@something`, and is
+   * refused by `z.email()`, which wants a real domain. So the round trip
+   * happens and the message comes back from the server.
+   */
+  test("6.2 — shows the message of a refused step with the script blocked", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+
+    await page.goto("/registro?intent=signup");
+    await page.locator('input[type="email"]').fill("a@b");
+    await page.locator('button[type="submit"]').click();
+
+    // On the marker and not on the path: the page is already at `/registro`
+    // when the form is submitted, so a path pattern matches before the round
+    // trip has happened.
+    await page.waitForURL(/error=correo/);
+
+    expect(new URL(page.url()).pathname).toBe("/registro");
+    expect(new URL(page.url()).search).toBe("?intent=signup&error=correo");
+
+    // The text is a literal here, as in the other scriptless cases. That it is
+    // the one declared in content is asserted by reference in the jsdom suite.
+    await expect(
+      page.getByText(
+        "No pudimos enviar el código. Revisa tu email institucional e inténtalo de nuevo.",
+      ),
+    ).toBeVisible();
   });
 });

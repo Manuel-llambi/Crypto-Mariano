@@ -20,16 +20,18 @@ interface AccessScreenProps {
    * form, nothing that could carry a field value into the URL.
    *
    * Ignored when `submitAction` is given; the two are meant to be exclusive and
-   * no screen passes both.
+   * no screen passes both. No screen passes either one any more — all four post
+   * — but the branches are kept for a step that turns out to be a dead end.
    */
   submitHref?: string;
   /**
-   * What the control posts to, on the one screen that posts (5.3).
+   * What the control posts to. Every screen passes one.
    *
    * Present means a real `<form>` around the fields and a
    * `<button type="submit">`. This is the shape that lets the browser submit on
-   * its own, with no script, which is what keeps signing in reachable when
-   * JavaScript is not available.
+   * its own, with no script, which is what keeps both signing in and signing up
+   * reachable when JavaScript is not available (5.3 of the login spec, 6.1 and
+   * 6.3 of the sign-up one).
    */
   submitAction?: (formData: FormData) => Promise<void>;
   /**
@@ -50,13 +52,15 @@ interface AccessScreenProps {
  * differ only in their copy and their fields. Repeating the markup four times
  * would mean four chances for them to drift apart.
  *
- * The three screens of `/registro` neither send a code, verify one nor create
- * an account: that half of 6.7 still holds, and they carry no `<form>` at all.
- * `/acceso` does authenticate since the login spec of 2026-08-17, and it is the
- * one screen that gets a form — safe because the form has an action and posts
- * to the server. A form with *no* action is what submits by GET and puts
- * whatever was typed into the query string, and from there into browser
- * history, server logs and the referrer of the next request.
+ * All four post now: `/acceso` since the login spec of 2026-08-17, and the three
+ * sign-up steps since the spec of 2026-08-19, which retired 6.7 of the landing
+ * altogether. So all four take the `submitAction` branch.
+ *
+ * The rule was never «no form». It is that a form with *no* action submits by
+ * GET and puts whatever was typed into the query string, and from there into
+ * browser history, server logs and the referrer of the next request. Every form
+ * here has an action and posts to the server, which is also what keeps these
+ * screens working with no script at all.
  */
 export function AccessScreen({
   siteName,
@@ -71,9 +75,10 @@ export function AccessScreen({
 }: AccessScreenProps) {
   /*
    * Three branches, resolved by precedence rather than by a discriminated union
-   * of props. Of the four screens sharing this card, three pass `submitHref`,
-   * one passes neither, and none passes both — a union would force all four to
-   * be retyped to settle a conflict nobody produces.
+   * of props. All four screens pass `submitAction` today and none passes both,
+   * so a union would force four call sites to be retyped to settle a conflict
+   * nobody produces. The other two branches are what a future step that ends
+   * the road, or merely links onward, would use.
    */
   const control =
     submitHref === undefined ? (

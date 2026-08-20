@@ -250,6 +250,26 @@ otp_expiry = 3600
 # subject = "You have been invited"
 # content_path = "./supabase/templates/invite.html"
 
+# The two templates the sign-up flow depends on (7.1, 7.2, 7.3).
+#
+# Both carry `{{ .Token }}` because Supabase picks between them and the flow
+# asks for a code to type: `confirmation` reaches an address with no account
+# yet, `magic_link` one that already has one. Leaving either at its default
+# would send that half of the visitors a link and no code.
+#
+# `content_path` is resolved from the repository root — the same prefix the
+# `[auth.email.template.invite]` example above uses, and NOT the bare
+# `./templates/…` of the `password_changed` example further down. Get it wrong
+# and the CLI says nothing: it just sends the built-in template.
+# `supabase/templates.test.ts` is what keeps that from going unnoticed.
+[auth.email.template.confirmation]
+subject = "Tu código de verificación"
+content_path = "./supabase/templates/confirmation.html"
+
+[auth.email.template.magic_link]
+subject = "Tu código de verificación"
+content_path = "./supabase/templates/magic-link.html"
+
 # Uncomment to customize notification email template
 # [auth.email.notification.password_changed]
 # enabled = true

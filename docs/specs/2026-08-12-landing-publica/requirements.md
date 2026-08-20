@@ -207,9 +207,10 @@ válida THEN THE SYSTEM SHALL fallar la compilación.~~ **Superado el
 6.6. THE SYSTEM SHALL usar la misma forma verbal en los tres controles de
 inscripción de la página.
 
-6.7. THE SYSTEM SHALL NO implementar ~~autenticación,~~ envío de códigos,
-verificación de códigos, alta de cuentas, cobro ~~ni gestión de sesión~~.
-**Acotado el 2026-08-18** (ver la nota de abajo).
+6.7. ~~THE SYSTEM SHALL NO implementar autenticación, envío de códigos,
+verificación de códigos, alta de cuentas, cobro ni gestión de sesión.~~
+**Superado por completo el 2026-08-20** (ver la nota de abajo). El cobro es lo
+único que sigue fuera de alcance, y ya no por este criterio.
 
 **Nota sobre 6.4 y 6.5 — los destinos dejaron de ser externos (2026-08-14).**
 Ambos criterios existían porque la pantalla de acceso vivía fuera de esta
@@ -225,26 +226,33 @@ porque el módulo que la lee no se carga.
 La numeración no se reacomoda a propósito: el código, los tests y `tasks.md`
 citan estos números, y renumerar convertiría cada cita en una referencia falsa.
 
-**Nota sobre 6.7 — qué se revirtió y qué sigue vigente (2026-08-18).** Desde el
-spec `2026-08-17-login-supabase`, `/acceso` verifica las credenciales contra la
-instancia local de Supabase, abre sesión en cookies, y el panel la consulta
-antes de emitir contenido. Eso levanta dos de las seis prohibiciones del
-criterio —autenticación y gestión de sesión— y **solo en esa pantalla**.
+**Nota sobre 6.7 — el criterio quedó superado entero (2026-08-20).** Se tachó en
+dos tiempos, y conviene saber cuál fue cuál.
 
-El resto sigue en pie. Las tres pantallas de `/registro` son solo interfaz: no
-envían el código, no lo verifican y no crean la cuenta, y el control de cada
-paso intermedio es un ancla que avanza pase lo que pase, incluso sin haber
-escrito nada. `/registro/crear-cuenta` cierra con un botón inerte. El cobro
-sigue fuera de alcance en todo el proyecto.
+El spec `2026-08-17-login-supabase` levantó dos de las seis prohibiciones
+—autenticación y gestión de sesión— y solo en `/acceso`: esa pantalla verifica
+las credenciales contra la instancia local de Supabase, abre sesión en cookies,
+y el panel la consulta antes de emitir contenido.
 
-**El argumento del formulario se conserva, reencuadrado.** Ninguna de las tres
-pantallas de `/registro` renderiza un `<form>`, y eso no es un detalle de
-estilo: un formulario **sin `action`** se envía por GET y pondría la contraseña
-en la barra de direcciones, y de ahí en el historial, en los registros del
-servidor y en el `Referer` del pedido siguiente. El `<form>` que sí aparece en
-`/acceso` no contradice ese razonamiento sino que lo respeta: postea a una
-Server Action, así que ningún campo se serializa en la dirección (1.5 del spec
-de acceso).
+El spec `docs/specs/2026-08-19-registro-supabase/` levantó las tres que
+quedaban. Las pantallas de `/registro` envían el código (`requestCode`), lo
+verifican (`verifyCode`) y dejan la cuenta con contraseña (`setPassword`), cada
+una posteando a su Server Action. De las seis prohibiciones **no queda ninguna
+en pie**: el cobro sigue fuera de alcance del proyecto, pero por decisión
+propia y no por este criterio.
+
+**La numeración no se toca**, igual que con 6.4 y 6.5: el código, los tests y
+los tres `tasks.md` citan estos números, y renumerar convertiría cada cita en
+una referencia a otro criterio.
+
+**El argumento del formulario se conserva, y ahora vale para las cuatro
+pantallas.** La regla nunca fue «sin `<form>`»: es que un formulario **sin
+`action`** se envía por GET y pondría la contraseña en la barra de direcciones,
+y de ahí en el historial, en los registros del servidor y en el `Referer` del
+pedido siguiente. Las cuatro pantallas transaccionales renderizan hoy un
+`<form action={...}>` que postea a una Server Action, así que ningún campo se
+serializa en la dirección (1.5, 2.5 y 3.6 del spec de alta). Es además lo que
+mantiene el alta entera en pie con el script bloqueado.
 
 ### Requisito 7 — Adaptación a pantallas angostas
 

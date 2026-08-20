@@ -13,9 +13,9 @@ import styles from "./layout.module.css";
 /**
  * Not indexable.
  *
- * The dashboard is guarded now, but the flow around it is unfinished — signing
- * up is still a mock-up and the data on screen is still versioned content — so
- * it has no business in a search result yet.
+ * The dashboard is guarded, and signing up reaches it for real since the spec
+ * of 2026-08-19. The data on screen is still versioned content and there is
+ * still no way to sign out, so it has no business in a search result yet.
  */
 export const metadata: Metadata = {
   robots: { index: false, follow: false },
