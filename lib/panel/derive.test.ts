@@ -86,6 +86,64 @@ describe("the state of each module", () => {
       "locked",
     ]);
   });
+
+  /**
+   * Standing on a module is not the same as having opened it.
+   *
+   * A brand new student sits on the first module with nothing done, and calling
+   * that «en curso» over an empty bar would state something the record denies.
+   * The zero share is what separates the two.
+   */
+  it("marks the current module as available when none of it is done", () => {
+    const { modules } = derivePanel(program.modules, {
+      ...record,
+      currentModuleIndex: 0,
+      currentModulePercent: 0,
+    });
+
+    expect(modules.map((module) => module.state)).toEqual([
+      "available",
+      "locked",
+      "locked",
+      "locked",
+    ]);
+  });
+});
+
+/**
+ * The one flag the copy branches on.
+ *
+ * The screen swaps «Reanudar» for «Comenzar», and the greeting with it, so the
+ * rule lives here once instead of being re-derived in the page and in two
+ * components.
+ */
+describe("whether the student has started", () => {
+  it("is false on the first module with nothing done", () => {
+    const derived = derivePanel(program.modules, {
+      ...record,
+      currentModuleIndex: 0,
+      currentModulePercent: 0,
+    });
+
+    expect(derived.started).toBe(false);
+  });
+
+  it("is true as soon as part of the first module is done", () => {
+    const derived = derivePanel(program.modules, {
+      ...record,
+      currentModuleIndex: 0,
+      currentModulePercent: 1,
+    });
+
+    expect(derived.started).toBe(true);
+  });
+
+  // Past the first module there is a passed module behind, whatever the share.
+  it("is true past the first module even with nothing done in it", () => {
+    const derived = derivePanel(program.modules, { ...record, currentModulePercent: 0 });
+
+    expect(derived.started).toBe(true);
+  });
 });
 
 describe("the counters", () => {

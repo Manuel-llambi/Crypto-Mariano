@@ -7,8 +7,13 @@ import type { DerivedModule } from "@/lib/program/derive";
  * Not to be confused with the module's own `status`, which says whether the
  * module is published or announced. That is a property of the course; this is a
  * property of the student.
+ *
+ * `available` and `in-progress` are both the module the student is standing on;
+ * what separates them is whether any of it is done. A brand new account sits on
+ * the first module having opened nothing, and calling that «en curso» over an
+ * empty bar would state something the record denies.
  */
-export type ModuleState = "passed" | "in-progress" | "locked";
+export type ModuleState = "passed" | "in-progress" | "available" | "locked";
 
 export interface PanelModule {
   /** From the syllabus, already derived from its position (3.1). */
@@ -36,6 +41,14 @@ export interface DerivedPanel {
   passedCount: number;
   moduleCount: number;
   current: CurrentModule;
+  /**
+   * Whether the student has any progress at all.
+   *
+   * The screen branches its copy on it — «Comenzar» against «Reanudar», and the
+   * greeting with them — so the rule is decided once here instead of being
+   * re-derived in the page and in two components.
+   */
+  started: boolean;
 }
 
 /** A module's own copy, whichever of the two branches it is. */
@@ -52,7 +65,7 @@ function descriptionOf(module: DerivedModule): string | null {
  * renumber, because neither spells a code out.
  */
 export function derivePanel(modules: DerivedModule[], record: PanelRecord): DerivedPanel {
-  const { currentModuleIndex } = record;
+  const { currentModuleIndex, currentModulePercent } = record;
   const current = modules[currentModuleIndex];
 
   if (current === undefined) {
@@ -61,9 +74,14 @@ export function derivePanel(modules: DerivedModule[], record: PanelRecord): Deri
     );
   }
 
+  // A module behind means progress even at a zero share of the current one.
+  const started = currentModuleIndex > 0 || currentModulePercent > 0;
+
+  const currentState: ModuleState = currentModulePercent > 0 ? "in-progress" : "available";
+
   const placed: PanelModule[] = modules.map((module, index) => {
     const state: ModuleState =
-      index < currentModuleIndex ? "passed" : index === currentModuleIndex ? "in-progress" : "locked";
+      index < currentModuleIndex ? "passed" : index === currentModuleIndex ? currentState : "locked";
 
     return {
       code: module.code,
@@ -82,5 +100,6 @@ export function derivePanel(modules: DerivedModule[], record: PanelRecord): Deri
       title: current.title,
       description: descriptionOf(current),
     },
+    started,
   };
 }

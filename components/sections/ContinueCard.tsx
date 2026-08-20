@@ -9,26 +9,33 @@ interface ContinueCardProps {
   module: CurrentModule;
   estimatedMinutes: number;
   attachmentCount: number;
+  /** Whether there is anything to go back to. From `derivePanel`. */
+  started: boolean;
 }
 
 /**
- * The module the student left open, and the control that goes back to it.
+ * The module the student is standing on, and the control that opens it.
  *
- * «Reanudar» is an inert button: there is no lesson viewer in this repository
- * yet, and a link into a 404 would be worse than a control that admits it does
- * nothing. It becomes an anchor the day the viewer exists.
+ * The wording swaps with the record: someone who has opened nothing is offered
+ * «Comenzar», not «Reanudar» — the second would claim a history the record
+ * denies, on the most prominent control of the screen.
+ *
+ * Either way it is an inert button: there is no lesson viewer in this
+ * repository yet, and a link into a 404 would be worse than a control that
+ * admits it does nothing. It becomes an anchor the day the viewer exists.
  */
 export function ContinueCard({
   copy,
   module,
   estimatedMinutes,
   attachmentCount,
+  started,
 }: ContinueCardProps) {
   return (
     <section className={styles.card} aria-labelledby="panel-continue-title">
       <p className={styles.eyebrow}>
         <span className={styles.dot} aria-hidden="true" />
-        {copy.eyebrow}
+        {started ? copy.eyebrow : copy.startEyebrow}
       </p>
 
       <h2 className={styles.title} id="panel-continue-title">
@@ -52,7 +59,7 @@ export function ContinueCard({
         </p>
 
         <button className={styles.cta} type="button">
-          {copy.ctaLabel}
+          {started ? copy.ctaLabel : copy.startCtaLabel}
           <PanelIcon name="arrow" className={styles.ctaIcon} />
         </button>
       </div>

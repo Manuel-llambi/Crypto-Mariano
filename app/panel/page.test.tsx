@@ -7,10 +7,20 @@ import { afterEach, describe, expect, it } from "vitest";
 import PanelPage, { metadata } from "./page";
 import { metadata as layoutMetadata } from "./layout";
 import { panel, program } from "@/lib/content";
+import { derivePanel } from "@/lib/panel/derive";
 
 afterEach(cleanup);
 
 const source = readFileSync(resolve(process.cwd(), "app/panel/page.tsx"), "utf8");
+
+/**
+ * The branch the shipped record takes.
+ *
+ * Read through `derivePanel` rather than re-deciding it here, so bumping
+ * `currentModuleIndex` in the content file moves the assertions with it instead
+ * of leaving a second copy of the rule to go stale.
+ */
+const { started } = derivePanel(program.modules, panel.record);
 
 describe("the welcome header", () => {
   it("greets the student by name, as the only first level heading", () => {
@@ -26,7 +36,17 @@ describe("the welcome header", () => {
     render(<PanelPage />);
 
     expect(screen.getByText(panel.welcome.eyebrow)).not.toBeNull();
-    expect(screen.getByText(panel.welcome.body)).not.toBeNull();
+    expect(screen.getByText(started ? panel.welcome.body : panel.welcome.startBody)).not.toBeNull();
+  });
+
+  /**
+   * Both halves of the copy exist, so the wrong one must not be on screen at
+   * the same time as the right one.
+   */
+  it("shows one greeting only, never both", () => {
+    render(<PanelPage />);
+
+    expect(screen.queryByText(started ? panel.welcome.startBody : panel.welcome.body)).toBeNull();
   });
 });
 
@@ -85,6 +105,20 @@ describe("the card that resumes the course", () => {
 
     // Level 2 is the card; the grid repeats the same title at level 3.
     expect(screen.getByRole("heading", { level: 2, name: current.title })).not.toBeNull();
+  });
+
+  /**
+   * «Reanudar» over a course nobody opened is a claim the record contradicts.
+   * The card reads the same flag as the greeting, so the two never disagree.
+   */
+  it("offers to start what has not been started, and to resume what has", () => {
+    render(<PanelPage />);
+
+    const { eyebrow, startEyebrow, ctaLabel, startCtaLabel } = panel.continueCard;
+
+    expect(screen.getByText(started ? eyebrow : startEyebrow)).not.toBeNull();
+    expect(screen.getByRole("button", { name: started ? ctaLabel : startCtaLabel })).not.toBeNull();
+    expect(screen.queryByText(started ? startEyebrow : eyebrow)).toBeNull();
   });
 });
 

@@ -264,12 +264,24 @@ export const PanelSchema = z.strictObject({
     eyebrow: NonEmpty,
     greeting: NonEmpty,
     body: NonEmpty,
+    /** Shown instead of `body` while the record shows no progress at all. */
+    startBody: NonEmpty,
   }),
+  /**
+   * Two branches of the same card, and both are required.
+   *
+   * Which one the screen shows follows from the record: a student with nothing
+   * done is told to start, everyone else to resume. Making the second branch
+   * optional would let a content edit leave a new student reading «Reanudar»
+   * over a course they never opened.
+   */
   continueCard: z.strictObject({
     eyebrow: NonEmpty,
+    startEyebrow: NonEmpty,
     durationLabel: NonEmpty,
     attachmentsLabel: NonEmpty,
     ctaLabel: NonEmpty,
+    startCtaLabel: NonEmpty,
   }),
   progressCard: z.strictObject({
     title: NonEmpty,
@@ -283,6 +295,8 @@ export const PanelSchema = z.strictObject({
     passedBadge: NonEmpty,
     passedLabel: NonEmpty,
     currentBadge: NonEmpty,
+    availableBadge: NonEmpty,
+    availableLabel: NonEmpty,
     lockedBadge: NonEmpty,
     lockedPrefix: NonEmpty,
   }),

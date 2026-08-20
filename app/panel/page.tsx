@@ -37,7 +37,9 @@ export default function PanelPage() {
         <h1 className={styles.greeting}>
           {panel.welcome.greeting} {panel.student.name}
         </h1>
-        <p className={styles.body}>{panel.welcome.body}</p>
+        <p className={styles.body}>
+          {derived.started ? panel.welcome.body : panel.welcome.startBody}
+        </p>
       </header>
 
       <hr className={styles.rule} />
@@ -48,6 +50,7 @@ export default function PanelPage() {
           module={derived.current}
           estimatedMinutes={record.estimatedMinutes}
           attachmentCount={record.attachmentCount}
+          started={derived.started}
         />
         <ProgressCard
           copy={panel.progressCard}

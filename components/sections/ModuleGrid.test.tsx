@@ -16,6 +16,8 @@ const copy = {
   passedBadge: "Completado",
   passedLabel: "Aprobado",
   currentBadge: "En curso",
+  availableBadge: "Disponible",
+  availableLabel: "Sin comenzar",
   lockedBadge: "Bloqueado",
   lockedPrefix: "Requiere",
 };
@@ -24,6 +26,12 @@ const modules: PanelModule[] = [
   { code: "EXP-00", title: "Fundamentos", state: "passed", requiresCode: null },
   { code: "EXP-01", title: "Bitcoin", state: "in-progress", requiresCode: null },
   { code: "EXP-02", title: "Ethereum", state: "locked", requiresCode: "EXP-01" },
+];
+
+/** A student who has not opened anything: the first module open, the rest shut. */
+const untouched: PanelModule[] = [
+  { code: "EXP-00", title: "Fundamentos", state: "available", requiresCode: null },
+  { code: "EXP-01", title: "Bitcoin", state: "locked", requiresCode: "EXP-00" },
 ];
 
 function renderGrid() {
@@ -73,6 +81,34 @@ describe("each state is written out, not only painted", () => {
 
     expect(screen.getByText(copy.lockedBadge)).not.toBeNull();
     expect(screen.getByText("Requiere EXP-01")).not.toBeNull();
+  });
+
+  it("labels the module the student may open but has not, and says so", () => {
+    render(<ModuleGrid copy={copy} modules={untouched} currentPercent={0} />);
+
+    expect(screen.getByText(copy.availableBadge)).not.toBeNull();
+    expect(screen.getByText(copy.availableLabel)).not.toBeNull();
+  });
+});
+
+/**
+ * A bar at 0% reads as a module barely begun, which is a different claim from a
+ * module never opened. The available card states the second one in words and
+ * draws no bar at all.
+ */
+describe("a module that has not been opened", () => {
+  it("draws no progress bar", () => {
+    const { container } = render(
+      <ModuleGrid copy={copy} modules={untouched} currentPercent={0} />,
+    );
+
+    expect(container.querySelector("[style*='--percent']")).toBeNull();
+  });
+
+  it("does not call itself «en curso»", () => {
+    render(<ModuleGrid copy={copy} modules={untouched} currentPercent={0} />);
+
+    expect(screen.queryByText(copy.currentBadge)).toBeNull();
   });
 });
 

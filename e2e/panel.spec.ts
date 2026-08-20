@@ -36,10 +36,15 @@ test.describe("the screen renders", () => {
     expect(new URL(page.url()).pathname).toBe("/panel");
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
-    await expect(page.getByText("35%")).toBeVisible();
+    await expect(page.getByText("0%")).toBeVisible();
     await expect(page.locator("li")).toHaveCount(7);
   });
 
+  /**
+   * The shipped record describes an account that has just been opened, so the
+   * whole syllabus is shut except the first module — and none of that is drawn
+   * in colour alone.
+   */
   test("shows a state for every module, in words and not only in colour", async ({ page }) => {
     await page.setViewportSize(WIDE);
     await page.goto("/panel");
@@ -47,10 +52,24 @@ test.describe("the screen renders", () => {
     // Scoped to the grid: «Completado» is also the label under the ring.
     const cards = page.locator("li");
 
-    await expect(cards.getByText("Completado")).toHaveCount(2);
-    await expect(cards.getByText("En curso")).toHaveCount(1);
-    await expect(cards.getByText("Bloqueado")).toHaveCount(4);
-    await expect(page.getByText("Requiere EXP-02")).toBeVisible();
+    await expect(cards.getByText("Completado")).toHaveCount(0);
+    await expect(cards.getByText("En curso")).toHaveCount(0);
+    await expect(cards.getByText("Disponible")).toHaveCount(1);
+    await expect(cards.getByText("Bloqueado")).toHaveCount(6);
+    await expect(page.getByText("Requiere EXP-00")).toBeVisible();
+  });
+
+  /**
+   * The most prominent control of the screen must not claim a history the
+   * record denies: nothing is done, so there is nothing to resume.
+   */
+  test("offers to start the course, not to resume it", async ({ page }) => {
+    await page.setViewportSize(WIDE);
+    await page.goto("/panel");
+
+    await expect(page.getByRole("button", { name: "Comenzar" })).toBeVisible();
+    await expect(page.getByRole("button", { name: "Reanudar" })).toHaveCount(0);
+    await expect(page.getByText("0 / 7")).toBeVisible();
   });
 
   test("fits a narrow screen without horizontal scrolling (7.8)", async ({ page }) => {
@@ -70,8 +89,8 @@ test.describe("the screen renders", () => {
  * 8.1 — the panel works with scripting off, because it has none of its own.
  *
  * `NavPanel` is the single client component of the site and it is not on this
- * screen. The progress ring and the module bar are conic gradients fed by a
- * custom property written into the markup, so both arrive already drawn.
+ * screen. The progress ring is a conic gradient fed by a custom property
+ * written into the markup, so it arrives already drawn.
  */
 test.describe("without JavaScript", () => {
   test.use({ javaScriptEnabled: false });
@@ -82,7 +101,7 @@ test.describe("without JavaScript", () => {
 
     await expect(page.getByRole("heading", { level: 1 })).toBeVisible();
     await expect(page.locator("li")).toHaveCount(7);
-    await expect(page.getByText("35%")).toBeVisible();
+    await expect(page.getByText("0%")).toBeVisible();
   });
 });
 
