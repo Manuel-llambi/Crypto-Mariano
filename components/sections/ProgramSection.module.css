@@ -2,8 +2,8 @@
   display: flex;
   flex-direction: column;
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 /*
@@ -37,7 +37,7 @@
   line-height: 0.9375rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 /*
@@ -57,7 +57,7 @@
 .description {
   max-width: 72ch;
   margin: 0 0 var(--row-gap);
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-size: 1rem;
   line-height: 1.5rem;
 }
@@ -65,11 +65,11 @@
 .cta {
   align-self: flex-start;
   margin-block-end: var(--section-block);
-  padding-block: 0.875rem;
-  padding-inline: 2rem;
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
   border-radius: var(--radius);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 600;
@@ -81,19 +81,19 @@
 
 .cta:hover,
 .cta:focus-visible {
-  background: var(--gold-text);
+  background: var(--color-on-tertiary);
 }
 
 .modules {
   display: flex;
   flex-direction: column;
   gap: 1px;
-  background: var(--rule);
-  border-block: 1px solid var(--rule);
+  background: var(--color-outline);
+  border-block: 1px solid var(--color-outline);
 }
 
 .module {
-  background: var(--white);
+  background: var(--color-surface);
 }
 
 /* The coming-soon branch is a plain card, so it carries its own padding; the
@@ -124,7 +124,7 @@ article.module {
   line-height: 0.9375rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 .title {
@@ -132,12 +132,12 @@ article.module {
   line-height: 1.3;
   overflow-wrap: break-word;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .teaser {
   margin: var(--row-gap) 0 0;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-style: italic;
   font-size: 0.875rem;
   line-height: 1.25rem;

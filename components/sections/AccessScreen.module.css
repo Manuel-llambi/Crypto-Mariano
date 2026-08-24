@@ -5,7 +5,7 @@
   justify-content: center;
   min-block-size: calc(100vh - var(--header-height));
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
+  background: var(--color-surface);
   overflow: hidden;
 }
 
@@ -18,7 +18,7 @@
   inset: 0;
   pointer-events: none;
   opacity: 0.03;
-  background-image: radial-gradient(var(--navy) 1px, transparent 1px);
+  background-image: radial-gradient(var(--color-primary) 1px, transparent 1px);
   background-size: 24px 24px;
 }
 
@@ -28,8 +28,9 @@
   inline-size: 100%;
   max-inline-size: 28rem;
   padding: clamp(1.5rem, 5vw, 3rem);
-  background: var(--cream);
-  border: 1px solid var(--rule);
+  background: var(--color-background);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius);
 }
 
 .intro {
@@ -37,14 +38,19 @@
   text-align: center;
 }
 
-/* The one place the serif of the design is used. */
+/*
+ * DESIGN_SYSTEM.md §5.1 — this was the one place the serif was used, and that
+ * was the argument for changing it: a single screen in a different headline
+ * face is not an editorial decision, it is a screen that got missed. The serif
+ * stays declared as a token, available to a page that has a reason.
+ */
 .title {
   margin: 0 0 0.5rem;
-  font-family: var(--font-serif);
+  font-family: var(--font-sans);
   font-size: 1.75rem;
   line-height: 1.2;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .subtitle {
@@ -52,20 +58,22 @@
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 /*
  * Inside `.intro`, so it inherits the centring and the space before the fields
- * that the block already carries. The only new thing is the colour, which is
- * measured against `--cream` — the background of the card, not of the page.
+ * that the block already carries. The only new thing is the colour, and the
+ * ground it is measured against is `--color-background` — the card, not the
+ * page. The page is `--color-surface`, which is the lighter of the two, so the
+ * card is the demanding one. `styles/tokens.ts` pairs the token with both.
  */
 .error {
   margin: 1rem 0 0;
   font-family: var(--font-sans);
   font-size: 1rem;
   line-height: 1.5rem;
-  color: var(--error-text);
+  color: var(--color-error);
 }
 
 .form {
@@ -85,11 +93,12 @@
   align-items: center;
   justify-content: center;
   min-block-size: 44px;
-  padding-block: 1rem;
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
   border: 0;
   border-radius: var(--radius);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-family: var(--font-mono);
   font-size: 0.875rem;
   letter-spacing: 0.15em;
@@ -101,18 +110,18 @@
 
 .submit:hover,
 .submit:focus-visible {
-  background: var(--gold-text);
-  color: var(--white);
+  background: var(--color-on-tertiary);
+  color: var(--color-on-primary);
 }
 
 .protocol {
   margin: 2rem 0 0;
   padding-block-start: 1.5rem;
-  border-block-start: 1px solid var(--rule);
+  border-block-start: 1px solid var(--color-outline);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.15em;
   text-align: center;
   text-transform: uppercase;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }

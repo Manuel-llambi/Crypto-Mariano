@@ -7,8 +7,8 @@
   grid-template-columns: 1fr;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 /*
@@ -72,7 +72,7 @@
   font-size: 0.75rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 /*
@@ -97,20 +97,20 @@
   margin: 0;
   max-width: 34rem;
   padding-inline-start: 1.5rem;
-  border-inline-start: 2px solid var(--gold-line);
+  border-inline-start: 2px solid var(--color-tertiary);
   font-family: var(--font-sans);
   font-size: 1.125rem;
   line-height: 1.75rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .cta {
   margin-top: var(--row-gap);
-  padding-block: 0.875rem;
-  padding-inline: 2rem;
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
   border-radius: var(--radius);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 600;
@@ -131,7 +131,7 @@
  */
 .cta:hover,
 .cta:focus-visible {
-  background: var(--gold-text);
+  background: var(--color-on-tertiary);
 }
 
 /*
@@ -160,29 +160,30 @@
  * `aria-label`, so nothing here is the only source of anything.
  *
  * `color-mix` rather than a second set of hex values: the grid and the glow are
- * the palette diluted, so they follow `--white` and `--gold-line` instead of
- * drifting from them the first time a token is corrected.
+ * the palette diluted, so they follow `--color-on-primary` and
+ * `--color-tertiary` instead of drifting from them the first time a token is
+ * corrected.
  */
 .panel {
   flex: 1 1 auto;
   min-inline-size: 0;
   max-inline-size: 100%;
   border-radius: var(--radius);
-  background-color: var(--navy);
+  background-color: var(--color-primary);
   background-image:
     radial-gradient(
       120% 90% at 28% 12%,
-      color-mix(in srgb, var(--gold-line) 22%, transparent) 0%,
+      color-mix(in srgb, var(--color-tertiary) 22%, transparent) 0%,
       transparent 62%
     ),
     repeating-linear-gradient(
       to right,
-      color-mix(in srgb, var(--white) 7%, transparent) 0 1px,
+      color-mix(in srgb, var(--color-on-primary) 7%, transparent) 0 1px,
       transparent 1px 4rem
     ),
     repeating-linear-gradient(
       to bottom,
-      color-mix(in srgb, var(--white) 7%, transparent) 0 1px,
+      color-mix(in srgb, var(--color-on-primary) 7%, transparent) 0 1px,
       transparent 1px 4rem
     );
 }

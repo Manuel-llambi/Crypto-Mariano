@@ -15,11 +15,11 @@
   min-block-size: 44px;
   font-family: var(--font-sans);
   font-size: 0.875rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   text-decoration: underline;
 }
 
 .action:hover,
 .action:focus-visible {
-  color: var(--navy);
+  color: var(--color-primary);
 }

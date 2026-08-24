@@ -12,7 +12,7 @@
 body {
   margin: 0;
   font-family: var(--font-sans);
-  background: var(--white);
+  background: var(--color-background);
 }
 
 /*
@@ -51,7 +51,7 @@ figcaption {
  * element, and the offset keeps it legible against dark backgrounds too.
  */
 :focus-visible {
-  outline: 3px solid var(--gold-line);
+  outline: 3px solid var(--color-tertiary);
   outline-offset: 2px;
 }
 

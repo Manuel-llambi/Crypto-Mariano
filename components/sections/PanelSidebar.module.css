@@ -7,8 +7,8 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  background: var(--cream);
-  border-block-end: 1px solid var(--rule);
+  background: var(--color-background);
+  border-block-end: 1px solid var(--color-outline);
 }
 
 @media (min-width: 64rem) {
@@ -16,7 +16,7 @@
     inline-size: 16rem;
     flex-shrink: 0;
     border-block-end: 0;
-    border-inline-end: 1px solid var(--rule);
+    border-inline-end: 1px solid var(--color-outline);
     overflow-y: auto;
   }
 }
@@ -26,7 +26,7 @@
   align-items: center;
   gap: 0.75rem;
   padding: 1.5rem;
-  border-block-end: 1px solid var(--rule);
+  border-block-end: 1px solid var(--color-outline);
 }
 
 .avatar {
@@ -37,8 +37,8 @@
   block-size: 2.5rem;
   flex-shrink: 0;
   border-radius: var(--radius);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .avatarIcon {
@@ -55,7 +55,7 @@
 .name {
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--color-primary);
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
@@ -65,7 +65,7 @@
   margin-block-start: 0.125rem;
   font-size: 0.6875rem;
   line-height: 1.2;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .nav {
@@ -86,7 +86,7 @@
   min-block-size: 44px;
   padding: 0.75rem 1.5rem;
   border-inline-start: 4px solid transparent;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-size: 0.9375rem;
   text-decoration: none;
 }
@@ -97,14 +97,14 @@
 
 .item[href]:hover,
 .item[href]:focus-visible {
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 .itemCurrent {
-  border-inline-start-color: var(--navy);
-  background: var(--white);
-  color: var(--navy);
+  border-inline-start-color: var(--color-primary);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-weight: 600;
 }
 
@@ -118,7 +118,7 @@
 .footer {
   margin-block-start: auto;
   padding: 1rem;
-  border-block-start: 1px solid var(--rule);
+  border-block-start: 1px solid var(--color-outline);
 }
 
 .minorItem {
@@ -127,7 +127,7 @@
   gap: 0.75rem;
   min-block-size: 44px;
   padding-inline: 1rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-size: 0.875rem;
   text-decoration: none;
 }
@@ -138,7 +138,7 @@
 
 .minorItem[href]:hover,
 .minorItem[href]:focus-visible {
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .minorIcon {

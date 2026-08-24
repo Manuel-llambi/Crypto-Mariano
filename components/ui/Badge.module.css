@@ -2,8 +2,9 @@
   display: inline-flex;
   align-items: center;
   padding: var(--label-block) var(--label-inline);
-  border: 1px solid var(--gold-line);
-  color: var(--gold-text);
+  border: 1px solid var(--color-tertiary);
+  border-radius: var(--radius);
+  color: var(--color-on-tertiary);
   font-family: var(--font-mono);
   font-size: 0.625rem;
   line-height: 0.9375rem;

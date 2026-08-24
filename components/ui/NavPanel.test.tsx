@@ -51,8 +51,19 @@ describe("the panel groups the anchor links (7.2)", () => {
     expect(container.querySelector("details")!.hasAttribute("name")).toBe(false);
   });
 
+  /*
+   * The property, not the number.
+   *
+   * This used to assert `1024px` and went stale the day the threshold moved to
+   * 1152 — a fifth copy of a number that already lived in four places. The
+   * number now belongs to `components/sections/nav-threshold.test.ts`, which
+   * checks every one of those copies and the width the bar actually needs. What
+   * is left here is the part that is this component's own business: on a wide
+   * screen the panel leaves the document, so its links are never announced
+   * alongside the inline ones.
+   */
   it("hides itself on wide screens, where the header shows the links inline", () => {
-    expect(stylesheet).toMatch(/min-width:\s*1024px/);
+    expect(stylesheet).toMatch(/@media\s*\(min-width:[^)]+\)\s*\{[^}]*\.panel\s*\{[^}]*display:\s*none/);
   });
 });
 

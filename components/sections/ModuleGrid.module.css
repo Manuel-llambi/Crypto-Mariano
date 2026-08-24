@@ -12,29 +12,31 @@
   flex-direction: column;
   min-block-size: 13.75rem;
   padding: 1.5rem;
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-outline);
   border-radius: var(--radius);
 }
 
 .cardPassed {
-  background: var(--cream);
+  background: var(--color-background);
 }
 
 /* The one card that stands out: a heavier border, as in the mockup. */
 .cardCurrent {
-  background: var(--white);
-  border: 2px solid var(--navy);
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
 }
 
 /* Open but untouched: the same weight as the card in progress, since it is the
    one the student can act on, and equally not dashed like the locked ones. */
 .cardAvailable {
-  background: var(--white);
-  border: 2px solid var(--navy);
+  background: var(--color-surface);
+  border: 2px solid var(--color-primary);
+  border-radius: var(--radius);
 }
 
 .cardLocked {
-  background: var(--white);
+  background: var(--color-surface);
   border-style: dashed;
 }
 
@@ -48,12 +50,12 @@
 
 .code {
   padding: var(--label-block) var(--label-inline);
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-outline);
   border-radius: var(--radius);
-  background: var(--white);
+  background: var(--color-surface);
   font-family: var(--font-mono);
   font-size: 0.8125rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .badge {
@@ -68,23 +70,25 @@
 }
 
 .badgePassed {
-  border: 1px solid var(--gold-line);
-  color: var(--gold-text);
+  border: 1px solid var(--color-tertiary);
+  border-radius: var(--radius);
+  color: var(--color-on-tertiary);
 }
 
 .badgeCurrent {
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .badgeAvailable {
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 .badgeLocked {
-  border: 1px solid var(--rule);
-  color: var(--grey-text);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius);
+  color: var(--color-on-surface-variant);
 }
 
 .title {
@@ -92,11 +96,11 @@
   font-size: 1.0625rem;
   font-weight: 600;
   line-height: 1.3;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .cardLocked .title {
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .footnote,
@@ -106,14 +110,14 @@
   gap: 0.5rem;
   margin: auto 0 0;
   font-size: 0.875rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .checkIcon {
   inline-size: 1rem;
   block-size: 1rem;
   flex-shrink: 0;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 .lockIcon {
@@ -126,7 +130,7 @@
   inline-size: 1rem;
   block-size: 1rem;
   flex-shrink: 0;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .bar {
@@ -134,7 +138,7 @@
   margin: auto 0 0;
   block-size: 0.375rem;
   border-radius: 999px;
-  background: var(--rule);
+  background: var(--color-outline);
   overflow: hidden;
 }
 
@@ -142,5 +146,5 @@
   display: block;
   inline-size: var(--percent, 0%);
   block-size: 100%;
-  background: var(--gold-line);
+  background: var(--color-tertiary);
 }

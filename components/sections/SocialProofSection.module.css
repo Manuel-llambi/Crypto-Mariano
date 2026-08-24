@@ -5,8 +5,8 @@
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
   /* Cream ground with white cards, as the finished design has it. */
-  background: var(--cream);
-  color: var(--navy);
+  background: var(--color-background);
+  color: var(--color-primary);
   text-align: center;
 }
 
@@ -26,7 +26,7 @@
   max-inline-size: 44rem;
   font-size: 1rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .seals {
@@ -57,13 +57,13 @@
   font-size: 0.875rem;
   line-height: 1rem;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .sealDetail {
   font-size: 0.75rem;
   line-height: 1rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 /*

@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 @media (min-width: 1024px) {
@@ -50,7 +50,7 @@
   flex: 1 1 0;
   min-inline-size: 0;
   padding: var(--card-padding);
-  background: var(--cream);
+  background: var(--color-background);
 }
 
 .icon {
@@ -69,5 +69,5 @@
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }

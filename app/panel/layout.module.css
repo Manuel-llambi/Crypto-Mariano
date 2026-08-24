@@ -19,7 +19,7 @@
 .main {
   flex: 1;
   min-inline-size: 0;
-  background: var(--white);
+  background: var(--color-surface);
 }
 
 @media (min-width: 64rem) {

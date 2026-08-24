@@ -6,7 +6,7 @@
   flex: 1 1 0;
   min-inline-size: 0;
   padding: var(--card-padding);
-  background: var(--white);
+  background: var(--color-surface);
   /*
    * White on cream is a two-percent difference in luminance: at a glance the
    * four cards dissolved into the section behind them and the row read as one
@@ -17,8 +17,9 @@
    * of the three without it was inconsistency, not a decision. The brass edge
    * along the top follows the same rule as the metrics.
    */
-  border: 1px solid var(--rule);
-  border-block-start: 2px solid var(--gold-line);
+  border: 1px solid var(--color-outline);
+  border-block-start: 2px solid var(--color-tertiary);
+  border-radius: var(--radius);
   text-align: center;
 }
 
@@ -28,12 +29,12 @@
   line-height: 1.75rem;
   font-weight: 400;
   text-transform: uppercase;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .description {
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.25rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }

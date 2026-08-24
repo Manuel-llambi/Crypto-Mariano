@@ -4,8 +4,8 @@
   align-items: flex-start;
   gap: var(--row-gap);
   padding: 8rem var(--section-inline);
-  background: var(--cream);
-  color: var(--navy);
+  background: var(--color-background);
+  color: var(--color-primary);
   min-block-size: 50vh;
 }
 
@@ -15,7 +15,7 @@
   font-size: 0.625rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 .title {
@@ -34,14 +34,15 @@
   max-inline-size: 48ch;
   font-size: 1rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .home {
   margin-block-start: 1rem;
-  padding: 0.75rem 2rem;
-  background: var(--navy);
-  color: var(--white);
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   border-radius: var(--radius);
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -51,5 +52,5 @@
 
 .home:hover,
 .home:focus-visible {
-  background: var(--gold-text);
+  background: var(--color-on-tertiary);
 }

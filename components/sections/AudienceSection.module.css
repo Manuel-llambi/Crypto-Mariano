@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: 4rem;
   padding: var(--section-block) var(--section-inline);
-  background: var(--cream);
-  color: var(--navy);
+  background: var(--color-background);
+  color: var(--color-primary);
 }
 
 .intro {

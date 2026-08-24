@@ -5,17 +5,18 @@
   text-align: center;
   gap: var(--row-gap);
   padding: var(--section-block) var(--section-inline);
-  background: var(--navy);
-  color: var(--white);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
 }
 
 /*
- * On the navy ground the badge has to invert: `--gold-line` as a border and
- * `--gold-text` as text were both chosen against white and neither carries here.
+ * On the navy ground the badge has to invert: `--color-tertiary` as a border and
+ * `--color-on-tertiary` as text were both chosen against paper and neither
+ * carries here.
  */
 .eyebrow {
   border-color: rgb(255 255 255 / 40%);
-  color: var(--white);
+  color: var(--color-on-primary);
   background: rgb(255 255 255 / 8%);
 }
 
@@ -54,11 +55,11 @@
 
 .cta {
   margin-top: var(--row-gap);
-  padding-block: 0.875rem;
-  padding-inline: 2rem;
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
   border-radius: var(--radius);
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
   font-family: var(--font-sans);
   font-size: 0.875rem;
   font-weight: 600;
@@ -73,14 +74,14 @@
 /*
  * The one button on the site that cannot swap to brass on hover.
  *
- * The other three sit on white and darken into `--gold-text`. This one sits on
- * the navy ground, where darkening the button is the same as deleting it — it
+ * The other three sit on paper and darken into `--color-on-tertiary`. This one
+ * sits on the navy ground, where darkening the button is the same as deleting it — it
  * would sink into its own background. So the ground stays light and the
  * *lettering* carries the state instead: cream fill, brass text, which is
  * 5.34:1 and holds 9.4 without needing the fill to move.
  */
 .cta:hover,
 .cta:focus-visible {
-  background: var(--cream);
-  color: var(--gold-text);
+  background: var(--color-background);
+  color: var(--color-on-tertiary);
 }

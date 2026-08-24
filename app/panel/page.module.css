@@ -15,7 +15,7 @@
   font-weight: 600;
   letter-spacing: 0.2em;
   text-transform: uppercase;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .greeting {
@@ -23,7 +23,7 @@
   font-size: clamp(2rem, 5vw, 3rem);
   font-weight: 600;
   line-height: 1.1;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .body {
@@ -31,13 +31,13 @@
   margin: 0;
   font-size: 1.0625rem;
   line-height: 1.6;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .rule {
   margin: 0 0 2.5rem;
   border: 0;
-  border-block-start: 1px solid var(--rule);
+  border-block-start: 1px solid var(--color-outline);
 }
 
 .top {
@@ -58,7 +58,7 @@
   justify-content: flex-end;
   margin-block-end: 1.5rem;
   padding-block-end: 1rem;
-  border-block-end: 1px solid var(--rule);
+  border-block-end: 1px solid var(--color-outline);
 }
 
 /* 7.6 — the control is 44 tall even though its label is small. */
@@ -71,7 +71,7 @@
   border: 0;
   border-radius: var(--radius);
   background: none;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-size: 0.875rem;
   font-weight: 600;
   cursor: pointer;
@@ -79,7 +79,7 @@
 
 .filter:hover,
 .filter:focus-visible {
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .filterIcon {

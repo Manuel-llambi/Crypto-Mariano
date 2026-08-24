@@ -3,8 +3,8 @@
   flex-direction: column;
   align-items: center;
   padding: var(--card-padding);
-  background: var(--white);
-  border: 1px solid var(--rule);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
   border-radius: var(--radius);
 }
 
@@ -19,13 +19,13 @@
   inline-size: 100%;
   margin: 0 0 2rem;
   padding-block-end: 1rem;
-  border-block-end: 1px solid var(--rule);
+  border-block-end: 1px solid var(--color-outline);
   font-family: var(--font-mono);
   font-size: 0.75rem;
   font-weight: 600;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 /*
@@ -42,7 +42,7 @@
   block-size: 10rem;
   margin-block-end: 2rem;
   border-radius: 50%;
-  background: conic-gradient(var(--gold-line) var(--percent, 0%), var(--rule) 0);
+  background: conic-gradient(var(--color-tertiary) var(--percent, 0%), var(--color-outline) 0);
 }
 
 .hole {
@@ -53,20 +53,20 @@
   align-items: center;
   justify-content: center;
   border-radius: 50%;
-  background: var(--white);
+  background: var(--color-surface);
 }
 
 .percent {
   font-size: 2.25rem;
   font-weight: 600;
   line-height: 1;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .percentLabel {
   margin-block-start: 0.25rem;
   font-size: 0.75rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .figures {
@@ -87,7 +87,7 @@
 .figureLabel {
   margin: 0;
   font-size: 0.875rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .figureValue {
@@ -95,5 +95,5 @@
   font-family: var(--font-mono);
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--color-primary);
 }

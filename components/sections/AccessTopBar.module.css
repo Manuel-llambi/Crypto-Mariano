@@ -4,9 +4,14 @@
   justify-content: center;
   min-block-size: var(--header-height);
   padding: 1rem var(--section-inline);
-  background: var(--cream);
-  border-block-end: 1px solid var(--rule);
-  color: var(--navy);
+  /*
+   * Surface and not paper, for the reason `TopNavBar` is: chrome sits above the
+   * page rather than being part of it. Here it also leaves the card as the only
+   * tinted thing on the screen, which is where the eye should land.
+   */
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-outline);
+  color: var(--color-primary);
 }
 
 .name {

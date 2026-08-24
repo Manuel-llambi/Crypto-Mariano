@@ -1,6 +1,6 @@
 .disclosure,
 .heading {
-  background: var(--white);
+  background: var(--color-surface);
 }
 
 .summary {
@@ -10,7 +10,7 @@
   gap: var(--row-gap);
   padding: var(--row-padding);
   cursor: pointer;
-  color: var(--navy);
+  color: var(--color-primary);
   transition: background-color var(--duration-fast) var(--ease-out);
 }
 
@@ -26,13 +26,14 @@
  * once, and painting all of them would say nothing.
  */
 .summary:hover {
-  background: var(--cream);
+  background: var(--color-background);
 }
 
 /*
  * The native marker is replaced by the chevron of the mockup. It is drawn with
- * --navy and not with --rule: the chevron is the graphical object that tells
- * the visitor the row can open, so 9.4 asks it for 3:1.
+ * --color-primary and not with --color-outline: the chevron is the graphical
+ * object that tells the visitor the row can open, so 9.4 asks it for 3:1, and
+ * --color-outline is classified as decoration precisely because it cannot.
  */
 .summary::-webkit-details-marker {
   display: none;
@@ -47,8 +48,8 @@
   flex: none;
   width: 0.6rem;
   height: 0.6rem;
-  border-right: 2px solid var(--navy);
-  border-bottom: 2px solid var(--navy);
+  border-right: 2px solid var(--color-primary);
+  border-bottom: 2px solid var(--color-primary);
   transform: rotate(45deg) translate(-0.15rem, -0.15rem);
 }
 
@@ -58,12 +59,12 @@
 
 .content {
   padding: 0 var(--row-padding) var(--row-padding);
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .heading {
   padding: var(--row-padding);
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 /*

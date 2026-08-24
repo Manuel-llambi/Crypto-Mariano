@@ -16,21 +16,42 @@
   min-block-size: 1.5rem;
 }
 
+/*
+ * Sans, as DESIGN_SYSTEM.md §4.5 asks and §6 explains.
+ *
+ * It was set in the mono, and the two rules of §6 are what settle it: the mono
+ * is for a verifiable datum — an id, a hash, a date, an `EXP-NN` — carried
+ * uppercase and letter-spaced, and everything else that is interface is sans.
+ * «Email institucional» is neither uppercase nor spaced, so it was reading as
+ * data without being any, which is the one thing this typeface pairing is
+ * supposed to keep apart. `.protocol` on the sign-in card is the counter-example
+ * that shows the rule working: `AUTH-2024` is a reference, and it stays mono.
+ */
 .label {
-  font-family: var(--font-mono);
+  font-family: var(--font-sans);
   font-size: 0.875rem;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .input {
   inline-size: 100%;
   min-block-size: 44px;
   padding: 0.75rem 1rem;
-  background: var(--white);
-  border: 1px solid var(--rule);
-  /* Square, like every other edge in this design. */
-  border-radius: 0;
-  color: var(--navy);
+  background: var(--color-surface);
+  /*
+   * The boundary of this control is 1.70:1 against the field it encloses, and
+   * 1.4.11 asks 3:1 of exactly that. It is the one place `--color-outline` is
+   * load-bearing rather than decorative: the rules that group a disclosure can
+   * be lost without costing the visitor anything, but an input that has stopped
+   * looking like an input has. DESIGN_SYSTEM.md §4.5 records the token; it does
+   * not record the shortfall, and the two are not the same statement. Fixing it
+   * means picking a darker edge — `--color-secondary` is 6.02:1 here — and that
+   * changes the weight of every field on the four transactional screens, so it
+   * is a decision, not a cleanup.
+   */
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius);
+  color: var(--color-primary);
   font-family: var(--font-sans);
   font-size: 1rem;
 }
@@ -40,5 +61,5 @@
  * alone would sit outside the box; the border change is what the design shows.
  */
 .input:focus-visible {
-  border-color: var(--navy);
+  border-color: var(--color-primary);
 }

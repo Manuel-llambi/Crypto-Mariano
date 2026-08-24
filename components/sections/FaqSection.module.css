@@ -3,8 +3,8 @@
   flex-direction: column;
   gap: 2rem;
   padding: var(--section-block) var(--section-inline);
-  background: var(--white);
-  color: var(--navy);
+  background: var(--color-surface);
+  color: var(--color-primary);
 }
 
 @media (min-width: 1024px) {
@@ -42,5 +42,6 @@
 }
 
 .entry {
-  border: 1px solid var(--rule);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius);
 }

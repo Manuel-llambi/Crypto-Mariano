@@ -10,8 +10,9 @@ interface BadgeProps {
 /**
  * The outlined label of the mockup: section eyebrows and module status.
  *
- * The outline is `--gold-line`, which 9.4 allows as decoration; the text inside
- * is `--gold-text`, the corrected gold that reaches 4.5:1.
+ * The outline is `--color-tertiary`, which 9.4 allows at 3:1 as an interface
+ * element; the text inside is `--color-on-tertiary`, the corrected gold that
+ * reaches 4.5:1.
  */
 export function Badge({ children, className }: BadgeProps) {
   return <span className={[styles.badge, className].filter(Boolean).join(" ")}>{children}</span>;

@@ -6,8 +6,8 @@
   flex: 1 1 0;
   min-inline-size: 0;
   padding: var(--card-padding);
-  background: var(--white);
-  border: 1px solid var(--rule);
+  background: var(--color-surface);
+  border: 1px solid var(--color-outline);
   /*
    * A brass edge along the top, heavier than the hairline around the rest.
    *
@@ -16,7 +16,8 @@
    * gesture the page already uses to mark what matters — the standfirst of the
    * hero and the tick in the footer are the same two pixels of brass.
    */
-  border-block-start: 2px solid var(--gold-line);
+  border-block-start: 2px solid var(--color-tertiary);
+  border-radius: var(--radius);
   text-align: center;
 }
 
@@ -37,7 +38,7 @@
   letter-spacing: -0.02em;
   font-variant-numeric: tabular-nums;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--color-primary);
 }
 
 .label {
@@ -47,5 +48,5 @@
   line-height: 1rem;
   letter-spacing: 1px;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }

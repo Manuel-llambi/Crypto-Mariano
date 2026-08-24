@@ -5,9 +5,9 @@
  */
 .footer {
   padding: var(--section-block) var(--section-inline) 2rem;
-  background: var(--white);
-  border-block-start: 1px solid var(--rule);
-  color: var(--navy);
+  background: var(--color-background);
+  border-block-start: 1px solid var(--color-outline);
+  color: var(--color-primary);
 }
 
 .grid {
@@ -45,7 +45,7 @@
   margin: 0;
   font-size: 0.875rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .column {
@@ -59,7 +59,7 @@
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
 }
 
 .list {
@@ -72,7 +72,7 @@
 }
 
 .link {
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
   font-size: 0.875rem;
   text-decoration: none;
   transition: color var(--duration-fast) var(--ease-out);
@@ -80,7 +80,7 @@
 
 .link:hover,
 .link:focus-visible {
-  color: var(--navy);
+  color: var(--color-primary);
   text-decoration: underline;
 }
 
@@ -89,7 +89,7 @@
   font-style: normal;
   font-size: 0.875rem;
   line-height: 1.5rem;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .emailLabel {
@@ -103,7 +103,7 @@
    * the corrected grey instead: the label names the address below it, so losing
    * it costs real information.
    */
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .email {
@@ -112,7 +112,7 @@
   min-block-size: 44px;
   font-size: 0.875rem;
   font-weight: 600;
-  color: var(--navy);
+  color: var(--color-primary);
   text-decoration: none;
 }
 
@@ -127,7 +127,7 @@
   gap: var(--row-gap);
   align-items: flex-start;
   padding-block-start: 2rem;
-  border-block-start: 1px solid var(--rule);
+  border-block-start: 1px solid var(--color-outline);
 }
 
 @media (min-width: 768px) {
@@ -145,7 +145,7 @@
   font-size: 0.625rem;
   letter-spacing: 0.15em;
   text-transform: uppercase;
-  color: var(--grey-text);
+  color: var(--color-on-surface-variant);
 }
 
 .notes {
@@ -158,5 +158,5 @@
 .tick {
   inline-size: 2rem;
   block-size: 0.25rem;
-  background: var(--gold-line);
+  background: var(--color-tertiary);
 }

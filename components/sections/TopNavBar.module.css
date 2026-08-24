@@ -23,12 +23,12 @@
    */
   padding-block: 0.5rem;
   padding-inline: max(clamp(0.75rem, 3vw, 1.5rem), (100% - var(--nav-max)) / 2);
-  background: var(--white);
-  border-block-end: 1px solid var(--rule);
-  color: var(--navy);
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-outline);
+  color: var(--color-primary);
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .header {
     gap: 2rem;
   }
@@ -63,13 +63,28 @@
  * 7.2 — the inline list is the wide-screen shape. Below the threshold it is
  * removed entirely, both visually and from the accessibility tree, and NavPanel
  * carries the same links instead. Only one of the two is ever announced.
+ *
+ * The threshold is 1152px and not 1024px, and the number was measured rather
+ * than picked. At 1024 the bar did not fit: brand 114 + list 627 + access 236,
+ * two 32px gaps and 48px of padding come to 1089px of content, so anything
+ * narrower than roughly 1104px overlapped the brand with the first link. That
+ * was already true before the button took its §5.2 padding — unifying it at
+ * `32px` widened the broken band from 1024–1073 to 1024–1104, it did not open
+ * it. 1152px is `--content-max`, which is the width this design already means
+ * something by, and it leaves the bar room instead of exactly enough.
+ *
+ * Four `@media` blocks share this number across two files and CSS gives no way
+ * to name it — a custom property cannot be read inside a media query. So the
+ * coupling is held by `components/sections/nav-threshold.test.ts` instead: get
+ * one of the four wrong and the inline list and the panel are both on screen,
+ * or neither is.
  */
 .nav {
   display: none;
   flex: 1 1 auto;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .nav {
     display: block;
   }
@@ -89,7 +104,7 @@
  * rule keyed on scroll position, because there is no scroll position to key on.
  */
 .link {
-  color: var(--navy);
+  color: var(--color-primary);
   font-size: 0.875rem;
   text-decoration: none;
   text-transform: uppercase;
@@ -98,7 +113,7 @@
 
 .link:hover,
 .link:focus-visible {
-  color: var(--gold-text);
+  color: var(--color-on-tertiary);
   text-decoration: underline;
 }
 
@@ -109,7 +124,7 @@
   margin-inline-start: auto;
 }
 
-@media (min-width: 1024px) {
+@media (min-width: 1152px) {
   .access {
     gap: 1rem;
   }
@@ -118,7 +133,7 @@
 /* Below 640px the enrolment control is the one that must survive (7.2). */
 .login {
   display: none;
-  color: var(--navy);
+  color: var(--color-primary);
   font-size: 0.875rem;
   text-decoration: none;
   white-space: nowrap;
@@ -147,9 +162,10 @@
 .enrol {
   flex: none;
   white-space: nowrap;
-  padding: 0.5rem clamp(0.75rem, 3vw, 1.5rem);
-  background: var(--navy);
-  color: var(--white);
+  padding-block: var(--button-padding-block);
+  padding-inline: var(--button-padding-inline);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
   border-radius: var(--radius);
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -160,5 +176,5 @@
 
 .enrol:hover,
 .enrol:focus-visible {
-  background: var(--gold-text);
+  background: var(--color-on-tertiary);
 }
