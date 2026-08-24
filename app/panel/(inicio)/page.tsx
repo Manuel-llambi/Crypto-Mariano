@@ -4,7 +4,8 @@ import { ContinueCard } from "@/components/sections/ContinueCard";
 import { ModuleGrid } from "@/components/sections/ModuleGrid";
 import { ProgressCard } from "@/components/sections/ProgressCard";
 import { PanelIcon } from "@/components/ui/PanelIcon";
-import { panel, program, site } from "@/lib/content";
+import { lesson, panel, program, site } from "@/lib/content";
+import { currentLessonHref, deriveOutline } from "@/lib/lesson/outline";
 import { derivePanel } from "@/lib/panel/derive";
 
 import styles from "./page.module.css";
@@ -30,6 +31,17 @@ export default function PanelPage() {
   const { record } = panel;
   const derived = derivePanel(program.modules, record);
 
+  /*
+   * Where the card opens, read back through the viewer's own tree.
+   *
+   * Two content files describe the same student — `panel.record` names the
+   * module, `lesson.record` names the lesson — and nothing forces them to
+   * agree. Passing the module code in makes `currentLessonHref` answer only
+   * when they do, so the card can never name one module and open another.
+   */
+  const outline = deriveOutline(program.modules, lesson.moduleLessons, lesson.record);
+  const continueHref = currentLessonHref(outline, derived.current.code);
+
   return (
     <div className={styles.page}>
       <header className={styles.welcome}>
@@ -51,6 +63,7 @@ export default function PanelPage() {
           estimatedMinutes={record.estimatedMinutes}
           attachmentCount={record.attachmentCount}
           started={derived.started}
+          href={continueHref}
         />
         <ProgressCard
           copy={panel.progressCard}

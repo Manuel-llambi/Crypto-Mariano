@@ -47,6 +47,62 @@ export const SIGNUP_ACCOUNT_HREF = "/registro/crear-cuenta";
 export const PANEL_HREF = "/panel";
 
 /**
+ * The lesson viewer, below the dashboard so it inherits the same guard.
+ *
+ * The codes travel lowercased because an address is not a label: `EXP-00` reads
+ * as a file number on screen and `/panel/modulo/exp-00/lec-01` reads as a path.
+ * The screen uppercases them again to print them, and matches case-insensitively
+ * on the way in, so a link typed either way lands on the same lesson.
+ */
+export const LESSON_BASE = "/panel/modulo";
+
+export function lessonHref(moduleCode: string, lessonCode: string): string {
+  return `${LESSON_BASE}/${moduleCode.toLowerCase()}/${lessonCode.toLowerCase()}`;
+}
+
+/**
+ * The two views of the lesson's right rail.
+ *
+ * A query parameter and not a client component: switching the rail is a
+ * navigation, so the tabs are anchors and the screen keeps working with no
+ * script at all (8.1). The cost is a page load per switch, which on a server
+ * component reading versioned content is nothing.
+ *
+ * The names live here rather than beside the tabs for the reason every other
+ * address in this file does: the page reads the parameter and the rail writes
+ * the links, and a value spelled in two places eventually disagrees with
+ * itself.
+ */
+export const LESSON_VIEW_PARAM = "vista";
+
+export const LESSON_VIEWS = { content: "contenido", resources: "recursos" } as const;
+
+export type LessonView = (typeof LESSON_VIEWS)[keyof typeof LESSON_VIEWS];
+
+/**
+ * Reads the parameter, falling back to the content view.
+ *
+ * Anything unrecognised is the content view too, and deliberately: a hand-typed
+ * `?vista=cualquiera` should show the lesson, not an error page. The parameter
+ * selects a rail, it does not identify a resource.
+ */
+export function lessonView(raw: string | string[] | undefined): LessonView {
+  return raw === LESSON_VIEWS.resources ? LESSON_VIEWS.resources : LESSON_VIEWS.content;
+}
+
+/** The address of one view of one lesson. */
+export function lessonViewHref(
+  moduleCode: string,
+  lessonCode: string,
+  view: LessonView,
+): string {
+  const base = lessonHref(moduleCode, lessonCode);
+
+  // The content view is the default, so it needs no parameter to select it.
+  return view === LESSON_VIEWS.content ? base : `${base}?${LESSON_VIEW_PARAM}=${view}`;
+}
+
+/**
  * Where a refused first step lands (1.2, 1.4).
  *
  * Derived from `SIGNUP_HREF` rather than spelled out, so the address cannot end

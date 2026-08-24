@@ -2,6 +2,7 @@ import { access as rawAccess } from "@/content/access";
 import { audience as rawAudience } from "@/content/audience";
 import { faq as rawFaq } from "@/content/faq";
 import { footer as rawFooter } from "@/content/footer";
+import { lesson as rawLesson } from "@/content/lesson";
 import { methodology as rawMethodology } from "@/content/methodology";
 import { nav as rawNav } from "@/content/nav";
 import { panel as rawPanel } from "@/content/panel";
@@ -16,6 +17,7 @@ import {
   AudienceSchema,
   FaqListSchema,
   FooterSchema,
+  LessonScreenSchema,
   MethodologySchema,
   NavSchema,
   PanelSchema,
@@ -51,6 +53,7 @@ export const socialProof = parseContent(
 export const faq = parseContent("content/faq.ts", FaqListSchema, rawFaq);
 export const access = parseContent("content/access.ts", AccessSchema, rawAccess);
 export const panel = parseContent("content/panel.ts", PanelSchema, rawPanel);
+export const lesson = parseContent("content/lesson.ts", LessonScreenSchema, rawLesson);
 
 /**
  * Newest first (2.7).

@@ -24,6 +24,14 @@ const PATHS = {
   lock: "M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z",
   arrow: "M14 5l7 7m0 0l-7 7m7-7H3",
   filter: "M3 4a1 1 0 011-1h16a1 1 0 011 1v2.586a1 1 0 01-.293.707l-6.414 6.414a1 1 0 00-.293.707V17l-4 4v-6.586a1 1 0 00-.293-.707L3.293 7.293A1 1 0 013 6.586V4z",
+  /* The player, added with the lesson viewer. Every one of them inert for now. */
+  play: "M7 4.5v15l12-7.5-12-7.5z",
+  skip: "M5 4.5l10 7.5-10 7.5v-15zM19 5v14",
+  volume: "M11 5L6 9H2v6h4l5 4V5zM15.54 8.46a5 5 0 010 7.07M18.36 5.64a9 9 0 010 12.72",
+  expand: "M8 3H5a2 2 0 00-2 2v3m18 0V5a2 2 0 00-2-2h-3m0 18h3a2 2 0 002-2v-3M3 16v3a2 2 0 002 2h3",
+  chevron: "M6 9l6 6 6-6",
+  /* The lesson nobody has opened yet: an outline, against `check`'s solid disc. */
+  circle: "M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
 } as const;
 
 /** Two paths, so they are kept apart from the single-path glyphs above. */

@@ -305,6 +305,110 @@ export const PanelSchema = z.strictObject({
 
 export type PanelContent = z.infer<typeof PanelSchema>;
 
+/**
+ * One lesson inside a module.
+ *
+ * Strict, like every other content schema, and for the same reason: a `code`,
+ * a `position` or a `lessonCount` written here stops being a value quietly
+ * ignored and becomes an error naming the surplus key. Both codes the screen
+ * shows — `EXP-NN` and `LEC-NN` — are derived from the position.
+ *
+ * `duration` is a label and not a number of seconds. Nothing computes with it
+ * while the player is inert: it is printed beside the title in the tree and in
+ * the header, and that is the whole of its job. It becomes a count the day the
+ * player has a file to measure.
+ */
+const LessonSchema = z.strictObject({
+  title: NonEmpty,
+  /** `MM:SS`, as the interface prints it. */
+  duration: z.string().regex(/^\d{2}:\d{2}$/, "must be MM:SS"),
+  summary: NonEmpty,
+  keyPoints: z.array(NonEmpty).min(1),
+  /** Optional: not every lesson carries a remark from whoever recorded it. */
+  instructorNote: z
+    .strictObject({
+      text: NonEmpty,
+      author: NonEmpty,
+    })
+    .optional(),
+  tools: z.array(NonEmpty).min(1).optional(),
+  updatedOn: z.iso.date(),
+});
+
+export type LessonEntry = z.infer<typeof LessonSchema>;
+
+/**
+ * Where the student stands, at lesson resolution.
+ *
+ * Two positions and two decorations. The positions are indices and never codes,
+ * for the same reason `PanelRecordSchema` refuses a `currentModuleCode`; the
+ * decorations describe a player that cannot play yet, so they are checked for
+ * shape and nothing else.
+ */
+const LessonRecordSchema = z.strictObject({
+  moduleIndex: z.number().int().nonnegative(),
+  lessonIndex: z.number().int().nonnegative(),
+  playedPercent: Percent,
+  elapsed: z.string().regex(/^\d{2}:\d{2}$/, "must be MM:SS"),
+});
+
+export type LessonRecord = z.infer<typeof LessonRecordSchema>;
+
+export const LessonScreenSchema = z.strictObject({
+  title: NonEmpty,
+  panelLabel: NonEmpty,
+  outline: z.strictObject({
+    progressLabel: NonEmpty,
+    lessonsSuffix: NonEmpty,
+    completedSuffix: NonEmpty,
+    ariaLabel: NonEmpty,
+  }),
+  /**
+   * All four states are required.
+   *
+   * The tree draws every module the syllabus has, and with seven modules and a
+   * student on the first one, three of the four are on screen at once. An
+   * optional branch here would let a content edit leave a lesson labelled with
+   * `undefined`.
+   */
+  states: z.strictObject({
+    passed: NonEmpty,
+    current: NonEmpty,
+    upcoming: NonEmpty,
+    locked: NonEmpty,
+  }),
+  player: z.strictObject({
+    playLabel: NonEmpty,
+    posterAlt: NonEmpty,
+  }),
+  header: z.strictObject({
+    positionLabel: NonEmpty,
+    positionJoiner: NonEmpty,
+    updatedLabel: NonEmpty,
+    previousLabel: NonEmpty,
+    nextLabel: NonEmpty,
+  }),
+  notes: z.strictObject({
+    contentView: NonEmpty,
+    resourcesView: NonEmpty,
+    descriptionTitle: NonEmpty,
+    keyPointsTitle: NonEmpty,
+    noteTitle: NonEmpty,
+    toolsTitle: NonEmpty,
+    filesTitle: NonEmpty,
+    filesEmpty: NonEmpty,
+  }),
+  /**
+   * Aligned to the syllabus by position, so the outer array may not be shorter
+   * than it is long — an announced module declares an empty list rather than
+   * being left out, which is what keeps index N here meaning module N there.
+   */
+  moduleLessons: z.array(z.array(LessonSchema)),
+  record: LessonRecordSchema,
+});
+
+export type LessonScreenContent = z.infer<typeof LessonScreenSchema>;
+
 export const SiteSchema = z.strictObject({
   name: NonEmpty,
   title: NonEmpty, // 10.1

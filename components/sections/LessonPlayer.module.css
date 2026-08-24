@@ -1,0 +1,132 @@
+/*
+ * The player keeps the 16:9 of the frame it will one day hold, so the header
+ * below it does not jump the day a real video replaces the placeholder.
+ */
+.player {
+  background: var(--color-ink);
+  border-radius: var(--radius);
+  overflow: hidden;
+}
+
+.poster {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  aspect-ratio: 16 / 9;
+  /*
+   * A flat field and not a photograph: there is no still to show, and a
+   * decorative image standing in for one would be a picture of nothing. Flat
+   * because §6 forbids decorative gradients.
+   */
+  background: var(--color-ink);
+}
+
+.stamp {
+  position: absolute;
+  inset-block-start: 1rem;
+  inset-inline-start: 1rem;
+  margin: 0;
+  padding: var(--label-block) var(--label-inline);
+  border-radius: var(--radius);
+  background: var(--color-surface);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-primary);
+}
+
+/*
+ * 7.6 — the control is a touch target before it is a circle, so the outer size
+ * is set by `min-block-size` and the ring is drawn at whatever that gives.
+ */
+.play {
+  display: inline-flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.5rem;
+  min-block-size: 44px;
+  padding: 1rem;
+  background: none;
+  border: 0;
+  color: var(--color-on-primary);
+  cursor: pointer;
+}
+
+/*
+ * A disc, not a ring, and that is a rule dodged on purpose rather than by
+ * accident.
+ *
+ * The mockup draws this control as a hairline circle. A `border` shorthand here
+ * would trip `styles/radius.test.ts`, which demands `var(--radius)` from every
+ * bordered box — correctly, because §6 knows about boxes and says nothing about
+ * circular controls. Widening that guard so one button could pass would cost
+ * more than the hairline is worth, so the circle is filled instead of outlined.
+ * `ProgressCard` already draws its ring the same way, with no border at all.
+ *
+ * If the DS ever decides what a circular control looks like, this is the first
+ * place to change; it is listed in §7 as open.
+ */
+.playIcon {
+  inline-size: 2rem;
+  block-size: 2rem;
+  padding: 1rem;
+  border-radius: 50%;
+  background: rgb(255 255 255 / 15%);
+  box-sizing: content-box;
+}
+
+.playLabel {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+.play:hover .playIcon,
+.play:focus-visible .playIcon {
+  background: rgb(255 255 255 / 30%);
+}
+
+.controls {
+  padding: 0.75rem 1rem 1rem;
+}
+
+.scrubber {
+  display: block;
+  margin: 0;
+  block-size: 3px;
+  background: rgb(255 255 255 / 25%);
+}
+
+.scrubberFill {
+  display: block;
+  block-size: 100%;
+  inline-size: var(--percent);
+  background: var(--color-on-primary);
+}
+
+.transport {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block-start: 0.75rem;
+  color: var(--color-on-primary);
+}
+
+.controlIcon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.time {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+}
+
+.spacer {
+  flex: 1;
+}

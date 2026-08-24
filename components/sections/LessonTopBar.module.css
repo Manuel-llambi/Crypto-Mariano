@@ -1,0 +1,95 @@
+/*
+ * The mockup pins this bar at 56px. `--header-height` is 4.5rem and belongs to
+ * the landing and the dashboard, where the bar carries controls; here it carries
+ * a trail, so it sits lower on purpose and the token is left alone rather than
+ * redefined for one screen.
+ */
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  min-block-size: 3.5rem;
+  padding-block: 0.5rem;
+  padding-inline: clamp(1rem, 3vw, 1.5rem);
+  background: var(--color-surface);
+  border-block-end: 1px solid var(--color-outline);
+}
+
+.trail {
+  min-inline-size: 0;
+}
+
+.crumbs {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/*
+ * The brand is a rule away from the trail, not a bullet: the mockup separates it
+ * with a hairline, which says «this is the product» rather than «this is step
+ * one». Below 40rem the trail keeps only the lesson, which is the one crumb that
+ * changes.
+ */
+.brand {
+  padding-inline-end: 1rem;
+  border-inline-end: 1px solid var(--color-outline);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-tertiary);
+  white-space: nowrap;
+}
+
+.code {
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+  white-space: nowrap;
+}
+
+.lesson {
+  overflow: hidden;
+  font-size: 0.8125rem;
+  font-weight: 500;
+  color: var(--color-on-surface);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+/* 7.6 — the height is the touch target, not the type size. */
+.exit {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+  min-block-size: 44px;
+  padding-block: 0.5rem;
+  padding-inline: 1.25rem;
+  border-radius: var(--radius);
+  background: var(--color-primary);
+  color: var(--color-on-primary);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.exit:hover,
+.exit:focus-visible {
+  background: var(--color-on-tertiary);
+}
+
+@media (max-width: 40rem) {
+  .brand,
+  .code {
+    display: none;
+  }
+}

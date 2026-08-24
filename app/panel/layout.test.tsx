@@ -37,9 +37,11 @@ beforeEach(() => {
 /**
  * An arbitrary child, deliberately nothing to do with the dashboard.
  *
- * 4.4 asks the guard to sit on the shared chrome rather than on a screen. This
- * child is what makes that observable: move the guard into
- * `app/panel/page.tsx` and it starts reaching the document without a session.
+ * 4.4 asks the guard to sit above every panel screen rather than on one of
+ * them. This child is what makes that observable: move the guard into
+ * `app/panel/(inicio)/page.tsx` and it starts reaching the document without a
+ * session — and the lesson viewer, which is not in that group, stops being
+ * guarded at all.
  */
 const child = <p>Contenido cualquiera del panel</p>;
 
@@ -54,16 +56,30 @@ function withoutUser() {
 describe("a request with a live session", () => {
   beforeEach(withUser);
 
-  // 4.2 — it is served normally, chrome and all. Mounted by invoking the
-  // function: `render(<PanelLayout />)` on an async component renders an empty
-  // container instead of throwing, and every assertion would be meaningless.
-  it("renders the chrome and the screen it was given", async () => {
+  // 4.2 — it is served normally. Mounted by invoking the function:
+  // `render(<PanelLayout />)` on an async component renders an empty container
+  // instead of throwing, and every assertion would be meaningless.
+  it("renders the screen it was given", async () => {
     render(await PanelLayout({ children: child }));
 
     expect(screen.getByText("Contenido cualquiera del panel")).not.toBeNull();
-    expect(screen.getByRole("banner")).not.toBeNull();
-    expect(screen.getByRole("navigation")).not.toBeNull();
     expect(redirect).not.toHaveBeenCalled();
+  });
+
+  /*
+   * And nothing else.
+   *
+   * The chrome moved into `(inicio)/layout.tsx` the day the lesson viewer
+   * arrived, because that screen wears a different frame. If furniture creeps
+   * back up here it would reach the viewer too, and the viewer would render two
+   * top bars — one of the few defects that a screenshot catches and a render
+   * test usually does not.
+   */
+  it("adds no chrome of its own", async () => {
+    render(await PanelLayout({ children: child }));
+
+    expect(screen.queryByRole("banner")).toBeNull();
+    expect(screen.queryByRole("navigation")).toBeNull();
   });
 });
 

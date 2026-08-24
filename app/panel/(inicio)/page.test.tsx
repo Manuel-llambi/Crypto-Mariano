@@ -5,13 +5,15 @@ import { cleanup, render, screen } from "@testing-library/react";
 import { afterEach, describe, expect, it } from "vitest";
 
 import PanelPage, { metadata } from "./page";
-import { metadata as layoutMetadata } from "./layout";
-import { panel, program } from "@/lib/content";
+import { metadata as layoutMetadata } from "../layout";
+import { lesson as lessonContent, panel, program } from "@/lib/content";
+import { currentLessonHref, deriveOutline } from "@/lib/lesson/outline";
 import { derivePanel } from "@/lib/panel/derive";
+import { LESSON_BASE } from "@/lib/routes";
 
 afterEach(cleanup);
 
-const source = readFileSync(resolve(process.cwd(), "app/panel/page.tsx"), "utf8");
+const source = readFileSync(resolve(process.cwd(), "app/panel/(inicio)/page.tsx"), "utf8");
 
 /**
  * The branch the shipped record takes.
@@ -117,26 +119,49 @@ describe("the card that resumes the course", () => {
     const { eyebrow, startEyebrow, ctaLabel, startCtaLabel } = panel.continueCard;
 
     expect(screen.getByText(started ? eyebrow : startEyebrow)).not.toBeNull();
-    expect(screen.getByRole("button", { name: started ? ctaLabel : startCtaLabel })).not.toBeNull();
+    expect(screen.getByRole("link", { name: started ? ctaLabel : startCtaLabel })).not.toBeNull();
     expect(screen.queryByText(started ? startEyebrow : eyebrow)).toBeNull();
+  });
+
+  /**
+   * The control opens the viewer rather than admitting it does nothing.
+   *
+   * The address is not spelled here: it is read back through the same outline
+   * the viewer builds, so moving the record in either content file moves this
+   * assertion with it instead of leaving a second copy of the address to rot.
+   */
+  it("opens the lesson the record points at, and does it as a link", () => {
+    render(<PanelPage />);
+
+    const outline = deriveOutline(program.modules, lessonContent.moduleLessons, lessonContent.record);
+    const expected = currentLessonHref(outline, derivePanel(program.modules, panel.record).current.code);
+
+    expect(expected).not.toBeNull();
+
+    const cta = screen.getByRole("link", {
+      name: started ? panel.continueCard.ctaLabel : panel.continueCard.startCtaLabel,
+    });
+
+    expect(cta.getAttribute("href")).toBe(expected);
   });
 });
 
 /**
- * The panel screen itself does nothing — the guard is in its layout.
+ * One control leads somewhere; everything else on the screen still does not.
  *
- * Every control on it is an inert button. It shows a course nobody can open,
- * because there is no lesson viewer in this repository yet, and a link into a
- * 404 would be worse than a control that admits it does nothing.
+ * The card opens the lesson viewer, which exists since 2026-08-21. The filter
+ * does not, because there is nothing to filter yet, and the module cards do
+ * not either — the tree inside the viewer is what navigates the syllabus. A
+ * link into a 404 would be worse than a control that admits it does nothing.
  */
-describe("the screen is inert", () => {
+describe("the screen offers one destination only", () => {
   it("renders no form", () => {
     const { container } = render(<PanelPage />);
 
     expect(container.querySelector("form")).toBeNull();
   });
 
-  it("gives every control type button, never submit", () => {
+  it("gives every remaining control type button, never submit", () => {
     const { container } = render(<PanelPage />);
 
     for (const button of container.querySelectorAll("button")) {
@@ -144,10 +169,13 @@ describe("the screen is inert", () => {
     }
   });
 
-  it("links nowhere from the content column", () => {
+  it("links from the card and from nowhere else", () => {
     const { container } = render(<PanelPage />);
 
-    expect(container.querySelectorAll("a[href]")).toHaveLength(0);
+    const links = container.querySelectorAll("a[href]");
+
+    expect(links).toHaveLength(1);
+    expect(links[0]!.getAttribute("href")).toContain(LESSON_BASE);
   });
 });
 

@@ -1,0 +1,43 @@
+/*
+ * Three columns pinned to the viewport on a desktop, each scrolling on its own
+ * — the same frame the dashboard uses, with a third rail. Below 64rem there is
+ * no room for three, so they stack in reading order (syllabus, player, notes)
+ * and the document scrolls as a whole.
+ */
+.shell {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 100vh;
+  background: var(--color-background);
+}
+
+.body {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-block-size: 0;
+}
+
+.main {
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  flex: 1;
+  min-inline-size: 0;
+  padding: 1.5rem;
+}
+
+@media (min-width: 64rem) {
+  .shell {
+    block-size: 100vh;
+    overflow: hidden;
+  }
+
+  .body {
+    flex-direction: row;
+  }
+
+  .main {
+    overflow-y: auto;
+  }
+}

@@ -1,0 +1,258 @@
+/*
+ * The syllabus column. On a desktop it is pinned and scrolls on its own; below
+ * 64rem there is no room for a third column, so it becomes a band above the
+ * player and the document scrolls as one — the same trade `PanelSidebar` makes,
+ * and for the same reason: a drawer would need a script.
+ */
+.outline {
+  display: flex;
+  flex-direction: column;
+  background: var(--color-background);
+  border-block-end: 1px solid var(--color-outline);
+}
+
+@media (min-width: 64rem) {
+  .outline {
+    inline-size: 18.75rem;
+    flex-shrink: 0;
+    border-block-end: 0;
+    border-inline-end: 1px solid var(--color-outline);
+    overflow-y: auto;
+  }
+}
+
+.progress {
+  padding: 1.5rem;
+  border-block-end: 1px solid var(--color-outline);
+}
+
+.progressLabel {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+}
+
+.figures {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  margin-block-start: 1rem;
+}
+
+/*
+ * A `conic-gradient` fed by a custom property written into the `style`
+ * attribute, so the arc arrives already drawn in the served HTML — no canvas,
+ * no measuring, no script (8.1). Same device as `ProgressCard`.
+ */
+.ring {
+  inline-size: 2.75rem;
+  block-size: 2.75rem;
+  flex-shrink: 0;
+  border-radius: 50%;
+  background: conic-gradient(
+    var(--color-primary) var(--percent),
+    var(--color-outline-variant) var(--percent)
+  );
+  mask: radial-gradient(circle, transparent 58%, #000 59%);
+}
+
+.percent {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  min-inline-size: 0;
+}
+
+.percentValue {
+  font-size: 1.375rem;
+  font-weight: 600;
+  line-height: 1.1;
+  color: var(--color-primary);
+}
+
+.percentDetail {
+  margin-block-start: 0.125rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-on-surface-variant);
+}
+
+.bar {
+  display: block;
+  margin: 1rem 0 0;
+  block-size: 3px;
+  background: var(--color-outline-variant);
+}
+
+.barFill {
+  display: block;
+  block-size: 100%;
+  inline-size: var(--percent);
+  background: var(--color-primary);
+}
+
+.modules {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.module {
+  border-block-end: 1px solid var(--color-outline-variant);
+}
+
+/* A module with no lessons: a heading, not a control that opens onto nothing. */
+.moduleHeading,
+.summary {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 0.125rem 0.75rem;
+  padding: 1rem 1.5rem;
+}
+
+.summary {
+  cursor: pointer;
+  list-style: none;
+}
+
+.summary::-webkit-details-marker {
+  display: none;
+}
+
+.summary:hover,
+.summary:focus-visible {
+  background: var(--color-surface);
+}
+
+.moduleCode {
+  grid-column: 1;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-tertiary);
+}
+
+.moduleTitle {
+  grid-column: 1;
+  font-size: 0.9375rem;
+  font-weight: 600;
+  color: var(--color-primary);
+}
+
+.moduleCount {
+  grid-column: 1;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-on-surface-variant);
+}
+
+.chevron {
+  grid-column: 2;
+  grid-row: 1 / span 3;
+  align-self: center;
+  inline-size: 1rem;
+  block-size: 1rem;
+  color: var(--color-on-surface-variant);
+  transition: transform var(--duration-fast) var(--ease-out);
+}
+
+.disclosure[open] .chevron {
+  transform: rotate(180deg);
+}
+
+.lessons {
+  margin: 0;
+  padding: 0 0 0.5rem;
+  list-style: none;
+}
+
+/*
+ * A row with no `href` is a lesson inside a module the student has not reached.
+ * It renders as plain text on purpose — the same choice `PanelSidebar` makes
+ * for a screen that does not exist yet. A link that bounces is worse than a
+ * label that admits it leads nowhere.
+ */
+.row {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  min-block-size: 44px;
+  padding: 0.5rem 1.5rem;
+  border-inline-start: 4px solid transparent;
+  color: var(--color-on-surface-variant);
+  font-size: 0.8125rem;
+  line-height: 1.35;
+  text-decoration: none;
+}
+
+a.row:hover,
+a.row:focus-visible {
+  background: var(--color-surface);
+  color: var(--color-primary);
+}
+
+.rowPassed {
+  color: var(--color-on-surface);
+}
+
+.rowCurrent {
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.rowLocked {
+  cursor: default;
+  opacity: 0.6;
+}
+
+/* The lesson on screen, which is not always the one the record points at. */
+.rowActive {
+  border-inline-start-color: var(--color-tertiary);
+  background: var(--color-parchment);
+  color: var(--color-primary);
+}
+
+.rowIcon {
+  inline-size: 1.125rem;
+  block-size: 1.125rem;
+  flex-shrink: 0;
+}
+
+.rowPassed .rowIcon {
+  color: var(--color-on-tertiary);
+}
+
+.rowTitle {
+  min-inline-size: 0;
+}
+
+.rowDuration {
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  color: var(--color-on-surface-variant);
+  white-space: nowrap;
+}
+
+/*
+ * The state in words, for assistive technology only.
+ *
+ * On screen the four states differ by glyph — a check, a triangle, an outline,
+ * a padlock — and not by colour, so 9.4 is met visually without a fifth column
+ * of text crowding a 300px rail. Read aloud, that glyph is nothing: it is
+ * `aria-hidden`, like every icon of the panel.
+ */
+.rowState {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}

@@ -1,0 +1,164 @@
+/*
+ * The third column. Like the syllabus it is pinned and scrolls on its own above
+ * 64rem; below that it stacks under the player and the document scrolls as one.
+ */
+.notes {
+  background: var(--color-surface);
+  border-block-start: 1px solid var(--color-outline);
+}
+
+@media (min-width: 64rem) {
+  .notes {
+    inline-size: 21.25rem;
+    flex-shrink: 0;
+    border-block-start: 0;
+    border-inline-start: 1px solid var(--color-outline);
+    overflow-y: auto;
+  }
+}
+
+.tabs {
+  display: flex;
+  border-block-end: 1px solid var(--color-outline);
+}
+
+/* 7.6 — the height is the touch target, not the type size. */
+.tab {
+  flex: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-block-size: 44px;
+  padding: 0.75rem 1rem;
+  border-block-end: 2px solid transparent;
+  color: var(--color-on-surface-variant);
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  text-decoration: none;
+}
+
+.tab:hover,
+.tab:focus-visible {
+  color: var(--color-primary);
+}
+
+/* Never the underline alone: the selected tab is also `aria-selected`. */
+.tabCurrent {
+  border-block-end-color: var(--color-primary);
+  color: var(--color-primary);
+  font-weight: 600;
+}
+
+.panel {
+  padding: 1.5rem;
+}
+
+.block + .block {
+  margin-block-start: 2rem;
+}
+
+.blockTitle {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  font-weight: 400;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-tertiary);
+}
+
+.description {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-on-surface);
+}
+
+/*
+ * The ordinals are the list's own, drawn from a counter rather than typed into
+ * the content file — the same rule the syllabus follows for `EXP-NN`: a number
+ * that describes a position is derived from the position.
+ */
+.points {
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+  counter-reset: point;
+}
+
+.point {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 0.75rem;
+  padding-block: 0.5rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: var(--color-on-surface);
+  counter-increment: point;
+}
+
+.point::before {
+  content: counter(point, decimal-leading-zero);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  color: var(--color-on-surface-variant);
+}
+
+/*
+ * Paper, not a shadow. §6 asks for a border or a fill to group a block, and the
+ * parchment fill is what the mockup uses to say «this is somebody talking».
+ */
+.note {
+  margin: 0.75rem 0 0;
+  padding: 1rem;
+  background: var(--color-parchment);
+  border: 1px solid var(--color-outline-variant);
+  border-radius: var(--radius);
+}
+
+.noteText {
+  margin: 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-on-surface);
+}
+
+.noteAuthor {
+  margin-block-start: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+}
+
+.tools {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin: 0.75rem 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* §4.3 — an evidence tag: a name of a thing, in the monospaced face. */
+.tool {
+  padding: var(--label-block) var(--label-inline);
+  border: 1px solid var(--color-outline);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.625rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--color-on-surface-variant);
+}
+
+.empty {
+  margin: 0.75rem 0 0;
+  font-size: 0.875rem;
+  line-height: 1.6;
+  color: var(--color-on-surface-variant);
+}
