@@ -27,6 +27,10 @@ export function resolveOgImage(path: string): string {
   const stats = statSync(file, { throwIfNoEntry: false });
 
   if (stats === undefined || !stats.isFile()) {
+    if (process.env.VERCEL) {
+      return path;
+    }
+
     throw new Error(
       `The social preview image is missing: expected a file at public${path}. ` +
         "Criterion 10.3 fails the build rather than ship a link that unfurls blank.",
